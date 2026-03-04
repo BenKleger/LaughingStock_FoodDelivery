@@ -1,0 +1,9 @@
+# Python dependencies
+requests==2.32.5
+certifi==2026.2.25
+charset-normalizer==3.4.4
+idna==3.11
+pip==26.0.1
+urllib3==2.6.3
+uvicorn 
+fastapi
