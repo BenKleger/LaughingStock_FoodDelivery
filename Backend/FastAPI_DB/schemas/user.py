@@ -8,7 +8,6 @@ class User(BaseModel):
     # type:
 
 class UserCreate(BaseModel):
-    id: str
     username: str
     password: str
     # type:

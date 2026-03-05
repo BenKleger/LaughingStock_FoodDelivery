@@ -24,3 +24,10 @@ def get_user_by_username(user_username: str) -> User:
         if it.get("username") == user_username:
             return User(**it)
     raise HTTPException(status_code=404, detail=f"User '{user_username}' not found")
+
+def get_user_by_id(user_id: str) -> User:
+    items = load_all()
+    for it in items:
+        if it.get("id") == user_id:
+            return User(**it)
+    raise HTTPException(status_code=404, detail=f"User '{user_id}' not found")
