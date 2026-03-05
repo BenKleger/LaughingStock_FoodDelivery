@@ -1,6 +1,5 @@
 from Restaurant.item import itemClass as item
 
-
 class orderClass:
     order_index = 0
     order_list = list[item]
