@@ -1,5 +1,5 @@
-from ..Order.order import orderClass
 from Restaurant.item import itemClass
+from Order.order import orderClass
 
 def test_payment_total():
     item1 = itemClass(10)
