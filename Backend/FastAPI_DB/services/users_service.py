@@ -13,10 +13,10 @@ def create_users(payload: UserCreate) -> User:
     new_id = str(uuid.uuid4())
     if any(it.get("id") == new_id for it in users):  # extremely unlikely, but consistent check
         raise HTTPException(status_code=409, detail="ID collision; retry.")
-    new_user = User(id=new_id, username=payload.username.strip(), password=payload.password.strip())
+    new_user = User(id=new_id, username=payload.username.strip(), password=payload.password.strip(), type=payload.type)
     users.append(new_user.dict())
     save_all(users)
-    return new_user
+    return new_id
 
 def get_user_by_username(user_username: str) -> User:
     items = load_all()

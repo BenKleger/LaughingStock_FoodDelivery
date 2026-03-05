@@ -5,15 +5,15 @@ class User(BaseModel):
     id: str
     username: str
     password: str
-    # type:
+    type: int # 0 for customer, 1 for restaurant, 2 for delivery
 
 class UserCreate(BaseModel):
     username: str
     password: str
-    # type:
+    type: int 
 
 class UserUpdate(BaseModel):
     id: str
     username: str
     password: str
-    # type:
+    type: int 
