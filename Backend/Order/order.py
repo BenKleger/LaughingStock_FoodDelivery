@@ -1,24 +1,31 @@
-from Restaurant import item
+from Restaurant.item import itemClass as item
 
-order_index = 0
-order = list[item()]
-order_instructions = ""
 
-def order(i : item):
-    pass
+class orderClass:
+    order_index = 0
+    order_list = list[item]
+    order_instructions = ""
 
-def add_item(i: item):
-    order[order_index] = i
-    order_index += 1
+    def __init__(self, i : item):
+        self.order = [i]
 
-def remove_item(i: item):
-    order.remove(i)
-    order_index -= 1
+    def add_item(self, i: item):
+        self.order[self.order_index] = i
+        self.order_index += 1
 
-def remove_item(index: int):
-    order.remove(index)
-    order_index -= 1
+    def remove_item(self, i: item):
+        self.order_list.remove(i)
+        self.order_index -= 1
 
-def set_order_instructions(instructions: str = "No special instructions :)"):
-    order_instructions = instructions
+    def remove_item(self, index: int):
+        self.order_list.remove(index)
+        self.order_index -= 1
 
+    def set_order_instructions(self, instructions: str = "No special instructions :)"):
+        self.order_instructions = instructions
+
+    def get_total(self):
+        total = 0
+        for item in self.order_list:
+            total += item.item_total
+        return total
