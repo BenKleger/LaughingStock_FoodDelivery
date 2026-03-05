@@ -8,6 +8,8 @@ app = FastAPI()
 def health():
     return {"status": "ok"}
 
+def test_null():
+    assert True is True
 app.include_router(users_router)
 
 user_id = login()
