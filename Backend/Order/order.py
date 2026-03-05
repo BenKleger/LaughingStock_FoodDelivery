@@ -7,10 +7,16 @@ class orderClass:
     order_instructions = ""
 
     def __init__(self, i : item):
-        self.order = [i]
+        self.add_item(i)
+        
+        
+    def __init__(self, list : list[item]):
+        for i in list:
+            self.add_item(i)
+
 
     def add_item(self, i: item):
-        self.order[self.order_index] = i
+        self.order_list[self.order_index] = i
         self.order_index += 1
 
     def remove_item(self, i: item):
