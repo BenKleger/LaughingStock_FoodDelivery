@@ -1,4 +1,4 @@
-from Order.order import orderClass
+from ..Order.order import orderClass
 from Restaurant.item import itemClass
 
 def test_payment_total():
