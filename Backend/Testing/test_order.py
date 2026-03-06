@@ -1,5 +1,5 @@
-from Backend.Restaurant.item import itemClass as item
-from Backend.Order.order import orderClass as order
+from Backend.Restaurant.item import item
+from Backend.Order.order import order
     
 myOrder: order
 item1: item = item(10)
