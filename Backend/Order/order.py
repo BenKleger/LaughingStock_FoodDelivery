@@ -1,6 +1,6 @@
-from Backend.Restaurant.item import itemClass as item
+from Backend.Restaurant.item import item
 
-class orderClass:
+class order:
 
 
     def __init__(self, i : item):
@@ -11,9 +11,10 @@ class orderClass:
         self.order_list: list[item] = []
         self.order_instructions = ""
         
-        if isinstance(i,item):
+        if isinstance(i, item):
            self.add_item(i)
         else:
+            raise Exception("Invalid type for initialization item")
             pass #TODO Exception behaviour    
        
     def add_item(self, i: item):
