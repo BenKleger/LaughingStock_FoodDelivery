@@ -9,7 +9,6 @@ router = APIRouter(prefix="/orders", tags=["order"])
 def get_orders():
     return list_orders()
 
-#simple post the payload (is the body of the request)
 @router.post("", response_model=Order, status_code=201)
 def post_item(payload: OrderCreate):
     return create_orders(payload)
