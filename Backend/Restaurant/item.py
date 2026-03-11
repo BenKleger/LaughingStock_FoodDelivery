@@ -1,14 +1,11 @@
 
-class itemClass:
-    itemID: str
-    itemName: str
-    itemTags: list[str]
-    itemPrice: float
-    itemRating: float
+class item:
 
-    def __init__(self, ID: str = 0,name:str = "", tags: list[str] = [""], price: float = 0, rating: float = 0):
-        self.itemID = ID
-        self.itemName = name
-        self.itemTags = tags
-        self.itemPrice = price
-        self.itemRating = rating
+    def __init__(self, price: float = 0, ID: str = 0,name:str = "", tags: list[str] = [], rating: float = 0):
+        """Initialize items with default values if none have been given."""
+            
+        self.itemPrice: float = price
+        self.itemID: str = ID
+        self.itemName: str = name
+        self.itemTags: list[str] = tags
+        self.itemRating: float = rating
