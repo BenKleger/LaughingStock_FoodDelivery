@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 from typing import List
-from FastAPI_DB.schemas.user import User, UserCreate
-from FastAPI_DB.services.users_service import list_users, create_users, get_user_by_username
+from Backend.FastAPI_DB.schemas.user import User, UserCreate
+from Backend.FastAPI_DB.services.users_service import list_users, create_users, get_user_by_username
 
 router = APIRouter(prefix="/users", tags=["user"])
 

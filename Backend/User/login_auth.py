@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException
-from FastAPI_DB.services.users_service import create_users, get_user_by_username
-from FastAPI_DB.schemas.user import UserCreate
+from Backend.FastAPI_DB.services.users_service import create_users, get_user_by_username
+from Backend.FastAPI_DB.schemas.user import UserCreate
 
 invalid = True
 

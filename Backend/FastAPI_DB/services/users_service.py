@@ -1,8 +1,8 @@
 import uuid
 from typing import List, Dict, Any
 from fastapi import HTTPException
-from FastAPI_DB.schemas.user import User, UserCreate
-from FastAPI_DB.repositories.user_repo import load_all, save_all
+from Backend.FastAPI_DB.schemas.user import User, UserCreate
+from Backend.FastAPI_DB.repositories.user_repo import load_all, save_all
 
 
 def list_users() -> List[User]:
@@ -16,7 +16,7 @@ def create_users(payload: UserCreate) -> User:
     new_user = User(id=new_id, username=payload.username.strip(), password=payload.password.strip(), type=payload.type)
     users.append(new_user.dict())
     save_all(users)
-    return new_id
+    return new_user
 
 def get_user_by_username(user_username: str) -> User:
     items = load_all()
