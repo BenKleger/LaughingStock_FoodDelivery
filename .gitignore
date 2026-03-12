@@ -1,0 +1,6 @@
+FoodD_venv/
+personalTest/
+.vscode/
+tomTest.py
+*.pyc
+__pycache__/
