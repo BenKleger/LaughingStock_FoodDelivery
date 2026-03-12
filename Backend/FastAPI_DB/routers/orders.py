@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 from typing import List
 from FastAPI_DB.schemas.order import Order, OrderCreate
-from FastAPI_DB.services.orders_service import list_orders, create_orders, get_order_by_order_id
+from FastAPI_DB.services.orders_service import list_orders, create_orders, get_order_by_order_id, calculate_delivery_payout
 
 router = APIRouter(prefix="/orders", tags=["order"])
 
@@ -16,3 +16,7 @@ def post_item(payload: OrderCreate):
 @router.get("/{order}", response_model=Order)
 def get_user(order_id: str):
     return get_order_by_order_id(order_id)
+
+@router.get("/orders/{order_id}/payout", response_model=float)
+def get_payout(order_id: str):
+    return calculate_delivery_payout(order_id)

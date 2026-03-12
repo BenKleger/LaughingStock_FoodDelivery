@@ -1,5 +1,5 @@
-from ..FastAPI_DB.services.orders_service import list_orders
-from ..FastAPI_DB.schemas.order import Order
+from Backend.FastAPI_DB.services.orders_service import list_orders
+from Backend.FastAPI_DB.schemas.order import Order
 
 def test_database_content():
     """Tests database fetch"""

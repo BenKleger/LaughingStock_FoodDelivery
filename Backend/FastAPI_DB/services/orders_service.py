@@ -91,3 +91,16 @@ def reset_order_DB():
     save_all(orders)
 
     return True
+
+def calculate_delivery_payout(order: Order) -> float:
+    """
+    Calulates the payout for an order based on a flat rate and delivery distance. 
+    Delivery distance is based off of Doordash Average PricePerKm of $0.59/Km"""
+
+   # order = get_order_by_order_id(order.order_id)
+    flate_rate = 5.0
+    distance_rate = 0.59
+    payout = flate_rate + (distance_rate * order.delivery_distance)
+    return payout
+
+
