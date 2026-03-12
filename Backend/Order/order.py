@@ -1,8 +1,6 @@
 from Backend.Restaurant.item import item
 
 class order:
-
-
     def __init__(self, i : item):
         """initializes order with an item"""
         
