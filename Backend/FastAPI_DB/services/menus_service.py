@@ -7,7 +7,7 @@ from ..repositories.order_repo import load_all, save_all
 def list_menus() -> List[Menu]:
     return [Menu(**it) for it in load_all()]
 
-def create_items(payload: MenuCreate) -> Menu:
+def create_menus(payload: MenuCreate) -> Menu:
     """
     Creates a new menu saves it to database.
 
