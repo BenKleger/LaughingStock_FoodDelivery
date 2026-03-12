@@ -1,4 +1,4 @@
-from FastAPI_DB.services.orders_services import get_order_by_order_id
+from ..FastAPI_DB.services.orders_service import get_order_by_order_id
 # from FastAPI_DB.schemas.order import Order
 
         ### PLACEHOLDER ###

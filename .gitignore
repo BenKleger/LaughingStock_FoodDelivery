@@ -4,9 +4,3 @@ __pycache__/
 
 # Environment files
 .env
-
-# MacOS
-.DS_Store
-
-# VSCode
-.vscode/
