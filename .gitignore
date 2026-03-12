@@ -1,1 +1,8 @@
 .venv/
+FoodD_venv/
+personalTest/
+.vscode/
+tomTest.py
+*.pyc
+__pycache__/
+users.json
