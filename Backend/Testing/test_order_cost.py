@@ -1,6 +1,4 @@
 from ..FastAPI_DB.services.orders_service import get_order_by_order_id
-from ..FastAPI_DB.schemas.order import Order
-
 from ..User.user_utils import get_order_cost
 
 def test_database_content():
