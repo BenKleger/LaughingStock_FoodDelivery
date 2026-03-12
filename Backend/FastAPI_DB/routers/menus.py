@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 from typing import List
 from FastAPI_DB.schemas.menu import Menu, MenuCreate
-from FastAPI_DB.services.items_service import list_menus, create_menus, get_menu_by_menu_id
+from FastAPI_DB.services.menus_service import list_menus, create_menus, get_menu_by_menu_ID
 
 router = APIRouter(prefix="/menus", tags=["menu"])
 
@@ -15,4 +15,4 @@ def post_item(payload: MenuCreate):
 
 @router.get("/{menu}", response_model=Menu)
 def get_item(menu_id: str):
-    return get_menu_by_menu_id(menu_id)
+    return get_menu_by_menu_ID(menu_id)

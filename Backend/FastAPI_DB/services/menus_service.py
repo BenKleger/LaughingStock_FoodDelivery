@@ -1,11 +1,14 @@
 from typing import List, Dict, Any
 from fastapi import HTTPException
+
 from ..schemas.menu import Menu, MenuCreate
-from ..repositories.order_repo import load_all, save_all
+from ..repositories.menu_repo import load_all as menus_load, save_all as menus_save
+
+from ..repositories.item_repo import load_all as items_load
 
 
 def list_menus() -> List[Menu]:
-    return [Menu(**it) for it in load_all()]
+    return [Menu(**it) for it in menus_load()]
 
 def create_menus(payload: MenuCreate) -> Menu:
     """
@@ -23,12 +26,12 @@ def create_menus(payload: MenuCreate) -> Menu:
         and save the updated list back to the repo.
     """
 
-    menus = load_all()
-    new_menu = Menu(menu_id=payload.menu_id.strip(), 
-                     menus=payload.menus)
+    menus = menus_load()
+    new_menu = Menu(menu_id=payload.menu_id, 
+                     items=payload.items)
     
     menus.append(new_menu.dict())
-    save_all(menus)
+    menus_save(menus)
     return new_menu
 
 def get_menu_by_menu_ID(user_menu_ID: str) -> Menu:
@@ -49,8 +52,41 @@ def get_menu_by_menu_ID(user_menu_ID: str) -> Menu:
         the menu whose menu_id matches the provided value.
     """
 
-    menus = load_all()
+    menus = menus_load()
     for it in menus:
         if it.get("menu_id") == user_menu_ID:
             return Menu(**it)
     raise HTTPException(status_code=404, detail=f"Menu '{user_menu_ID}' not found")
+
+def reset_menus_DB():
+    """
+    Resets the item database using data from the orders.json file.
+
+    Returns:
+        bool: True if successful.
+
+    Description:
+        This function clears the current item database and repopulates it
+        using the records from the orders.json dataset.
+    """
+    # try:
+    menus_save([])
+
+    items_from_db = items_load()
+    items_by_restaurant = {}
+
+    for item in items_from_db:
+        restaurant_id = item["restaurant_id"]
+
+        if restaurant_id not in items_by_restaurant:
+            items_by_restaurant[restaurant_id] = []
+
+        items_by_restaurant[restaurant_id].append(item)
+
+    for restaurant_id in items_by_restaurant:
+        create_menus(MenuCreate(menu_id=restaurant_id, 
+                                items=items_by_restaurant[restaurant_id]))
+
+    #     return True
+    # except:
+    #     return False

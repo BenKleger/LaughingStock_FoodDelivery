@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 from typing import List
-from FastAPI_DB.schemas.order import Item, ItemCreate
-from FastAPI_DB.services.items_service import list_items, create_items, get_item_by_item_id
+from FastAPI_DB.schemas.item import Item, ItemCreate
+from FastAPI_DB.services.items_service import list_items, create_items, get_item_by_item_ID
 
 router = APIRouter(prefix="/items", tags=["item"])
 
@@ -15,4 +15,4 @@ def post_item(payload: ItemCreate):
 
 @router.get("/{item}", response_model=Item)
 def get_item(item_id: str):
-    return get_item_by_item_id(item_id)
+    return get_item_by_item_ID(item_id)

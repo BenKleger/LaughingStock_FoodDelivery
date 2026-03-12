@@ -1,11 +1,10 @@
-import uuid, time
+import uuid
 from typing import List, Dict, Any
 from fastapi import HTTPException
 
 from ..schemas.item import Item, ItemCreate
 from ..repositories.item_repo import load_all as items_load, save_all as items_save
 
-from ..schemas.order import Order
 from ..repositories.order_repo import load_all as orders_load
 
 
@@ -114,25 +113,5 @@ def reset_items_DB():
                 
         return True
     except:
+        print("Items reset failed...")
         return False
-
-    # with open("FastAPI_DB/data/food_delivery.csv", newline="") as f:
-    #     reader = csv.reader(f)
-
-    #     next(reader)
-
-    #     for row in reader:
-    #         new_order = ItemCreate(order_id=row[0], 
-    #                                 restaurant_id=int(row[1]), 
-    #                                 food_item=row[2], 
-    #                                 order_time=row[3], 
-    #                                 delivery_time=row[4], 
-    #                                 delivery_distance=float(row[5]), 
-    #                                 order_value=float(row[6]), 
-    #                                 delivery_method=row[7], 
-    #                                 traffic_condition=row[8], 
-    #                                 weather_condition=row[9])
-    #         orders.append(new_order.dict())
-    # save_all(orders)
-
-    # return True
