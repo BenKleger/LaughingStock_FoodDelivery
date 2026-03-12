@@ -69,24 +69,25 @@ def reset_menus_DB():
         This function clears the current item database and repopulates it
         using the records from the orders.json dataset.
     """
-    # try:
-    menus_save([])
+    try:
+        menus_save([])
 
-    items_from_db = items_load()
-    items_by_restaurant = {}
+        items_from_db = items_load()
+        items_by_restaurant = {}
 
-    for item in items_from_db:
-        restaurant_id = item["restaurant_id"]
+        for item in items_from_db:
+            restaurant_id = item["restaurant_id"]
 
-        if restaurant_id not in items_by_restaurant:
-            items_by_restaurant[restaurant_id] = []
+            if restaurant_id not in items_by_restaurant:
+                items_by_restaurant[restaurant_id] = []
 
-        items_by_restaurant[restaurant_id].append(item)
+            items_by_restaurant[restaurant_id].append(item)
 
-    for restaurant_id in items_by_restaurant:
-        create_menus(MenuCreate(menu_id=restaurant_id, 
-                                items=items_by_restaurant[restaurant_id]))
+        for restaurant_id in items_by_restaurant:
+            create_menus(MenuCreate(menu_id=restaurant_id, 
+                                    items=items_by_restaurant[restaurant_id]))
 
-    #     return True
-    # except:
-    #     return False
+        return True
+    except:
+        print("Menus reset failed...")
+        return False
