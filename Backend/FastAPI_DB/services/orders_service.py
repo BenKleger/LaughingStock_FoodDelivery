@@ -1,7 +1,7 @@
 from typing import List, Dict, Any
 from fastapi import HTTPException
-from FastAPI_DB.schemas.order import Order, OrderCreate
-from FastAPI_DB.repositories.order_repo import load_all, save_all
+from ..schemas.order import Order, OrderCreate
+from ..repositories.order_repo import load_all, save_all
 import csv
 
 
