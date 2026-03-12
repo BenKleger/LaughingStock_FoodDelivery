@@ -3,6 +3,7 @@ from FastAPI_DB.routers.users import router as users_router
 from FastAPI_DB.routers.orders import router as orders_router
 from FastAPI_DB.services.orders_service import reset_order_DB
 from User.login_auth import login
+from User.user_utils import get_order_cost
 
 app = FastAPI()
 
@@ -17,6 +18,4 @@ def test_null():
 app.include_router(users_router)
 app.include_router(orders_router)
 
-print(reset_order_DB())
-print("YES")
 # user_id = login()
