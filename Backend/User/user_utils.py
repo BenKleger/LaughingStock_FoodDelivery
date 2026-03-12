@@ -1,32 +1,24 @@
-from FastAPI_DB.services.orders_services import get_order_by_order_id
-# from FastAPI_DB.schemas.order import Order
+from ..FastAPI_DB.services.orders_service import get_order_by_order_id
+from ..FastAPI_DB.schemas.order import Order
 
         ### PLACEHOLDER ###
+# Will need to figure out where to store these and how these variables are managed
 delivery_vars = {
   "rate_per_km": 0.2,
   "surge_price_time": [6, 8],
   "surge_price_inf": 1.13,
-  "tax": 1.13
+  "tax": 0.13
 }
 
-surge_condition = True
+surge_condition = False
 
 def get_order_cost(user_order_id: str, tip: float, discount: float) -> float:
     user_order = get_order_by_order_id(user_order_id)
 
-    price = user_order["order_value"]
-    tax = price * user_order["tax"]
-    delivery_cost = user_order["delivery_distance"] * user_order["rate_per_km"] * (delivery_vars["surge_price_inf"] if surge_condition else 1)
+    price = user_order.order_value * (1 - discount)
+    tax = price * delivery_vars["tax"]
+    delivery_cost = user_order.delivery_distance * delivery_vars["rate_per_km"] * (delivery_vars["surge_price_inf"] if surge_condition else 1)
 
-    cost = (price * (1 - discount)) + tax + delivery_cost + tip
+    cost = price + tax + delivery_cost + tip
 
-    return cost
-
-# As a user, I want to be able to know the total cost of the food before purchase, 
-# so that I know if I’m willing to buy it.
-
-# Acceptance criteria:
-# Order list contains summary details including pricing of each individual item, 
-# total cost, tax, discount, delivery free, tip%, fees. Updates to the order list are 
-# reflected in summary details within ~2 seconds.
-# Once an order is placed and confirmed the price remains fixed.
+    return round(cost, 2)
