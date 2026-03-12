@@ -1,7 +1,6 @@
-FoodD_venv/
-personalTest/
-.vscode/
-tomTest.py
-*.pyc
+# Python
 __pycache__/
-users.json
+*.pyc
+
+# Environment files
+.env
