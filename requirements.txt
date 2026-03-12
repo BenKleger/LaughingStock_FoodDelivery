@@ -7,3 +7,4 @@ pip==26.0.1
 urllib3==2.6.3
 uvicorn==0.41.0 
 fastapi==0.135.1
+hhttp==0.28.1
