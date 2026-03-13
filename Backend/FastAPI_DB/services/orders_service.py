@@ -3,7 +3,8 @@ from fastapi import HTTPException
 from ..schemas.order import Order, OrderCreate
 from ..repositories.order_repo import load_all, save_all
 import csv
-
+import uuid
+from Backend.Restaurant.item import item as item # to be replaced by in fastapi_db item
 
 def list_orders() -> List[Order]:
     return [Order(**it) for it in load_all()]
@@ -23,9 +24,13 @@ def create_orders(payload: OrderCreate) -> Order:
         creates new order and appends it to the list,
         and save the updated list back to the repo.
     """
-
     orders = load_all()
-    new_order = Order(order_id=payload.order_id.strip(), restaurant_id=payload.restaurant_id, food_item=payload.food_item.strip(),
+
+    new_id = str(uuid.uuid4())
+    if any(order.get("order_id") == new_id for order in orders):  # extremely unlikely, but consistent check
+        raise HTTPException(status_code=409, detail="ID collision; retry.")
+    
+    new_order = Order(new_id, restaurant_id=payload.restaurant_id, food_item=payload.food_item.strip(),
                         order_time=payload.order_time.strip(), delivery_time=payload.delivery_time.strip(), delivery_distance=payload.delivery_distance,
                         order_value=payload.order_value, delivery_method=payload.delivery_method.strip(), traffic_condition=payload.traffic_condition.strip(),
                         weather_condition=payload.weather_condition.strip())
@@ -91,3 +96,56 @@ def reset_order_DB():
     save_all(orders)
 
     return True
+
+
+def change_order_item(user_order_id: str, new_item: item = None):
+    """
+    Changes the item of an order.
+
+    Parameters:
+        user_order_id (str): order id provided by user.
+        new_item (item): item provided by user to replace current item in order, defaults to None if no item given.
+
+    Returns:
+        bool: True if successful.
+
+    Description:
+        This function overwrites the item in a given order, if no item is specified it will empty the order.
+    """
+    if new_item == None:
+        _clear_order_item()
+    else:
+        pass
+
+    return True
+
+
+
+def _clear_order_item(user_order_id: str):
+    """
+    Clears the item from an order.
+
+    Parameters:
+        user_order_id (str): order id provided by user.
+       
+    Returns:
+        bool: True if successful.
+
+    Description:
+        This function overwrites the item in a given order, if no item is specified it will empty the order.
+    """
+    pass
+
+def delete_order(user_order_id: str):
+    """
+    Deletes the specified order from the database.
+
+    Parameters:
+        user_order_id (str): order id provided by user.
+    
+    Returns:
+        bool: True if successful
+
+    Description:
+        Deletes the specified order from the data/orders.json file
+    """
