@@ -35,7 +35,7 @@ def create_items(payload: ItemCreate) -> Item:
     if any(it.get("item_id") == new_id for it in items):  # extremely unlikely, but consistent check
         raise HTTPException(status_code=409, detail="ID collision; retry.")
     
-    new_item = Item(item_id=new_id.strip(), 
+    new_item = Item(item_id=str(payload.restaurant_id) + "-" + payload.name, 
                     restaurant_id=payload.restaurant_id,
                     name=payload.name.strip(), 
                     tags=payload.tags, 
@@ -45,14 +45,6 @@ def create_items(payload: ItemCreate) -> Item:
     items_save(items)
     return new_item
 
-    # users = load_all()
-    # new_id = str(uuid.uuid4())
-    # if any(it.get("id") == new_id for it in users):  # extremely unlikely, but consistent check
-    #     raise HTTPException(status_code=409, detail="ID collision; retry.")
-    # new_user = User(id=new_id, username=payload.username.strip(), password=payload.password.strip())
-    # users.append(new_user.dict())
-    # save_all(users)
-    # return new_user
 
 def get_item_by_item_ID(user_item_ID: str) -> Item:
     """
