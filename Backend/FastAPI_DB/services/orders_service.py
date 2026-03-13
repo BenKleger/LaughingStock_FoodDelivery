@@ -4,7 +4,9 @@ from ..schemas.order import Order, OrderCreate
 from ..repositories.order_repo import load_all, save_all
 import csv
 import uuid
-from Backend.Restaurant.item import item as item # to be replaced by in fastapi_db item
+from .items_service import get_item_by_item_ID
+from .items_service import get_item_by_name
+from ..schemas.item import Item as item 
 
 def list_orders() -> List[Order]:
     return [Order(**it) for it in load_all()]
@@ -30,10 +32,13 @@ def create_orders(payload: OrderCreate) -> Order:
     if any(order.get("order_id") == new_id for order in orders):  # extremely unlikely, but consistent check
         raise HTTPException(status_code=409, detail="ID collision; retry.")
     
-    new_order = Order(new_id, restaurant_id=payload.restaurant_id, food_item=payload.food_item.strip(),
+    new_order = Order(order_id=new_id, restaurant_id=payload.restaurant_id, items=[],
                         order_time=payload.order_time.strip(), delivery_time=payload.delivery_time.strip(), delivery_distance=payload.delivery_distance,
                         order_value=payload.order_value, delivery_method=payload.delivery_method.strip(), traffic_condition=payload.traffic_condition.strip(),
                         weather_condition=payload.weather_condition.strip())
+    for item in payload.items:
+        add_order_item(new_order.order_id, item)
+
     orders.append(new_order.dict())
     save_all(orders)
     return new_order
@@ -56,10 +61,10 @@ def get_order_by_order_id(user_order_id: str) -> Order:
         the order whose order_id matches the provided value.
     """
 
-    items = load_all()
-    for it in items:
-        if it.get("order_id") == user_order_id:
-            return Order(**it)
+    orders = load_all()
+    for order in orders:
+        if order.get("order_id") == user_order_id:
+            return Order(**order)
     raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
 
 def reset_order_DB():
@@ -76,15 +81,15 @@ def reset_order_DB():
 
     orders = []
 
-    with open("FastAPI_DB/data/food_delivery.csv", newline="") as f:
+    with open("Backend/FastAPI_DB/data/food_delivery.csv", newline="") as f:
         reader = csv.reader(f)
 
         next(reader)
-
+    
         for row in reader:
-            new_order = OrderCreate(order_id=row[0], 
+            new_order = Order(order_id=row[0], 
                                     restaurant_id=int(row[1]), 
-                                    food_item=row[2], 
+                                    items=[],  # temporarily empty
                                     order_time=row[3], 
                                     delivery_time=row[4], 
                                     delivery_distance=float(row[5]), 
@@ -97,14 +102,13 @@ def reset_order_DB():
 
     return True
 
-
-def change_order_item(user_order_id: str, new_item: item = None):
+def add_order_item(user_order_id: str, new_item: item = None):
     """
-    Changes the item of an order.
+    Adds an item to an order.
 
     Parameters:
         user_order_id (str): order id provided by user.
-        new_item (item): item provided by user to replace current item in order, defaults to None if no item given.
+        new_item (item): item provided by user to replace current item in order.
 
     Returns:
         bool: True if successful.
@@ -113,28 +117,43 @@ def change_order_item(user_order_id: str, new_item: item = None):
         This function overwrites the item in a given order, if no item is specified it will empty the order.
     """
     if new_item == None:
-        _clear_order_item()
-    else:
-        pass
+        # new_item not specified, clear the item from the order.
+        return _clear_order_item(user_order_id)
+    
+    # new_item specified
+    orders = load_all()
+    for order in orders:
+        if order.get("order_id") == user_order_id:
+            o = Order(**order)
+            break
+        o.food_item = new_item
+    raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
+    
 
     return True
 
 
 
-def _clear_order_item(user_order_id: str):
+
+def delete_order_item(user_order_id: str, item_id_to_remove: str):
     """
-    Clears the item from an order.
+    Removes an item from an order.
 
     Parameters:
         user_order_id (str): order id provided by user.
+        item_id_to_remove (str): id of the item to remove.
        
     Returns:
         bool: True if successful.
 
     Description:
-        This function overwrites the item in a given order, if no item is specified it will empty the order.
+        This function clears the item in a given order.
     """
-    pass
+    orders = load_all()
+    for order in orders:
+        if order.get("order_id") == user_order_id:
+            return Order(**order)
+    raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
 
 def delete_order(user_order_id: str):
     """
@@ -149,3 +168,6 @@ def delete_order(user_order_id: str):
     Description:
         Deletes the specified order from the data/orders.json file
     """
+
+    pass
+    return True
