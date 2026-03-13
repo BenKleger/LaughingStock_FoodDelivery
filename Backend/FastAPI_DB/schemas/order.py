@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import List
 
 class Order(BaseModel):
     order_id: str

@@ -1,8 +1,8 @@
-from Backend.PaymentSystem import paymentProcessor
-from Backend.PaymentSystem import paymentService
-from Backend.FastAPI_DB.services import users_service
-from Backend.Order import order
-from Backend.Restaurant import item
+from ..PaymentSystem import paymentProcessor
+from ..PaymentSystem import paymentService
+from ..FastAPI_DB.services import users_service
+from ..Order import order
+from ..Restaurant import item
 from decimal import Decimal
 
 newUser = users_service.UserCreate(username="testUser", password="testPW")

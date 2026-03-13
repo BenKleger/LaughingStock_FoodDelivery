@@ -14,5 +14,5 @@ def post_item(payload: OrderCreate):
     return create_orders(payload)
 
 @router.get("/{order}", response_model=Order)
-def get_user(order_id: str):
+def get_item(order_id: str):
     return get_order_by_order_id(order_id)
