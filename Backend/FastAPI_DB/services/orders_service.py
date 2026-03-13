@@ -34,7 +34,7 @@ def create_orders(payload: OrderCreate) -> Order:
     new_order = Order(order_id=new_id, restaurant_id=payload.restaurant_id, food_item=payload.food_item.strip(),
                         order_time=payload.order_time.strip(), delivery_time=payload.delivery_time.strip(), delivery_distance=payload.delivery_distance,
                         order_value=payload.order_value, delivery_method=payload.delivery_method.strip(), traffic_condition=payload.traffic_condition.strip(),
-                        weather_condition=payload.weather_condition.strip(), item_ids=payload.item_ids)
+                        weather_condition=payload.weather_condition.strip(), item_ids=payload.item_ids, order_status=payload.order_status)
     for item in payload.items:
         add_order_item(new_order.order_id, item)
 
@@ -53,7 +53,7 @@ def get_order_by_order_id(user_order_id: str) -> Order:
         Order: Matching the provided ID.
 
     Raises:
-        HTTPException: If no order with the given ID exists in database.
+        HTTPException 404: If no order with the given user_order_id exists in database.
 
     Description:
         The function searches through all stored orders and returns
@@ -96,7 +96,9 @@ def reset_order_DB():
                                     delivery_method=row[7], 
                                     traffic_condition=row[8], 
                                     weather_condition=row[9],
-                                    item_ids = [str(row[1]) + "-" + row[2]]) 
+                                    item_ids = [str(row[1]) + "-" + row[2]],
+                                    order_status="delivered")
+
             orders.append(new_order.model_dump())
     save_all(orders)
 
@@ -114,30 +116,39 @@ def add_order_item(user_order_id: str, new_item_id: str = None):
     Returns:
         bool: True if successful, False if no item was given.
 
+    Raises:
+        HTTPException status 404: If no order with user_order_id exists in orders.json,
+            or if no item with new_item_id exists in items.json (by items_service).
+        HTTPException status 400: If the order is not in "being_created" status.
+    
     Description:
         This function adds the given item_id to the given order item_ids. If no item is given it will do nothing.
     """
+
     if new_item_id == None:
         # new_item not specified, do nothing
         return False
     
     # new_item specified
     orders = load_all()
-    o:Order = None
+    o: Order = None
     for order in orders:
         if order.get("order_id") == user_order_id:
             o = Order(**order)
             break
-        
+    
+    if order.get("order_status") != "being_created":
+        raise HTTPException(status_code=400, detail=f"Order '{user_order_id}' cannot be changed because it is not in 'being_created' status")
+               
     if o is None:
         raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
     
     item_to_add = get_item_by_item_ID(new_item_id)
-    if item_to_add is None:
-        raise HTTPException(status_code=404, detail=f"Item '{new_item_id}' not found")
     
     o.item_ids.append(new_item_id)
     o.order_value += item_to_add.price
+    
+    save_all(orders)
 
     return True
 
@@ -154,15 +165,34 @@ def delete_order_item(user_order_id: str, item_id_to_remove: str):
        
     Returns:
         bool: True if successful.
+    
+    Raises:
+        HTTPException status 404: If no order with user_order_id exists in orders.json, or
+            if no item with item_id_to_remove exists in specified orders.json.
+        HTTPException status 400: If the order is not in "being_created" status.
 
     Description:
         This function removes the given item from the given order.
     """
     orders = load_all()
+    o : Order = None
     for order in orders:
         if order.get("order_id") == user_order_id:
-            return Order(**order)
-    raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
+            o = Order(**order)
+            break
+    
+    if o is None:
+        raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
+    
+    if o.order_status != "being_created":
+                raise HTTPException(status_code=400, detail=f"Item '{item_id_to_remove}' from order '{user_order_id}' cannot be deleted because it is not in 'being_created' status")
+    
+    if item_id_to_remove not in o.item_ids:
+        raise HTTPException(status_code=404, detail=f"Item '{item_id_to_remove}' not found in order '{user_order_id}'")
+    
+    o.item_ids.remove(item_id_to_remove)
+    return True
+
 
 def delete_order(user_order_id: str):
     """
@@ -172,11 +202,24 @@ def delete_order(user_order_id: str):
         user_order_id (str): order id provided by user.
     
     Returns:
-        bool: True if successful
+        bool: True if successful, False if no order with the given ID exists.
 
+    Raises:
+        HTTPException status 404: If no order with user_order_id exists in orders.json.
+        HTTPException status 400: If the order is not in "being_created" status.
     Description:
         Deletes the specified order from the data/orders.json file
     """
+    
 
-    pass
-    return True
+
+    orders = load_all()
+    for order in orders:
+        if order.get("order_id") == user_order_id:
+            if order.get("order_status") != "being_created":
+                raise HTTPException(status_code=400, detail=f"Order '{user_order_id}' cannot be deleted because it is not in 'being_created' status")
+            orders.remove(order)
+            save_all(orders)
+            return True
+    
+    raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
