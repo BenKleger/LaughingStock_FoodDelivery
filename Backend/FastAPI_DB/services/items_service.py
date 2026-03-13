@@ -1,5 +1,4 @@
-import uuid
-from typing import List, Dict, Any
+from typing import List
 from fastapi import HTTPException
 
 from ..schemas.item import Item, ItemCreate
@@ -35,7 +34,7 @@ def create_items(payload: ItemCreate) -> Item:
                     tags=payload.tags, 
                     price=payload.price)
     
-    items.append(new_item.dict())
+    items.append(new_item.model_dump())
     items_save(items)
     return new_item
 

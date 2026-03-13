@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List
 from fastapi import HTTPException
 from ..schemas.order import Order, OrderCreate
 from ..repositories.order_repo import load_all, save_all
@@ -38,7 +38,7 @@ def create_orders(payload: OrderCreate) -> Order:
     for item in payload.items:
         add_order_item(new_order.order_id, item)
 
-    orders.append(new_order.dict())
+    orders.append(new_order.model_dump())
     save_all(orders)
     return new_order
 
@@ -97,39 +97,47 @@ def reset_order_DB():
                                     traffic_condition=row[8], 
                                     weather_condition=row[9],
                                     item_ids = [str(row[1]) + "-" + row[2]]) 
-            orders.append(new_order.dict())
+            orders.append(new_order.model_dump())
     save_all(orders)
 
     return True
 
 
-def add_order_item(user_order_id: str, new_item: item = None):
+def add_order_item(user_order_id: str, new_item_id: str = None):
     """
     Adds an item to an order.
 
     Parameters:
         user_order_id (str): order id provided by user.
-        new_item (item): item provided by user to replace current item in order.
+        new_item_id (str): id of the item to add to the order.
 
     Returns:
-        bool: True if successful.
+        bool: True if successful, False if no item was given.
 
     Description:
-        This function overwrites the item in a given order, if no item is specified it will empty the order.
+        This function adds the given item_id to the given order item_ids. If no item is given it will do nothing.
     """
-    if new_item == None:
-        # new_item not specified, clear the item from the order.
-        return _clear_order_item(user_order_id)
+    if new_item_id == None:
+        # new_item not specified, do nothing
+        return False
     
     # new_item specified
     orders = load_all()
+    o:Order = None
     for order in orders:
         if order.get("order_id") == user_order_id:
             o = Order(**order)
             break
-        o.food_item = new_item
-    raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
+        
+    if o is None:
+        raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
     
+    item_to_add = get_item_by_item_ID(new_item_id)
+    if item_to_add is None:
+        raise HTTPException(status_code=404, detail=f"Item '{new_item_id}' not found")
+    
+    o.item_ids.append(new_item_id)
+    o.order_value += item_to_add.price
 
     return True
 
@@ -148,7 +156,7 @@ def delete_order_item(user_order_id: str, item_id_to_remove: str):
         bool: True if successful.
 
     Description:
-        This function clears the item in a given order.
+        This function removes the given item from the given order.
     """
     orders = load_all()
     for order in orders:

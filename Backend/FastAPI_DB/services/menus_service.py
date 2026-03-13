@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List
 from fastapi import HTTPException
 
 from ..schemas.menu import Menu, MenuCreate
@@ -30,7 +30,7 @@ def create_menus(payload: MenuCreate) -> Menu:
     new_menu = Menu(menu_id=payload.menu_id, 
                      items=payload.items)
     
-    menus.append(new_menu.dict())
+    menus.append(new_menu.model_dump())
     menus_save(menus)
     return new_menu
 
