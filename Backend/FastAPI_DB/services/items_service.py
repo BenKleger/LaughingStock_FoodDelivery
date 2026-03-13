@@ -28,14 +28,8 @@ def create_items(payload: ItemCreate) -> Item:
     """
 
     items = items_load()
-    items_save([])
 
-    new_id = str(uuid.uuid4())
-
-    if any(it.get("item_id") == new_id for it in items):  # extremely unlikely, but consistent check
-        raise HTTPException(status_code=409, detail="ID collision; retry.")
-    
-    new_item = Item(item_id=str(payload.restaurant_id) + "-" + payload.name, 
+    new_item = Item(item_id=payload.item_id.strip(), 
                     restaurant_id=payload.restaurant_id,
                     name=payload.name.strip(), 
                     tags=payload.tags, 
@@ -82,27 +76,34 @@ def reset_items_DB():
         using the records from the orders.json dataset.
     """
     try:
-        items_save([])
-
-        unique_items = []
         orders_from_db = orders_load()
 
+        unique_items = {}
         for order in orders_from_db:
-            restaurant_id = order["restaurant_id"]
-            item_name = order["food_item"]
-            item_price = order["order_value"]
+            restaurant_id = order.get("restaurant_id")
+            item_name = order.get("food_item")
+            item_price = order.get("order_value")
+
+            if restaurant_id is None or item_name is None or item_price is None:
+                continue
 
             key = (restaurant_id, item_name)
+            if key in unique_items:
+                continue
 
-            if key not in unique_items:
-                unique_items.append(key)
+            unique_items[key] = item_price
 
-                create_items(ItemCreate(item_id="-1",
-                                restaurant_id=restaurant_id,
-                                name=item_name,
-                                tags=[],
-                                price=item_price))
-                
+        items = []
+        for (restaurant_id, item_name), item_price in unique_items.items():
+            items.append({
+                "item_id": f"{restaurant_id}-{item_name}",
+                "restaurant_id": restaurant_id,
+                "name": item_name,
+                "tags": [],
+                "price": item_price,
+            })
+
+        items_save(items)
         return True
     except:
         print("Items reset failed...")

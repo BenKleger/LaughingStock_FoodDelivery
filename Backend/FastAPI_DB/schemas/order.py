@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from typing import List
+from .item import Item
 
 class Order(BaseModel):
     order_id: str
@@ -11,6 +13,7 @@ class Order(BaseModel):
     delivery_method: str
     traffic_condition: str
     weather_condition: str
+    item_ids: List[str]
 
 class OrderCreate(BaseModel):
     order_id: str
@@ -23,3 +26,4 @@ class OrderCreate(BaseModel):
     delivery_method: str
     traffic_condition: str
     weather_condition: str
+    item_ids: List[str]

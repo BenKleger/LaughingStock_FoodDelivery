@@ -5,7 +5,6 @@ from ..repositories.order_repo import load_all, save_all
 import csv
 import uuid
 from .items_service import get_item_by_item_ID
-from .items_service import get_item_by_name
 from ..schemas.item import Item as item 
 
 def list_orders() -> List[Order]:
@@ -32,10 +31,10 @@ def create_orders(payload: OrderCreate) -> Order:
     if any(order.get("order_id") == new_id for order in orders):  # extremely unlikely, but consistent check
         raise HTTPException(status_code=409, detail="ID collision; retry.")
     
-    new_order = Order(order_id=new_id, restaurant_id=payload.restaurant_id, items=[],
+    new_order = Order(order_id=new_id, restaurant_id=payload.restaurant_id, food_item=payload.food_item.strip(),
                         order_time=payload.order_time.strip(), delivery_time=payload.delivery_time.strip(), delivery_distance=payload.delivery_distance,
                         order_value=payload.order_value, delivery_method=payload.delivery_method.strip(), traffic_condition=payload.traffic_condition.strip(),
-                        weather_condition=payload.weather_condition.strip())
+                        weather_condition=payload.weather_condition.strip(), item_ids=payload.item_ids)
     for item in payload.items:
         add_order_item(new_order.order_id, item)
 
@@ -89,18 +88,20 @@ def reset_order_DB():
         for row in reader:
             new_order = Order(order_id=row[0], 
                                     restaurant_id=int(row[1]), 
-                                    items=[],  # temporarily empty
+                                    food_item = row[2],
                                     order_time=row[3], 
                                     delivery_time=row[4], 
                                     delivery_distance=float(row[5]), 
                                     order_value=float(row[6]), 
                                     delivery_method=row[7], 
                                     traffic_condition=row[8], 
-                                    weather_condition=row[9])
+                                    weather_condition=row[9],
+                                    item_ids = [str(row[1]) + "-" + row[2]]) 
             orders.append(new_order.dict())
     save_all(orders)
 
     return True
+
 
 def add_order_item(user_order_id: str, new_item: item = None):
     """
