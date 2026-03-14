@@ -2,7 +2,12 @@ from Backend.FastAPI_DB.services.orders_service import list_orders, reset_order_
 from Backend.FastAPI_DB.schemas.order import Order
 
 
-def test_database_creation():
+def test_order_database_creation():
+    """
+    Tests orders database creation and population with initial data.
+    
+    Will alter orders.json
+    """
     reset_order_DB()
 
     orders_database = list_orders()
@@ -10,16 +15,11 @@ def test_database_creation():
     assert len(orders_database) == 10000
     assert isinstance(orders_database[0], Order)
 
-def test_database_content():
-    """Tests database fetch"""
-    menus_database = list_orders()
+def test_order_database_content():
+    """
+    Tests orders database content retrieval.
+    """
+    orders_database = list_orders()
 
-    assert len(menus_database) > 0
-    assert isinstance(menus_database[0], Order)
-
-#def test_database_content():
-#    """Tests database fetch"""
-#    order_database = list_orders()
-#
- #   assert len(order_database) > 0
-#    assert isinstance(order_database[0], Order)
+    assert len(orders_database) > 0
+    assert isinstance(orders_database[0], Order)

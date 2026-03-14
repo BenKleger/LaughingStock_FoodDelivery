@@ -17,7 +17,7 @@ def test_menu_database_creation():
     
 def test_menu_database_content():
     """
-    Tests database fetch
+    Tests menu database content retrieval.
     """
     menus_database = list_menus()
 

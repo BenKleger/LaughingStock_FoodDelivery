@@ -14579,5 +14579,15 @@
     "name": "Briyani rice",
     "tags": [],
     "price": 19.19
+  },
+  {
+    "item_id": "101-Test Item",
+    "restaurant_id": 101,
+    "name": "Test Item",
+    "tags": [
+      "tasty",
+      "yummy"
+    ],
+    "price": 9.99
   }
 ]
