@@ -1,5 +1,5 @@
 import uuid
-from typing import List, Dict, Any
+from typing import List
 from fastapi import HTTPException
 from ..schemas.user import User, UserCreate
 from ..repositories.user_repo import load_all, save_all
@@ -14,7 +14,7 @@ def create_users(payload: UserCreate) -> User:
     if any(it.get("id") == new_id for it in users):  # extremely unlikely, but consistent check
         raise HTTPException(status_code=409, detail="ID collision; retry.")
     new_user = User(id=new_id, username=payload.username.strip(), password=payload.password.strip())
-    users.append(new_user.dict())
+    users.append(new_user.model_dump())
     save_all(users)
     return new_user
 

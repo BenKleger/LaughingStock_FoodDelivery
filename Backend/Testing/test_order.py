@@ -1,54 +1,64 @@
-from Backend.Restaurant.item import item
-from Backend.Order.order import order
+from fastapi import HTTPException
+import pytest
+
+from ..FastAPI_DB.schemas.item import Item, ItemCreate
+from ..FastAPI_DB.services.items_service import create_items
+from ..FastAPI_DB.schemas.order import Order, OrderCreate
+from ..FastAPI_DB.services.orders_service import create_orders, add_order_item, delete_order_item, delete_order, get_order_by_order_id
     
-myOrder: order
-item1: item = item(10)
+order: Order = None
 
-def test_create_order():
-    """Tests creation of an order"""
-    myOrder = order(item1)
-    assert myOrder.order_size == 1
-    assert len(myOrder.order_list) == 1
-    assert isinstance(myOrder, order)
+def test_create_order_and_add_and_delete_order_item():
+    """
+    Tests create_orders function, adding multiple items with the add_order_item function,
+    deleting an item with the delete_order_item function and finally deleting the order.
 
-def test_payment_total():
-    """Tests payment total of an order with one item"""
-    myOrder = order(item1)
-    total = myOrder.get_total()
-    assert item1.itemPrice == 10
-    assert myOrder.order_size == 1
-    assert total == 10
-
-def test_add_item():
-    """Tests adding an item to the list"""
-    item2 = item(20)
-    myOrder = order(item1)
-    myOrder.add_item(item2)
-    assert len(myOrder.order_list) == 2
-    assert myOrder.order_size == 2
-
-def test_payment_total2():
-    item2 = item(20)
-    myOrder = order(item1)
-    myOrder.add_item(item2)
-    total = myOrder.get_total()
-    assert total == 30
-
-def test_remove_item_with_index():
-    item2 = item(20)
-    myOrder = order(item1)
-    myOrder.remove_item(0)    
-    assert myOrder.order_size == 0
+    All are in same function as it is easiest to test on a single order, not requring multiple
+    order creations.
+    """
+    
+    orderCreate = OrderCreate(order_id = "test_order",
+                          restaurant_id = 101,
+                          food_item = "Test Food",
+                          order_time = "now",
+                          delivery_time = "later",
+                          delivery_distance = 5.5,
+                          order_value = 10.12,
+                          delivery_method = "bike",
+                          traffic_condition = "light",
+                          weather_condition = "sunny",
+                          item_ids = [],
+                          order_status = "being_created")
+    
+    order = create_orders(orderCreate)
 
 
-def test_remove_item_with_item():
-    item2 = item(20)
-    myOrder = order(item1)
-    myOrder.add_item(item2)
-    myOrder.remove_item(1)
-    myOrder.remove_item(item1)
-    assert myOrder.order_size == 0
+    itemCreate = ItemCreate(item_id="101-Test Item", restaurant_id = 101, name="Test Item", price=9.99, tags=["tasty","yummy"])
+    
+    item = create_items(itemCreate)
 
-def test_directory():
-    print(test_directory)
-    assert True
+    order = add_order_item(order.order_id, item.item_id)
+    order = add_order_item(order.order_id, "21-Pasta")
+
+    print(order.item_ids)
+    o = get_order_by_order_id(order.order_id)
+    print(o.item_ids)
+    assert len(order.item_ids) == 2
+    assert order.item_ids[0] == item.item_id
+
+    order = delete_order_item(order.order_id, "101-Test Item")
+    
+    assert len(order.item_ids) == 1
+
+    deleted = delete_order(order.order_id)
+    
+    assert deleted == True
+
+def test_delete_order_item_completed_order():
+    """
+    Tests delete_order_item function, to ensure that an item cannot 
+    be deleted from an order that is not in "being_created" status.
+    """
+    with pytest.raises(HTTPException):    
+        assert delete_order_item("1d8e87M", "16-Taccos")
+

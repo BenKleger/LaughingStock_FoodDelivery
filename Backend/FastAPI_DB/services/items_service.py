@@ -1,5 +1,4 @@
-import uuid
-from typing import List, Dict, Any
+from typing import List
 from fastapi import HTTPException
 
 from ..schemas.item import Item, ItemCreate
@@ -28,31 +27,17 @@ def create_items(payload: ItemCreate) -> Item:
     """
 
     items = items_load()
-    items_save([])
 
-    new_id = str(uuid.uuid4())
-
-    if any(it.get("item_id") == new_id for it in items):  # extremely unlikely, but consistent check
-        raise HTTPException(status_code=409, detail="ID collision; retry.")
-    
-    new_item = Item(item_id=new_id.strip(), 
+    new_item = Item(item_id=payload.item_id.strip(), 
                     restaurant_id=payload.restaurant_id,
                     name=payload.name.strip(), 
                     tags=payload.tags, 
                     price=payload.price)
     
-    items.append(new_item.dict())
+    items.append(new_item.model_dump())
     items_save(items)
     return new_item
 
-    # users = load_all()
-    # new_id = str(uuid.uuid4())
-    # if any(it.get("id") == new_id for it in users):  # extremely unlikely, but consistent check
-    #     raise HTTPException(status_code=409, detail="ID collision; retry.")
-    # new_user = User(id=new_id, username=payload.username.strip(), password=payload.password.strip())
-    # users.append(new_user.dict())
-    # save_all(users)
-    # return new_user
 
 def get_item_by_item_ID(user_item_ID: str) -> Item:
     """
@@ -90,27 +75,34 @@ def reset_items_DB():
         using the records from the orders.json dataset.
     """
     try:
-        items_save([])
-
-        unique_items = []
         orders_from_db = orders_load()
 
+        unique_items = {}
         for order in orders_from_db:
-            restaurant_id = order["restaurant_id"]
-            item_name = order["food_item"]
-            item_price = order["order_value"]
+            restaurant_id = order.get("restaurant_id")
+            item_name = order.get("food_item")
+            item_price = order.get("order_value")
+
+            if restaurant_id is None or item_name is None or item_price is None:
+                continue
 
             key = (restaurant_id, item_name)
+            if key in unique_items:
+                continue
 
-            if key not in unique_items:
-                unique_items.append(key)
+            unique_items[key] = item_price
 
-                create_items(ItemCreate(item_id="-1",
-                                restaurant_id=restaurant_id,
-                                name=item_name,
-                                tags=[],
-                                price=item_price))
-                
+        items = []
+        for (restaurant_id, item_name), item_price in unique_items.items():
+            items.append({
+                "item_id": f"{restaurant_id}-{item_name}",
+                "restaurant_id": restaurant_id,
+                "name": item_name,
+                "tags": [],
+                "price": item_price,
+            })
+
+        items_save(items)
         return True
     except:
         print("Items reset failed...")
