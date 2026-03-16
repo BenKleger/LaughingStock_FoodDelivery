@@ -2,6 +2,8 @@ from operator import attrgetter
 from typing import List
 from fastapi import HTTPException
 
+from Backend.FastAPI_DB.schemas.item import Item
+
 from ..schemas.search import Search, SearchCreate
 from .menus_service import get_menu_by_menu_ID
 from .items_service import get_item_by_item_ID
@@ -32,12 +34,12 @@ def create_search(payload: SearchCreate) -> Search:
         to the search query, and return those. If no matches are found, it will return an empty list.
     """
     try:
-        return create_search_by_restaurant_ID(payload,get_menu_by_menu_ID(payload.query))
+        return create_search_by_restaurant_ID(payload)
         # Will generate HTTPException when no menu with given ID is found.
-    except HTTPException:
+    except:
         try:
             item = get_item_by_item_ID(payload.query)
-            return Search(search_results = [0][item.item_id])
+            return Search(search_results = [[item.item_id]])
             # Will generate HTTPException when no item with given ID is found.
         except HTTPException:
             try:
@@ -58,10 +60,9 @@ def create_search_by_restaurant_ID(payload: SearchCreate) -> Search:
     Description:
         This function returns all items from the menu of a given restaurant.
     """
-
-    menu = get_menu_by_menu_ID(payload.query)
+    menu = get_menu_by_menu_ID(int(payload.query.strip()))
     items = menu.items
-    return paginate_list(payload, items)
+    return Search(search_results=paginate_list(payload, items))
     
 def create_search_by_item_name(payload: SearchCreate) -> Search:
     """
@@ -75,39 +76,44 @@ def create_search_by_item_name(payload: SearchCreate) -> Search:
 
     Description:
         This function performs a search for by item name through the item database.
+        Works reguardless of capitalization or whitespace added.
     """
     
     all_items = items_load()
     items = []
     for item in all_items:
-        if item.get("name") == payload.query:
-            items.append(item)
+        if item.get("name").lower().strip() == payload.query.lower().strip():
+            items.append(Item(**item))
+    search_result=paginate_list(payload, items)
+    search = Search(search_results=search_result)
+    return search
 
-    return paginate_list(payload, items)
-
-def paginate_list(payload: SearchCreate, items: List[str]) -> List[List[str]]:
+def paginate_list(payload: SearchCreate, items: List[Item]) -> List[List[str]]:
     """
     Helper function to sort and paginate search results.
     
     Paramters:
         payload (SearchCreate): used to obtain method of sorting items. 
-        items (List[str]): List of items to be sorted into pages.
+        items (List[Item]): List of items to be sorted into pages.
         
     Returns: 
         List[List[str]]: Paginated result sorted by filtering method,
         uses ITEMS_PER_PAGE to determine at most how many items to
         include on each page.
     """
+    print("1")
     if payload.filter == "price_high_to_low":
         sorted_items = sorted(items, key=attrgetter("price"), reverse=True)
     elif payload.filter == "price_low_to_high":
         sorted_items = sorted(items, key=attrgetter("price"), reverse=False)
     else:
         sorted_items = items
+    print("2")
 
     paginated_results: List[List[str]] = []
     for i in range(0, len(sorted_items), ITEMS_PER_PAGE):
         paginated_results.append([item.item_id for item in sorted_items[i:i+ITEMS_PER_PAGE]])
-    
+    print("paginated_results:")
+    print(paginated_results)
     return paginated_results
 
