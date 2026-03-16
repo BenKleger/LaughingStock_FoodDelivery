@@ -41,6 +41,6 @@ def get_order_cost(user_order_id: str, tip: float):
 	tax = price * delivery_vars["tax"]
 	delivery_cost = 7 if (auto_gen_distance * delivery_vars["rate_per_km"] < 7) else 2 + (auto_gen_distance * delivery_vars["rate_per_km"])
 
-	cost = price + tax + delivery_cost + tip
+	cost = price + tax + round(delivery_cost, 2) + tip
 
 	return round(cost, 2), round(auto_gen_distance, 2)

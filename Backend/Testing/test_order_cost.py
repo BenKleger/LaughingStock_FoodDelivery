@@ -15,3 +15,5 @@ def test_order_cost():
     real_cost = item_price + item_price*0.13 + user_tip + (7 if distance*0.7 < 7 else 2 + distance*0.7)
 
     assert func_cost == round(real_cost, 2)
+
+test_order_cost()
