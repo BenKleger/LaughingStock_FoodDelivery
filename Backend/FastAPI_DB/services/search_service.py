@@ -3,9 +3,9 @@ from typing import List
 from fastapi import HTTPException
 
 from ..schemas.search import Search, SearchCreate
-from .menus_service import get_menu_by_menu_ID, list_menus
+from .menus_service import get_menu_by_menu_ID
 from .items_service import get_item_by_item_ID
-from .orders_service import list_orders
+from ..repositories.item_repo import load_all as items_load
 
 ITEMS_PER_PAGE = 10
 
@@ -57,12 +57,10 @@ def create_search_by_restaurant_ID(payload: SearchCreate) -> Search:
 
     Description:
         This function returns all items from the menu of a given restaurant.
-        TODO
     """
 
     menu = get_menu_by_menu_ID(payload.query)
     items = menu.items
-    
     return paginate_list(payload, items)
     
 def create_search_by_item_name(payload: SearchCreate) -> Search:
@@ -77,12 +75,17 @@ def create_search_by_item_name(payload: SearchCreate) -> Search:
 
     Description:
         This function performs a search for by item name through the item database.
-        TODO
     """
+    
+    all_items = items_load()
+    items = []
+    for item in all_items:
+        if item.get("name") == payload.query:
+            items.append(item)
 
-    return paginate_list(payload, [])
+    return paginate_list(payload, items)
 
-def paginate_list(payload: SearchCreate, items_ids: List[str]) -> List[List[str]]:
+def paginate_list(payload: SearchCreate, items: List[str]) -> List[List[str]]:
     """
     Helper function to sort and paginate search results.
     
@@ -95,7 +98,6 @@ def paginate_list(payload: SearchCreate, items_ids: List[str]) -> List[List[str]
         uses ITEMS_PER_PAGE to determine at most how many items to
         include on each page.
     """
-    items = [get_item_by_item_ID(item_id) for item_id in items_ids]
     if payload.filter == "price_high_to_low":
         sorted_items = sorted(items, key=attrgetter("price"), reverse=True)
     elif payload.filter == "price_low_to_high":
