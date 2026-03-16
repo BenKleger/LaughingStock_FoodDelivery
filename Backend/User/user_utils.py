@@ -35,12 +35,12 @@ def get_order_cost(user_order_id: str, tip: float):
 	user_order = get_order_by_order_id(user_order_id)
 	user_item = get_item_by_item_ID(user_order.item_ids[0])
 
-	auto_gen_distance = random.uniform(1, 25)
+	auto_gen_distance = round(random.uniform(1, 25), 2)
 
 	price = user_item.price
 	tax = price * delivery_vars["tax"]
 	delivery_cost = 7 if (auto_gen_distance * delivery_vars["rate_per_km"] < 7) else 2 + (auto_gen_distance * delivery_vars["rate_per_km"])
 
-	cost = price + tax + delivery_cost, 2 + tip
+	cost = price + tax + delivery_cost + tip
 
-	return round(cost, 2), auto_gen_distance
+	return round(cost, 2), round(auto_gen_distance, 2)
