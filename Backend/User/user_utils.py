@@ -9,7 +9,7 @@ delivery_vars = {
 	"tax": 0.13
 }
 
-def get_order_cost(user_order_id: str, tip: float) -> tuple[float, float]:
+def get_order_cost(user_order_id: str, tip: float):
 	"""
 		Gets order cost based on distance and initial item price
 
@@ -18,7 +18,9 @@ def get_order_cost(user_order_id: str, tip: float) -> tuple[float, float]:
 			tip (float): user tip
 
 		Returns:
-			tuple[float, float]: return [0] order cost, [1] distance (randomly generated)
+			cost: order cost
+			distance: (randomly generated 1-25)
+			
 
 		Description:
 			The function gets the order id passed into it. Looks up item cost in
@@ -31,14 +33,14 @@ def get_order_cost(user_order_id: str, tip: float) -> tuple[float, float]:
 	"""
 
 	user_order = get_order_by_order_id(user_order_id)
-	user_item = get_item_by_item_ID(user_order["item_ids"][0])
+	user_item = get_item_by_item_ID(user_order.item_ids[0])
 
 	auto_gen_distance = random.uniform(1, 25)
 
-	price = user_item["price"]
+	price = user_item.price
 	tax = price * delivery_vars["tax"]
 	delivery_cost = 7 if (auto_gen_distance * delivery_vars["rate_per_km"] < 7) else 2 + (auto_gen_distance * delivery_vars["rate_per_km"])
 
 	cost = price + tax + delivery_cost + tip
 
-	return tuple[round(cost, 2), round(auto_gen_distance, 2)]
+	return round(cost, 2), round(auto_gen_distance, 2)
