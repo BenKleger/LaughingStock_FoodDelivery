@@ -5,7 +5,7 @@ from FastAPI_DB.services.users_service import list_users, create_users, get_user
 
 router = APIRouter(prefix="/users", tags=["user"])
 
-@router.get("", response_model=List[User])
+@router.get("")
 def get_users():
     return list_users()
 
@@ -14,6 +14,6 @@ def get_users():
 def post_item(payload: UserCreate):
     return create_users(payload)
 
-@router.get("/{username}", response_model=User)
+@router.get("/{username}")
 def get_user(user_username: str):
     return get_user_by_username(user_username)

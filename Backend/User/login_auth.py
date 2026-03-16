@@ -39,11 +39,16 @@ def create():
             get_user_by_username(username_input)
             print("Username is taken.\n\n")
         except HTTPException:
+            acc_type = int(input("Select account type: \n(1) Customer \n(2) Driver \n(3) Manager\n"))
+            if acc_type != 1 and acc_type != 2 and acc_type != 3:
+                print("Invalid account type. Please try again.\n\n")
+                continue
+
             password1_input = input("Password: ")
             password2_input = input("Repeat Password: ")
             
             if (password1_input == password2_input):
-                new_user = create_users(UserCreate(username=username_input, password=password1_input))
+                new_user = create_users(UserCreate(username=username_input, password=password1_input, type = acc_type))
                 print("\nAccount creation successful!")
                 return new_user
             else:
