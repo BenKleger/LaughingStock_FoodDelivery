@@ -3,7 +3,7 @@ from typing import List
 from fastapi import HTTPException
 
 from ..schemas.search import Search, SearchCreate
-from .menus_service import get_menu_by_menu_ID
+from .menus_service import get_menu_by_menu_ID, list_menus
 from .items_service import get_item_by_item_ID
 from .orders_service import list_orders
 
@@ -59,7 +59,11 @@ def create_search_by_restaurant_ID(payload: SearchCreate) -> Search:
         This function returns all items from the menu of a given restaurant.
         TODO
     """
-    return []
+
+    menu = get_menu_by_menu_ID(payload.query)
+    items = menu.items
+    
+    return paginate_list(payload, items)
     
 def create_search_by_item_name(payload: SearchCreate) -> Search:
     """
@@ -76,7 +80,7 @@ def create_search_by_item_name(payload: SearchCreate) -> Search:
         TODO
     """
 
-    return []
+    return paginate_list(payload, [])
 
 def paginate_list(payload: SearchCreate, items_ids: List[str]) -> List[List[str]]:
     """
