@@ -17,4 +17,4 @@ app.include_router(orders_router)
 app.include_router(items_router)
 app.include_router(menus_router)
 
-user_id = login() #comment this line out to access http://127.0.0.1:8000/docs 
+#user_id = login() #comment this line out to access http://127.0.0.1:8000/docs or to test endpoints

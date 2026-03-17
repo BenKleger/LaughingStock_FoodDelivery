@@ -22,5 +22,89 @@
     "username": "aiden",
     "password": "123",
     "type": 1
+  },
+  {
+    "id": "fba460d8-8956-40d1-88f4-66b4538e1959",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "3e11ed60-0254-4d6f-8290-14b86b2ee5f9",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "a57cf15f-fdae-4302-95ec-013c33ff17b7",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "5cbf9329-3b98-42f5-b7b5-edb07560d2f4",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
+  },
+  {
+    "id": "23563ef7-5d5b-49a8-9ecf-7779ca0f04e6",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
+  },
+  {
+    "id": "0a8613b9-a31f-4319-bbd7-12c7601047e9",
+    "username": "testUser",
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "257af842-0ff4-4a0c-8457-28c6f177a361",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "a1b50bc5-6350-404a-8dc7-86446a242ff0",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
+  },
+  {
+    "id": "f9ea68bd-34ab-42f5-ba20-68027e1664f6",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
+  },
+  {
+    "id": "301cc1fa-ea49-494a-9939-4e46b0bb7274",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "89fbe068-4906-4a80-8865-b461f993d7cc",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
+  },
+  {
+    "id": "09fca462-5ccb-401b-8a93-d7175245a7c8",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   }
 ]
