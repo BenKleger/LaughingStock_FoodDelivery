@@ -54,7 +54,7 @@ def get_menu_by_menu_ID(user_menu_ID: str) -> Menu:
 
     menus = menus_load()
     for it in menus:
-        if it.get("menu_id") == user_menu_ID:
+        if it.get("menu_id") == int(user_menu_ID):
             return Menu(**it)
     raise HTTPException(status_code=404, detail=f"Menu '{user_menu_ID}' not found")
 
