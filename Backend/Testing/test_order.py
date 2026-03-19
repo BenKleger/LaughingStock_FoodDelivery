@@ -4,7 +4,7 @@ import pytest
 from ..FastAPI_DB.schemas.item import Item, ItemCreate
 from ..FastAPI_DB.services.items_service import create_items
 from ..FastAPI_DB.schemas.order import Order, OrderCreate
-from ..FastAPI_DB.services.orders_service import create_orders, add_order_item, delete_order_item, delete_order, get_order_by_order_id
+from ..FastAPI_DB.services.orders_service import create_orders, add_order_item, delete_order_item, delete_order, get_order_by_order_id, change_order_status
     
 order: Order = None
 
@@ -50,6 +50,21 @@ def test_create_order_and_add_and_delete_order_item():
     
     assert len(order.item_ids) == 1
 
+    #testing order status change
+    order = change_order_status(order.order_id, "paid")
+    o = get_order_by_order_id(order.order_id)
+    print("change 1:" + o.order_status)
+    assert o.order_status == "paid"
+    #test invalid status change
+    with pytest.raises(HTTPException) as exception:
+        order = change_order_status(order.order_id, "KILL")
+        assert exception.value.detail == "Status KILL is not a valid status." 
+    #change status back to being_created so it can be deleted
+    order = change_order_status(order.order_id, "being_created")
+    o = get_order_by_order_id(order.order_id)
+    print("change 2:" + o.order_status)
+    assert o.order_status == "being_created"
+    
     deleted = delete_order(order.order_id)
     
     assert deleted == True

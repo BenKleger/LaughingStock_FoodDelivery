@@ -1,24 +1,46 @@
-from ..FastAPI_DB.services.orders_service import get_order_by_order_id
-# from FastAPI_DB.schemas.order import Order
+import random
 
-        ### PLACEHOLDER ###
-# Will need to figure out where to store these and how these variables are managed
+from ..FastAPI_DB.services.orders_service import get_order_by_order_id
+from ..FastAPI_DB.services.items_service import get_item_by_item_ID
+
+# System variables
 delivery_vars = {
-  "rate_per_km": 0.2,
-  "surge_price_time": [6, 8],
-  "surge_price_inf": 1.13,
-  "tax": 0.13
+	"rate_per_km": 0.7,
+	"tax": 0.13
 }
 
-surge_condition = False
+def get_order_cost(user_order_id: str, tip: float):
+	"""
+		Gets order cost based on distance and initial item price
 
-def get_order_cost(user_order_id: str, tip: float, discount: float) -> float:
-    user_order = get_order_by_order_id(user_order_id)
+		Parameters:
+			user_order_id (str): order id of order being created
+			tip (float): user tip
 
-    price = user_order.order_value * (1 - discount)
-    tax = price * delivery_vars["tax"]
-    delivery_cost = user_order.delivery_distance * delivery_vars["rate_per_km"] * (delivery_vars["surge_price_inf"] if surge_condition else 1)
+		Returns:
+			cost: order cost
+			distance: (randomly generated 1-25)
+			
 
-    cost = price + tax + delivery_cost + tip
+		Description:
+			The function gets the order id passed into it. Looks up item cost in
+			items.json database. Tacks on tax, tip, and delivery costs to get
+			final order price.
 
-    return round(cost, 2)
+			Distance is randomly generated from 1-25km.
+
+			Delivery cost is 7 base cost, or $2 plus delivery cost. (Increased for distances over 10km)
+	"""
+
+	user_order = get_order_by_order_id(user_order_id)
+	user_item = get_item_by_item_ID(user_order.item_ids[0])
+
+	auto_gen_distance = round(random.uniform(1, 25), 2)
+
+	price = user_item.price
+	tax = price * delivery_vars["tax"]
+	delivery_cost = 7 if (auto_gen_distance * delivery_vars["rate_per_km"] < 7) else 2 + (auto_gen_distance * delivery_vars["rate_per_km"])
+
+	cost = price + tax + delivery_cost + tip
+
+	return round(cost, 2), round(auto_gen_distance, 2)
