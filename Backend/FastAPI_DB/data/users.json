@@ -3,25 +3,29 @@
     "id": "1fb6ba46-4857-46d4-9ea9-45f12c21623a",
     "username": "daniel",
     "password": "123",
-    "type": 1
+    "type": 1,
+    "ordersList": []
   },
   {
     "id": "f826bc95-f107-481d-9bac-99944123bd2c",
     "username": "ben",
     "password": "123",
-    "type": 2
+    "type": 2,
+    "ordersTaken": []
   },
   {
     "id": "79dd6206-0df4-4c74-99a5-dd414111681f",
     "username": "tom",
     "password": "123",
-    "type": 3
+    "type": 3,
+    "restaurantId": 0
   },
   {
     "id": "f3f6c584-421c-415c-9e83-a2b0e49a903e",
     "username": "aiden",
     "password": "123",
-    "type": 1
+    "type": 1,
+    "ordersList": []
   },
   {
     "id": "fba460d8-8956-40d1-88f4-66b4538e1959",
@@ -382,6 +386,62 @@
   },
   {
     "id": "2b95b6a2-cddc-4c03-8526-1681621382c0",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
+  },
+  {
+    "id": "1118549e-4b41-4fea-9ae7-aa39c336be19",
+    "username": "testUser",
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "e614fe52-fb1a-4cc6-998a-70d6918dfeff",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "2c2a49c8-40c0-4964-9ce1-9117fc0359df",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
+  },
+  {
+    "id": "da5c2659-309d-4c30-889c-19ec4602d8cb",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
+  },
+  {
+    "id": "24ca2b24-4022-409d-905b-183241ac3542",
+    "username": "testUser",
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "73a7fdd6-44bb-47e1-a213-639accaf15a5",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "3aa1c535-2ae3-4285-8cd5-168e7f18305c",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
+  },
+  {
+    "id": "159b265a-f8fd-4840-96a2-7d602747c1dc",
     "username": "test_manager",
     "password": "test_password",
     "type": 3,
