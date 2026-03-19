@@ -233,3 +233,52 @@ def delete_order(user_order_id: str):
             return True
     
     raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
+
+def change_order_status(user_order_id: str, new_status: str):
+    """
+    Changes the status of an order.
+
+    Parameters:
+        user_order_id (str): order id provided by user.
+        new_status (str): the status the order should be updated to
+
+    Returns:
+        o (Order): The updated order item.
+
+    Raises:
+        HTTPException status 404: If no order with user_order_id exists in orders.json,
+            or if no item with new_item_id exists in items.json (by items_service).
+        HTTPException status 400: If the order is not in "being_created", 
+        "paid", "sent", or "accepted" status. Basically everything but "delivered".
+    
+    Description:
+        This function modifies the order status of a given order. If no item is given it will do nothing.
+    """
+
+    orders = load_all()
+
+    order_dict = None
+    for order in orders:
+        if order.get("order_id") == user_order_id:
+            order_dict = order
+            break
+    
+    if order_dict is None:
+        raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
+    
+    o = Order(**order_dict)
+    
+    if o.order_status == "delivered":
+        raise HTTPException(status_code=400, detail=f"Order '{user_order_id}' cannot be changed because it was already delivered")
+    
+    if new_status in ["being_created", "paid", "sent", "accepted"]:
+        o.order_status = new_status
+    else: 
+        raise HTTPException(status_code=400, detail=f"Status '{new_status}' is not a valid status.")
+    
+    # Update the dict in the list
+    order_dict['order_status'] = o.order_status
+    
+    save_all(orders)
+
+    return o
