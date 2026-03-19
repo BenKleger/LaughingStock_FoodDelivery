@@ -4,3 +4,6 @@ __pycache__/
 
 # Environment files
 .env
+
+# Environment directories
+FoodD_venv/
