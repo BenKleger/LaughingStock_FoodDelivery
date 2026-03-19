@@ -6,7 +6,7 @@ from Backend.FastAPI_DB.schemas import order as orderClass
 class PaymentProcessor(BaseModel):
     customer: userClass.User
     order: orderClass.Order
-    user_address: str
+    billing_address: str
     payment_number: str
     payment_pin: str
     payment_method: str
@@ -18,7 +18,7 @@ class PaymentProcessor(BaseModel):
 class PaymentProcessorCreate(BaseModel):
     customer: userClass.User
     order: orderClass.Order
-    user_address: str = ""
+    billing_address: str = ""
     payment_number: str = ""
     payment_pin: str = ""
     payment_method: str = ""

@@ -3,7 +3,7 @@ import re
 from Backend.FastAPI_DB.schemas.payment_processor import PaymentProcessor, PaymentProcessorCreate
 from Backend.FastAPI_DB.schemas import order
 from fastapi import HTTPException
-from Backend.FastAPI_DB.repositories.order_repo import save_all
+from Backend.FastAPI_DB.repositories.order_repo import save_all, load_all
 
 def process_payment(payload: PaymentProcessorCreate):
     """
@@ -20,9 +20,11 @@ def process_payment(payload: PaymentProcessorCreate):
     """
     valid = validatePaymentMethod(payload)
     if valid["valid"]: 
+        orders = load_all()
         chargePaymentMethod() #dummy method
-        # payload.order.order_status = "paid"
-        save_all(payload)
+        payload.order.order_status = "paid"
+        save_all(orders)
+        return True
     else: raise HTTPException(status_code=400, detail=valid["errors"])
 
 def validatePaymentMethod(payload: PaymentProcessorCreate):
@@ -42,23 +44,28 @@ def validatePaymentMethod(payload: PaymentProcessorCreate):
         along with the validity of the payment method.
     """
     errors = []
+    valid = []
     if(payload.payment_method in ("CREDIT", "DEBIT")):
         valid = [checkPaymentNumber(payload.payment_number), luhnTest(payload.payment_number), 
                     checkPin(payload.payment_pin), checkName(payload.card_holder_name), 
-                    checkPostal(payload.postal_code), checkAddress(payload.user_address)]
+                    checkPostal(payload.postal_code), checkAddress(payload.billing_address)]
     elif(payload.payment_method in ("APPLEPAY", "PAYPAL")):
         valid = [checkEmail(payload.email), checkPassword(payload.email_password)]
-    else: return {"valid": False, "errors": ["INVALID PAYMENT METHOD!"]}
+    else: 
+        errors.append("INVALID PAYMENT METHOD!")
 
+    if(payload.order.order_status != "being_created"):
+        errors.append("ORDER CANNOT BE MODIFIED IN THIS STATE!")
+    # add error messages (if any) to the errors array, if errors is not empty
+    # return false and list of errors 
     for item in valid:
         if item: errors.append(item)
     if errors:
+        # print(errors)
         return {"valid": False, "errors": errors}
-    elif(payload.order.order_status != "being_created"):
-        return {"valid": False, "errors": ["ORDER CANNOT BE MODIFIED IN THIS STATE!"]}
     return {"valid": True}
 
-def chargePaymentMethod(payload: order):
+def chargePaymentMethod():
     """
     Dummy method for charging a card. Unimplemented.
     """
