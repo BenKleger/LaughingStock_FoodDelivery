@@ -236,11 +236,11 @@ def delete_order(user_order_id: str):
 
 def change_order_status(user_order_id: str, new_status: str):
     """
-    Adds an item to an order.
+    Changes the status of an order.
 
     Parameters:
         user_order_id (str): order id provided by user.
-        new_item_id (str): id of the item to add to the order.
+        new_status (str): the status the order should be updated to
 
     Returns:
         o (Order): The updated order item.
@@ -273,6 +273,8 @@ def change_order_status(user_order_id: str, new_status: str):
     
     if new_status in ["being_created", "paid", "sent", "accepted"]:
         o.order_status = new_status
+    else: 
+        raise HTTPException(status_code=400, detail=f"Status '{new_status}' is not a valid status.")
     
     # Update the dict in the list
     order_dict['order_status'] = o.order_status

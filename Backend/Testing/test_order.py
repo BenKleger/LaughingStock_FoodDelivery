@@ -55,7 +55,11 @@ def test_create_order_and_add_and_delete_order_item():
     o = get_order_by_order_id(order.order_id)
     print("change 1:" + o.order_status)
     assert o.order_status == "paid"
-        #change status back to being_created so it can be deleted
+    #test invalid status change
+    with pytest.raises(HTTPException) as exception:
+        order = change_order_status(order.order_id, "KILL")
+        assert exception.value.detail == "Status KILL is not a valid status." 
+    #change status back to being_created so it can be deleted
     order = change_order_status(order.order_id, "being_created")
     o = get_order_by_order_id(order.order_id)
     print("change 2:" + o.order_status)
