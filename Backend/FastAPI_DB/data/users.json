@@ -2,746 +2,449 @@
   {
     "id": "1fb6ba46-4857-46d4-9ea9-45f12c21623a",
     "username": "daniel",
-    "password": "123"
+    "password": "123",
+    "type": 1,
+    "ordersList": []
   },
   {
     "id": "f826bc95-f107-481d-9bac-99944123bd2c",
     "username": "ben",
-    "password": "123"
+    "password": "123",
+    "type": 2,
+    "ordersTaken": []
   },
   {
     "id": "79dd6206-0df4-4c74-99a5-dd414111681f",
     "username": "tom",
-    "password": "123"
+    "password": "123",
+    "type": 3,
+    "restaurantId": 0
   },
   {
     "id": "f3f6c584-421c-415c-9e83-a2b0e49a903e",
     "username": "aiden",
-    "password": "123"
+    "password": "123",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "14b65e20-d3c9-4f04-b832-8baa9b577604",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "72e3c415-5b81-4317-9300-c40135f77c0a",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "1ece173b-22d3-4a97-9039-2d85c452db25",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "bf9e1e09-da5f-4d30-8fee-b225bfd18367",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "3c895e96-f5b9-4ac7-8845-c23c52ace60b",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "47f37100-7574-476f-bd0a-ea9583325532",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "7a7bfa34-d50b-4dcc-a441-4cdce8e1ac2a",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "fa42ff83-7832-4478-bb5a-02f2a0c59cbe",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "23a4ca65-b20a-4f53-84b8-c186752b4084",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "3e17d9cb-2942-403e-b4cb-994ce3956375",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "b574badc-ccbe-44fd-a4bf-493ab66ec834",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "c1954dc2-eb32-4953-9319-494c2bb837ea",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "4b0edf89-2e06-408e-a727-27ebaee09a46",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "83ddf010-b24f-4959-bc8f-cd04b1135161",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "fe8276e8-dde3-4b07-80c4-4122f0d2ffde",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "e351f449-8a0b-480c-8a6f-221c7cea95a9",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "2ccd9586-f974-42a9-b92c-2aea7dd34055",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "dd320d36-9941-44b6-86e6-ae48d3a0c96c",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "17b7dcc2-7afa-4305-8637-4d369f6c61cd",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "51805e28-0797-43ec-bb88-983ec5cebb9b",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "64042442-6e18-4f62-a265-00bdff0fe4d8",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "ad9c9477-35df-4668-ba59-c2c3c42b52b6",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "f7c44fc8-9b05-42de-95c6-9daf28fd3d36",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "b90900a0-7c45-4d43-95d9-5df99897e988",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "394f03c5-d6f2-409d-b3ca-bf311202bf9a",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "ab659b21-036e-498a-b45c-bd7689378e8b",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "a4b36843-125b-4d41-93ef-86136b579312",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "65c1f4f8-5212-4a1e-ae0a-b2f63c0d0f6c",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "8cd283b5-c450-480d-9c72-cac54c2dd1c3",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "64572424-78b8-48de-8e79-c3e0adb0ebad",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "7908f44e-b6fe-4b3a-8068-6f2db7bcdaa6",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "09e66f1a-61bb-4881-a303-7ad6d669215f",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "d16fc730-0632-46b2-8195-0f47fad94a35",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "833a530e-e668-478c-8288-07785971af26",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "01f8c91c-1148-451b-ba38-44d695dfd0dc",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "4dc4e93e-9574-4521-a0b1-1b1ec3df2c59",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "0ed12ba1-bee5-4951-8f13-fc9b32e56868",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "ea7c6f70-ac8f-43a0-8a0b-a34517718d20",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "1dba6e96-3d47-4ada-ac61-ad4efaa40e17",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "6e4fb18c-ae38-49c6-b0b8-6d6ca9540a53",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "02d6b092-7d1e-451e-a808-05ff65f208e9",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "81cd6b0b-c18f-4f0b-9d52-728d31e5af2b",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "73508a8f-8a14-4a99-97d6-5c10bca653a8",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "744d472e-2464-4836-b64a-b7cd41970099",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "4a9612b6-2a66-4bc6-a8a4-d0b56e7b1588",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "0e9252dc-eaa1-40a5-8cc5-1325d41ebf16",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "a6654521-6639-4781-acad-c426d5ef6266",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "a04eda88-65c3-4660-8d25-fc529628fb8e",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "6f59013c-44a5-424f-a0d5-9009fdb38366",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "fdfb982b-d2a8-4921-94fc-f9b0d1c6c177",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "55f5628c-d7d4-42c8-b7b1-94bd3e821569",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "756a0dc7-6833-41a9-92b7-e4cdc3d7132f",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "bb42faa0-2daa-4c10-a53b-7673a908a8c8",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "449d1489-0a6b-4572-b320-033082fef7d5",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "615145a5-3d72-4032-b413-4ac6167dd1d9",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "e2b1d835-802c-4a86-8c55-bab6438c5385",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "b7722771-1d2c-42ae-a35b-2184be653177",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "9a268f8c-8b0e-43fc-bb9b-95d400e52e2f",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "09e30934-2041-4ecd-80f3-d4e57dc9733a",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "52100f6c-10ab-4439-91b2-c20adbcd7b56",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "281c3a1f-3538-471a-8c9d-d5333c9ae1db",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "d09011ae-e422-4958-9cb7-2ce2fc8a9b7a",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "334d3476-18e7-4992-9922-9def41b580e2",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "f08213f1-3ba2-4de1-8386-53a89c61bdfe",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "896e093b-6166-492d-9f89-3d01bce3747d",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "8bd5af39-d915-422c-8695-5c22e4fc03e4",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "40154ade-4915-4352-a2d5-943a8e63d28b",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "5ce108a6-0c0b-4b20-ac44-d95981823f84",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "c31a2f37-7840-4b67-b9ff-35cabc95c3dd",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "c20b3c22-fdca-4f05-aeee-910be1a604ea",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "e7c95265-46fa-4c1c-9890-e4d1b096065c",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "242bb810-6505-45db-8e4f-5cbf77033feb",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "e1bf8c02-7878-47a6-8278-c68cb8871278",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "7e959eeb-9ef1-4b5c-97b9-978e61274285",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "4264e014-8e0a-4aa0-bdae-c7acd17506ff",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "263dd664-d13a-401b-a755-cb9645e8cc09",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "4dcbb350-d51b-45f6-bdb7-09f2ecac7bad",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "ee86835e-a0ab-48e6-97ea-79c4c178e583",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "5ed5dcf1-c650-4b73-845a-cf9ea6bd8971",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "fa353f55-e649-4919-9947-f4c91baac816",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "ca9e6d2a-b783-4122-8bcd-eafd6db6bad7",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "f6d58532-d2a4-45fd-abf6-da9e83962d44",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "fba460d8-8956-40d1-88f4-66b4538e1959",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "fe789e58-83ce-4afc-87bc-18660d76c57e",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "2d44df4a-c788-4f82-978f-7d8c334190d2",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "559a953f-e656-4268-8f7a-a8d71746da73",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "a3cd7c07-531e-4899-9bc1-b14a0fa95063",
-    "username": "testUser",
-    "password": "testPW"
-  },
-  {
-    "id": "e73e5abd-5ed7-4406-b7dd-2cb3ce9cbad4",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "3e11ed60-0254-4d6f-8290-14b86b2ee5f9",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "715b8e58-0f47-45c1-b8f0-fad71c50ed29",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "a57cf15f-fdae-4302-95ec-013c33ff17b7",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "d72dd143-e6c5-44d2-ad85-ec1d77df8f3e",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "5cbf9329-3b98-42f5-b7b5-edb07560d2f4",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
   },
   {
-    "id": "9894c68c-ec7a-4f4a-a66a-c5d4d5bd10a4",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "23563ef7-5d5b-49a8-9ecf-7779ca0f04e6",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   },
   {
-    "id": "391e4843-6e47-4fae-a24b-9c6bc1959726",
+    "id": "0a8613b9-a31f-4319-bbd7-12c7601047e9",
     "username": "testUser",
-    "password": "testPW"
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "65b0b693-25f8-4c71-be56-d5f816279e94",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "257af842-0ff4-4a0c-8457-28c6f177a361",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "2d796a93-48ee-4175-9468-2c5826946644",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "a1b50bc5-6350-404a-8dc7-86446a242ff0",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
   },
   {
-    "id": "681fb12b-b6d1-4c8d-8558-20f9cea9aafe",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "f9ea68bd-34ab-42f5-ba20-68027e1664f6",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   },
   {
-    "id": "26dd94b6-b14d-4a44-9124-769adba2612d",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "301cc1fa-ea49-494a-9939-4e46b0bb7274",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "468e70b1-007e-4658-b926-6d2aa99fd1f7",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "89fbe068-4906-4a80-8865-b461f993d7cc",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
   },
   {
-    "id": "57ebd0f9-5db1-4c33-a008-d1721a05776d",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "09fca462-5ccb-401b-8a93-d7175245a7c8",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   },
   {
-    "id": "4a51127e-66bf-4164-be5c-a0a1142a4dad",
+    "id": "0a94fa6e-2549-45df-876f-b18fdf713777",
     "username": "testUser",
-    "password": "testPW"
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "6d3e6c46-74c7-402f-834b-2b5ee89df813",
+    "id": "419f988b-1f58-4f1d-a955-9ad9bc1f3b87",
     "username": "testUser",
-    "password": "testPW"
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "41e4da8f-7829-4112-b1f6-ad89dba04a78",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "e23861fb-8c39-4d10-832d-a6f822bdb4a4",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "16cc28b3-bc06-4eab-b938-3d9ba728783b",
-    "username": "b",
-    "password": "kleger"
+    "id": "28f6b7ac-bd55-4294-9fc6-e37b9c1e2155",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
   },
   {
-    "id": "9947fb51-3580-46cf-ba91-3699f3ebf6da",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "5f76bed6-2a83-4403-b5e6-62e36b56535d",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   },
   {
-    "id": "a9f6480d-78d6-4f11-af1d-1868e822f47b",
+    "id": "9233f236-6e3e-424e-8ea1-6c53a4b742d8",
     "username": "testUser",
-    "password": "testPW"
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "2d7c5f09-a175-4437-b80f-f8036cc44f9f",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "fb9648ff-bd70-4efa-bc6d-c5afc5e86ac2",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "1c3bee9a-40a6-4122-a5a3-ea28377db56b",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "8aa7be55-6754-48b8-9531-99382a4331aa",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
   },
   {
-    "id": "f1bc0b19-747a-4090-af0b-ee1d253d4e32",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "76ed933d-bbf1-41a7-a605-c9c3d78a316c",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   },
   {
-    "id": "49d1e82f-9b60-4149-844f-92d7738e61d5",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "1ca30367-1dd4-4102-b137-5d75740fb711",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "aa32d469-7f42-45dd-8f64-5b90156d9fbf",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "7d797476-1255-47e2-9983-0cbd90fe3705",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
   },
   {
-    "id": "26c0c78f-d9dd-4e07-8fa9-35516dd769f0",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "287f2add-c5af-49f5-8d45-5c9146249f60",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   },
   {
-    "id": "17982eea-a24a-4211-94c4-5de1737d7e77",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "6602ab0d-1aad-4f70-938f-b4945549539a",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "0976afca-d6ba-4a47-8080-b884c8d6fc68",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "67e026b7-eaa8-4c71-a1b7-8333bf1ed2ca",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
   },
   {
-    "id": "6d9a517c-1959-4401-ba62-6a6d72e0839d",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "7696caf9-8a47-4f6f-ab85-d6385aca24b4",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   },
   {
-    "id": "073ca749-d005-4cda-8d1e-56c15bfd9894",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "49fdfa2b-294c-4fc8-8792-5a68bb3df077",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "70a160c9-43ca-46e7-abe3-82f0ad7f1a68",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "5d6b748c-59f7-4acd-92a7-cb1b889ecb51",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
   },
   {
-    "id": "46c536a8-9422-4995-962b-0b8436068471",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "cd9064e4-87f1-4b63-aefd-407e5ee8db25",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   },
   {
-    "id": "9cacd351-2529-480b-b0fc-466edd353499",
+    "id": "568c0805-a437-4225-b5d6-d0c6e799e1c8",
     "username": "testUser",
-    "password": "testPW"
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "fc13dbc2-416a-4bec-aa36-447f0ffb974d",
+    "id": "4fef71e6-be34-4264-abe5-f91df4d1617e",
     "username": "testUser",
-    "password": "testPW"
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "84f3db77-ca9a-4003-a94f-2a8b96ed4c5a",
+    "id": "7e3e2c30-8273-4168-9bbb-eb2b67479225",
     "username": "testUser",
-    "password": "testPW"
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "cecf8a75-3df8-4c02-a8bb-d40a42d16561",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "3857d004-5f1e-4644-a046-abc08785dc92",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "b9b4df76-6cfe-4272-9f92-d707aac78a82",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "9fd4794c-495b-4f94-819b-ccf999a6bf94",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
   },
   {
-    "id": "40d364df-f82f-4f3b-a919-07520cfbd705",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "e5c32cd4-7f1e-4bd2-8bc2-787bf289cd06",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   },
   {
-    "id": "a0c39a53-f100-465a-b2f6-64a9fd0dcc6a",
+    "id": "adc322f1-9c53-4b36-8643-eba4eb77719d",
     "username": "testUser",
-    "password": "testPW"
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "24ea5108-955c-4f1a-b599-ca206d70eca2",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "0aabf733-270b-4bce-b707-cec5b2102b5d",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "da561318-b01b-40a8-b932-0bf4408b28d1",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "a785c7dc-ffc5-4556-8c95-58ad56791fc6",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
   },
   {
-    "id": "ac918fe8-1316-447f-9c00-05b2a35ad569",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "f62af5e6-fbf0-4a6a-892b-635ee8794097",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   },
   {
-    "id": "a3d00061-9605-40d4-bdbb-d904150abd6d",
+    "id": "8b14dfd5-e272-4578-978b-d802be3092ce",
     "username": "testUser",
-    "password": "testPW"
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "a92421ff-d17b-4c3f-8ce3-da834373a87e",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "a437d634-f15b-4faf-bf87-8dbc02df412d",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "b33c3ea5-90d2-4c10-90cf-47cbeca3f9cb",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "e038b216-c447-4e67-9ab8-9419d3279da0",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
   },
   {
-    "id": "14cd642a-8b51-4850-9c35-11a7d7354be0",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "c00337d1-af87-4429-987e-16d5e7c23401",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   },
   {
-    "id": "57dbf1b1-31a6-418a-8498-aba2021dc174",
+    "id": "9bde93a9-972f-4a2a-905d-056690b2373b",
     "username": "testUser",
-    "password": "testPW"
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "d6e8ece0-2d5a-4283-bf68-39c05849c214",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "2f0b03a7-7d76-4da4-95d2-c2e90a5d6de8",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "0ec6d742-2a02-4fe0-86d4-f3017e1c52ab",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "e7ad689f-8695-4e49-9aeb-db09c443f6bc",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
   },
   {
-    "id": "0459c7cb-4e58-4a08-ae77-5f7206cf9be4",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "0f43ace2-2fa6-4b37-a0e4-f952742eb11b",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   },
   {
-    "id": "a17262ce-16ac-42dd-9870-5ba627500960",
+    "id": "cf9ffbcb-c911-439c-a0d5-3217203b6c24",
     "username": "testUser",
-    "password": "testPW"
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "e1faf122-a970-4458-b197-306b592d1076",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "331245f9-0ec7-461c-a4c8-0501dd654c3d",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "a7aed14d-bbd6-4f43-984a-c49292edc0c4",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "19f458f1-6f3f-407b-bc06-132b72d411fb",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
   },
   {
-    "id": "f80cdf5c-50ab-420a-a462-abf870689abd",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "2b95b6a2-cddc-4c03-8526-1681621382c0",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   },
   {
-    "id": "33376839-0cc3-4e8f-91e2-3e8617cdfcc2",
+    "id": "1118549e-4b41-4fea-9ae7-aa39c336be19",
     "username": "testUser",
-    "password": "testPW"
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "c176ddbd-56e6-4c72-8022-7a6fd0aca720",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "e614fe52-fb1a-4cc6-998a-70d6918dfeff",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "0ce34284-cd2f-43f7-a9db-03c9cbc10980",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "2c2a49c8-40c0-4964-9ce1-9117fc0359df",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
   },
   {
-    "id": "129fd5bf-db06-42f3-9488-bf3e4114ef60",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "da5c2659-309d-4c30-889c-19ec4602d8cb",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   },
   {
-    "id": "62f1eac4-dac7-477b-bda1-585c08cb2a03",
+    "id": "24ca2b24-4022-409d-905b-183241ac3542",
     "username": "testUser",
-    "password": "testPW"
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "588fd60c-32ea-44b3-8390-36ee1c8a7ce7",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "73a7fdd6-44bb-47e1-a213-639accaf15a5",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
   },
   {
-    "id": "d1d7b7a2-11df-4c64-ba0b-db9f39eb8564",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "3aa1c535-2ae3-4285-8cd5-168e7f18305c",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
   },
   {
-    "id": "301ad864-d49a-41f7-ae0d-93434b3dac2d",
-    "username": "testUser",
-    "password": "testPW"
+    "id": "159b265a-f8fd-4840-96a2-7d602747c1dc",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   }
 ]
