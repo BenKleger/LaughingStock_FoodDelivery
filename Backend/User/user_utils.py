@@ -3,7 +3,9 @@ import random
 from FastAPI_DB.services.orders_service import get_order_by_order_id
 from FastAPI_DB.services.items_service import get_item_by_item_ID
 from FastAPI_DB.services.search_service import create_search
+from FastAPI_DB.services.users_service import get_user_by_id
 from FastAPI_DB.schemas.search import SearchCreate, Search
+from FastAPI_DB.schemas.user import Customer, Driver, Manager
 
 # System variables
 delivery_vars = {
@@ -47,7 +49,6 @@ def get_order_cost(user_order_id: str, tip: float):
 
 	return round(cost, 2), round(auto_gen_distance, 2)
 
-
 def customer_branch(user_id: str):
 	"""
 	Responsible for all customer logic in main branch.
@@ -73,7 +74,6 @@ def customer_branch(user_id: str):
 			create_or_edit_order(user_id)
 		elif (option == "3"):
 			break
-
 
 def search():
 	"""
@@ -118,8 +118,6 @@ def search():
 				display_page(search,index)
 			else:
 				break
-
-
 	
 def display_page(search: Search, index: int):
 	"""
@@ -139,21 +137,42 @@ def display_page(search: Search, index: int):
 	for j in range(len(search.search_results[index%num_pages])):
 		item = get_item_by_item_ID(search.search_results[index%num_pages][j])
 		print(str(item.item_id) + "  \t" + str(item.price))
-	pass
 	return True
 
 def view_order_status(user_id):
 	"""
 	Lists all orders corresponding to user, with their associated statuses.
 	
+	No separate options in this function.
 	"""
-	pass
+	customer: Customer = get_user_by_id(user_id)
+	if(len(customer.ordersList) == 0):
+		print("No orders associated with account.")
+		return
+	
+	else:
+		for order_id in customer.ordersList:
+			order = get_order_by_order_id(order_id)
+			print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nItems:")
+			if len(order.item_ids) == 0:
+				print("\tNo items in order")
+				return
+			for item_id in order.item_ids:
+				item = get_item_by_item_ID(item_id)
+				print("\t"+item.name)			
+				
+
 
 def create_or_edit_order(user_id):
 	"""
 	Lists all orders corresponding to user
 	"""
-	pass
+	while(True): # for repeated actions
+		print("Select Valid Option: \n(0) Search\n(1) View Order Status\n(2) Create or Edit Order\n(3) Log out")
+		while(True): # for ensuring valid actions
+			option = input()
+			if (option == "0" or option == "1" or option == "2" or option == "3"):
+				break
 
 def driver_branch():
 	pass
