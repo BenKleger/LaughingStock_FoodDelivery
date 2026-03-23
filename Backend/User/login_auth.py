@@ -16,7 +16,8 @@ def login():
 
     print()
 
-    if (option == "1"): create()
+    if (option == "1"): 
+        return create()
     else: 
         while(invalid):
             username_input = input("Username: ")
@@ -50,6 +51,6 @@ def create():
             if (password1_input == password2_input):
                 new_user = create_users(UserCreate(username=username_input, password=password1_input, type = int(acc_type)))
                 print("\nAccount creation successful!")
-                return new_user
+                return new_user.id
             else:
                 print("Passwords do not match. Please try again.\n\n")
