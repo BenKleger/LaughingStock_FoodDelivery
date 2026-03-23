@@ -1,11 +1,16 @@
 import random
+import json
+import datetime
 
-from FastAPI_DB.services.orders_service import get_order_by_order_id
+
+from FastAPI_DB.services.orders_service import get_order_by_order_id, create_orders
 from FastAPI_DB.services.items_service import get_item_by_item_ID
 from FastAPI_DB.services.search_service import create_search
 from FastAPI_DB.services.users_service import get_user_by_id
+from FastAPI_DB.repositories.user_repo import load_all as load_users, save_all as save_users
 from FastAPI_DB.schemas.search import SearchCreate, Search
-from FastAPI_DB.schemas.user import Customer, Driver, Manager
+from FastAPI_DB.schemas.order import OrderCreate
+from FastAPI_DB.schemas.user import User, Customer, Driver, Manager
 
 # System variables
 delivery_vars = {
@@ -59,6 +64,7 @@ def customer_branch(user_id: str):
 		2. Create or Edit (assuming it is in being_created status) an order
 		3. Logout
 	"""
+	customer: Customer = get_user_by_id(user_id)
 	while(True): # for repeated actions
 		print("Select Valid Option: \n(0) Search\n(1) View Order Status\n(2) Create or Edit Order\n(3) Log out")
 		while(True): # for ensuring valid actions
@@ -69,10 +75,11 @@ def customer_branch(user_id: str):
 		if (option == "0"): 
 			search()
 		elif (option == "1"):
-			view_order_status(user_id) 
+			view_order_status(customer) 
 		elif (option == "2"):
-			create_or_edit_order(user_id)
+			create_or_edit_order(customer)
 		elif (option == "3"):
+			#write back customer with changes to the DB #TODO
 			break
 
 def search():
@@ -139,15 +146,15 @@ def display_page(search: Search, index: int):
 		print(str(item.item_id) + "  \t" + str(item.price))
 	return True
 
-def view_order_status(user_id):
+def view_order_status(customer: Customer):
 	"""
 	Lists all orders corresponding to user, with their associated statuses.
 	
 	No separate options in this function.
 	"""
-	customer: Customer = get_user_by_id(user_id)
+
 	if(len(customer.ordersList) == 0):
-		print("No orders associated with account.")
+		print("\nNo orders associated with account.\n")
 		return
 	
 	else:
@@ -159,20 +166,74 @@ def view_order_status(user_id):
 				return
 			for item_id in order.item_ids:
 				item = get_item_by_item_ID(item_id)
-				print("\t"+item.name)			
-				
+				print("\t"+item.name+ ": $" + str(item.price))			
+			print()
 
-
-def create_or_edit_order(user_id):
+def create_or_edit_order(customer:Customer):
 	"""
 	Lists all orders corresponding to user
 	"""
 	while(True): # for repeated actions
-		print("Select Valid Option: \n(0) Search\n(1) View Order Status\n(2) Create or Edit Order\n(3) Log out")
+		print("Select Valid Option: \n(0) Create Order\n(1) Edit Order\n(2) Exit Order Changes")
 		while(True): # for ensuring valid actions
 			option = input()
-			if (option == "0" or option == "1" or option == "2" or option == "3"):
+			if (option == "0" or option == "1" or option == "2"):
 				break
+			print("Invalid Entry. Try again.")
+
+		if option == "0":
+			create_new_order(customer)
+		elif option == "1":
+			edit_order(customer)
+		else:
+			break
+
+def create_new_order(customer: Customer):
+	"""
+	Creates an order, adding it to both the order database (json), as well as
+	the user's orderlist
+	"""
+	print("Input item id to initialize order, or 'q' to cancel order creation:")
+	while(True):
+		item_id_to_init_order = input()
+		if item_id_to_init_order == "q":
+			return
+		try:
+			item = get_item_by_item_ID(item_id_to_init_order)
+			break
+		except:
+			print("Invalid Entry. Try again.")
+	new_order_create = OrderCreate(restaurant_id=item.restaurant_id, 
+							food_item = item.name,
+							order_time = str(datetime.datetime.now())[:10], 
+							delivery_time = "TBD", 
+							delivery_distance = round(random.uniform(1, 25), 2), 
+							order_value = 7 + item.price, 
+							delivery_method = "Car", 
+							traffic_condition = "Clear", 
+							weather_condition = "Sunny",
+							item_ids = [str(item.restaurant_id) + "-" + item.name],
+							order_status="being_created")
+	new_order = create_orders(new_order_create)
+	customer.ordersList.append(new_order.order_id)
+	alter_json(customer)
+
+
+
+def alter_json(new_user: User):
+	"""
+	Changes json file to include the updated information
+	"""
+	users = load_users()
+	for user in users:
+		if user.get("id") == new_user.id:
+			user.update(new_user)
+			break
+	save_users(users)
+	print("Order Sucessfully saved!")
+
+def edit_order(customer):
+	pass
 
 def driver_branch():
 	pass
