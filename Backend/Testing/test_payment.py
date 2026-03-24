@@ -5,7 +5,7 @@ from ..Order import order
 from ..Restaurant import item
 from decimal import Decimal
 
-newUser = users_service.UserCreate(username="testUser", password="testPW")
+newUser = users_service.UserCreate(username="testUser", password="testPW", type=1) #type 1 is customer
 newUser = users_service.create_users(newUser)
 item0 = item.item()
 item1 = item.item(price=14.99, ID="001", name="Fried watermelon")
