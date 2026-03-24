@@ -1,7 +1,6 @@
 import re
 # from Backend.FastAPI_DB.schemas import user as userClass
 from Backend.FastAPI_DB.schemas.payment_processor import PaymentProcessor, PaymentProcessorCreate
-from Backend.FastAPI_DB.schemas import order
 from fastapi import HTTPException
 from Backend.FastAPI_DB.repositories.order_repo import save_all, load_all
 from Backend.FastAPI_DB.services.orders_service import change_order_status
