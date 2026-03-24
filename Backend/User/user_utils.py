@@ -3,7 +3,7 @@ import json
 import datetime
 
 
-from FastAPI_DB.services.orders_service import get_order_by_order_id, create_orders
+from FastAPI_DB.services.orders_service import get_order_by_order_id, create_orders, add_order_item, delete_order_item, delete_order
 from FastAPI_DB.services.items_service import get_item_by_item_ID
 from FastAPI_DB.services.search_service import create_search
 from FastAPI_DB.services.users_service import get_user_by_id
@@ -64,9 +64,9 @@ def customer_branch(user_id: str):
 		2. Create or Edit (assuming it is in being_created status) an order
 		3. Logout
 	"""
-	customer: Customer = get_user_by_id(user_id)
 	while(True): # for repeated actions
-		print("Select Valid Option: \n(0) Search\n(1) View Order Status\n(2) Create or Edit Order\n(3) Log out")
+		customer: Customer = get_user_by_id(user_id)
+		print("Select Valid Option: '0' Search, '1' View Order Status, '2' Create or Edit Order, '3' Log out")
 		while(True): # for ensuring valid actions
 			option = input()
 			if (option == "0" or option == "1" or option == "2" or option == "3"):
@@ -77,7 +77,7 @@ def customer_branch(user_id: str):
 		elif (option == "1"):
 			view_order_status(customer) 
 		elif (option == "2"):
-			create_or_edit_order(customer)
+			create_or_edit_order(user_id)
 		elif (option == "3"):
 			#write back customer with changes to the DB #TODO
 			break
@@ -91,7 +91,7 @@ def search():
 		Allowing user to go forward or back pages, or exit.
 	"""
 	while(True): # for repeated searches
-		print("Select Valid Option: \n(0) Search by price low to high\n(1) Search by price high to low\n(2) Exit search engine")
+		print("Select Valid Option: '0' Search by price low to high, '1' Search by price high to low, '2' Exit search engine")
 		while(True): # for ensuring valid entry of filter
 				option = input()
 				if (option == "0" or option == "1" or option == "2"):
@@ -111,7 +111,7 @@ def search():
 		index = 0
 		valid_search = display_page(search, index)
 		while(valid_search): # for repeated changes in page
-			print("\nSelect Valid Option: \n(0) Next Page\n(1) Previous Page\n(2) Exit Search")
+			print("\nSelect Valid Option: '0' Next Page, '1' Previous Page, '2' Exit Search")
 			while(True): # for ensuring valid entry of filter
 				option = input()
 				if (option == "0" or option == "1" or option == "2"):
@@ -139,11 +139,12 @@ def display_page(search: Search, index: int):
 		return False #
 	
 	num_pages = len(search.search_results)
-	print("Page " + str(index%num_pages+1) + " of "+ str(num_pages+1))
+	print("Page " + str(index%num_pages+1) + " of "+ str(num_pages))
+	print("Item id   \tPrice")
 	
 	for j in range(len(search.search_results[index%num_pages])):
 		item = get_item_by_item_ID(search.search_results[index%num_pages][j])
-		print(str(item.item_id) + "  \t" + str(item.price))
+		print(str(item.item_id) + "  \t$" + str(item.price))
 	return True
 
 def view_order_status(customer: Customer):
@@ -169,12 +170,13 @@ def view_order_status(customer: Customer):
 				print("\t"+item.name+ ": $" + str(item.price))			
 			print()
 
-def create_or_edit_order(customer:Customer):
+def create_or_edit_order(user_id):
 	"""
 	Lists all orders corresponding to user
 	"""
 	while(True): # for repeated actions
-		print("Select Valid Option: \n(0) Create Order\n(1) Edit Order\n(2) Exit Order Changes")
+		print("Select Valid Option: '0' Create Order, '1' Edit Order, '2' Exit Order Changes")
+		customer:Customer = get_user_by_id(user_id)
 		while(True): # for ensuring valid actions
 			option = input()
 			if (option == "0" or option == "1" or option == "2"):
@@ -194,15 +196,9 @@ def create_new_order(customer: Customer):
 	the user's orderlist
 	"""
 	print("Input item id to initialize order, or 'q' to cancel order creation:")
-	while(True):
-		item_id_to_init_order = input()
-		if item_id_to_init_order == "q":
-			return
-		try:
-			item = get_item_by_item_ID(item_id_to_init_order)
-			break
-		except:
-			print("Invalid Entry. Try again.")
+	item = get_item_input()
+	if item == 'q':
+		return
 	new_order_create = OrderCreate(restaurant_id=item.restaurant_id, 
 							food_item = item.name,
 							order_time = str(datetime.datetime.now())[:10], 
@@ -217,8 +213,17 @@ def create_new_order(customer: Customer):
 	new_order = create_orders(new_order_create)
 	customer.ordersList.append(new_order.order_id)
 	alter_json(customer)
-
-
+	print("Order Sucessfully Added!")
+	
+def get_item_input():
+	while(True):
+		item_id = input()
+		if item_id == "q":
+			return 'q'
+		try:
+			return get_item_by_item_ID(item_id)
+		except:
+			print("Invalid Entry. Try again.")
 
 def alter_json(new_user: User):
 	"""
@@ -230,10 +235,107 @@ def alter_json(new_user: User):
 			user.update(new_user)
 			break
 	save_users(users)
-	print("Order Sucessfully saved!")
 
-def edit_order(customer):
-	pass
+def edit_order(customer:Customer):
+	"""
+	Allows the user to add, remove items from created orders, or complete orders that are in the 'being_created' status
+	"""
+	
+	if(len(customer.ordersList) == 0):
+		print("\nNo orders associated with account to edit.\n")
+		return
+	
+	order_list_dict:dict = {}
+	i: int = 0
+	for orderID in customer.ordersList:
+		order = get_order_by_order_id(orderID)
+		if order.order_status == "being_created":
+			order_list_dict[i] = orderID
+			i += 1
+
+	print("Select order to edit:")
+	for key,value in order_list_dict.items():
+		print("Enter '" + str(key) + "' for order with ID: " + value)
+	print("Enter 'q' to exit")
+
+	while(True):
+		inputted_value = input()
+		if inputted_value == 'q':
+			return
+		try:
+			if int(inputted_value) in order_list_dict:
+				break
+			print("Invalid entry. Try again.")
+		except:
+			print("Invalid entry. Try again.")
+		
+	order_id = order_list_dict[int(inputted_value)]
+	while(True): # Can do multiple things in an order
+		print("Input '0' To add items, '1' to remove items, '2' to delete the order, or '3' to quit editing this order")
+		option = -1
+		while(True):
+			option = input()
+			if(option == '0' or option == '1' or option == '2' or option == '3'):
+				break
+			print("Invalid entry. Try again.")
+		
+		if option == '0': 
+			add_item_to_order(order_id)
+		elif option == '1': 
+			remove_item_from_order(order_id)
+		elif option == '2':
+			del_order(order_id,customer.id)
+			break
+		else: return
+
+
+def add_item_to_order(order_id):
+	"""
+	Adds item to the associated.
+	"""
+	print("Input item id to add to order, or 'q' to cancel editing order:")
+	item = get_item_input()
+	if item == 'q':
+		return
+	
+	add_order_item(order_id, item.item_id)
+
+
+def remove_item_from_order(order_id):
+	order = get_order_by_order_id(order_id)
+	if(len(order.item_ids) == 0):
+		print("No items in order!")
+		return
+	
+	print("Item ids in order:")
+	for item_id in order.item_ids:
+		print(item_id)
+
+	print("Enter an item id in the order to be removed, or 'q' to quit.")
+	while(True):
+		inputted_value = input()
+		if inputted_value == "q":
+			return 'q'
+		if(inputted_value in order.item_ids):
+			break
+		print("Invalid Entry. Try again.")
+
+	delete_order_item(order_id, inputted_value)
+	
+def del_order(order_id,user_id):
+	"""
+	Deletes the order.
+	"""
+	print("Are you sure you wish to delete this order? (y)-Yes, Anything else-No")
+	confirm = input()
+	if confirm == 'y':
+		user: Customer = get_user_by_id(user_id)
+		user.ordersList.remove(order_id)
+		alter_json(user)
+		delete_order(order_id)
+		print("Order Sucessfully Deleted!")
+		return
+	
 
 def driver_branch():
 	pass
