@@ -2,7 +2,7 @@ from operator import attrgetter
 from typing import List
 from fastapi import HTTPException
 
-from FastAPI_DB.schemas.item import Item
+from Backend.FastAPI_DB.schemas.item import Item
 
 from ..schemas.search import Search, SearchCreate
 from .menus_service import get_menu_by_menu_ID
@@ -101,15 +101,19 @@ def paginate_list(payload: SearchCreate, items: List[Item]) -> List[List[str]]:
         uses ITEMS_PER_PAGE to determine at most how many items to
         include on each page.
     """
+    print("1")
     if payload.filter == "price_high_to_low":
         sorted_items = sorted(items, key=attrgetter("price"), reverse=True)
     elif payload.filter == "price_low_to_high":
         sorted_items = sorted(items, key=attrgetter("price"), reverse=False)
     else:
         sorted_items = items
+    print("2")
 
     paginated_results: List[List[str]] = []
     for i in range(0, len(sorted_items), ITEMS_PER_PAGE):
         paginated_results.append([item.item_id for item in sorted_items[i:i+ITEMS_PER_PAGE]])
+    print("paginated_results:")
+    print(paginated_results)
     return paginated_results
 

@@ -16,6 +16,7 @@ class Order(BaseModel):
     order_status: str # "being_created", "sent", "accepted", "delivered"
 
 class OrderCreate(BaseModel):
+    order_id: str
     restaurant_id: int
     food_item: str
     order_time: str
