@@ -8,8 +8,9 @@ from FastAPI_DB.services.items_service import get_item_by_item_ID
 from FastAPI_DB.services.search_service import create_search
 from FastAPI_DB.services.users_service import get_user_by_id
 from FastAPI_DB.repositories.user_repo import load_all as load_users, save_all as save_users
+from FastAPI_DB.repositories.order_repo import load_all as load_orders, save_all as save_orders
 from FastAPI_DB.schemas.search import SearchCreate, Search
-from FastAPI_DB.schemas.order import OrderCreate
+from FastAPI_DB.schemas.order import OrderCreate, Order
 from FastAPI_DB.schemas.user import User, Customer, Driver, Manager
 
 # System variables
@@ -212,7 +213,7 @@ def create_new_order(customer: Customer):
 							order_status="being_created")
 	new_order = create_orders(new_order_create)
 	customer.ordersList.append(new_order.order_id)
-	alter_json(customer)
+	alter_user_json(customer)
 	print("Order Sucessfully Added!")
 	
 def get_item_input():
@@ -225,7 +226,7 @@ def get_item_input():
 		except:
 			print("Invalid Entry. Try again.")
 
-def alter_json(new_user: User):
+def alter_user_json(new_user: User):
 	"""
 	Changes json file to include the updated information
 	"""
@@ -271,11 +272,11 @@ def edit_order(customer:Customer):
 		
 	order_id = order_list_dict[int(inputted_value)]
 	while(True): # Can do multiple things in an order
-		print("Input '0' To add items, '1' to remove items, '2' to delete the order, or '3' to quit editing this order")
+		print("Input '0' To add items, '1' to remove items, '2' to delete the order, '3' to complete order or '4' to quit editing this order")
 		option = -1
 		while(True):
 			option = input()
-			if(option == '0' or option == '1' or option == '2' or option == '3'):
+			if(option == '0' or option == '1' or option == '2' or option == '3' or option == '4'):
 				break
 			print("Invalid entry. Try again.")
 		
@@ -286,8 +287,10 @@ def edit_order(customer:Customer):
 		elif option == '2':
 			del_order(order_id,customer.id)
 			break
+		elif option == '3':
+			complete_order(order_id)
+			break
 		else: return
-
 
 def add_item_to_order(order_id):
 	"""
@@ -299,7 +302,6 @@ def add_item_to_order(order_id):
 		return
 	
 	add_order_item(order_id, item.item_id)
-
 
 def remove_item_from_order(order_id):
 	order = get_order_by_order_id(order_id)
@@ -331,14 +333,50 @@ def del_order(order_id,user_id):
 	if confirm == 'y':
 		user: Customer = get_user_by_id(user_id)
 		user.ordersList.remove(order_id)
-		alter_json(user)
+		alter_user_json(user)
 		delete_order(order_id)
 		print("Order Sucessfully Deleted!")
 		return
 	
+def complete_order(order_id):
+	"""
+	Changes order status to sent (awaiting driver acceptance)
+	"""
+	#TODO Add payment system implementation
+	order: Order = get_order_by_order_id(order_id)
+	order.order_status = "sent"
+	alter_order_json(order)
+
+def alter_order_json(new_order: Order):
+	"""
+	Changes json file to include the updated information
+	"""
+	orders = load_orders()
+	for order in orders:
+		if order.get("order_id") == new_order.order_id:
+			order.update(new_order)
+			break
+	save_orders(orders)
 
 def driver_branch():
-	pass
+	"""	
+	Responsible for all driver logic in main branch.
+
+	Allows driver users to:
+		0. Search for available orders (in "sent" status)
+		1. View current orders taken
+		2. View distance for an order taken
+		3. start delivery of a taken order
+		3. Logout
+	"""
 
 def manager_branch():
-	pass
+	"""	
+	Responsible for all manager logic in main branch.
+
+	Allows manager users to:
+		0. View and select what restaurant they manage. (including create a new restauarant)
+		1. View their restaurant's menu
+		2. Edit their restauarant's menu
+		3. Logout
+	"""
