@@ -39,21 +39,25 @@ def get_order_cost(user_order_id: str, tip: float):
 
 			Distance is randomly generated from 1-25km.
 
-			Delivery cost is 7 base cost, or $2 plus delivery cost. (Increased for distances over 10km)
+			Delivery cost is $7 base cost, or $2 plus delivery cost. (Increased for distances over 10km)
 	"""
 
 	user_order = get_order_by_order_id(user_order_id)
 	user_item = get_item_by_item_ID(user_order.item_ids[0])
-
-	auto_gen_distance = round(random.uniform(1, 25), 2)
+	min_distance = 1
+	max_distance = 25
+	number_decimal_places = 2
+	auto_gen_distance = round(random.uniform(min_distance, max_distance), number_decimal_places)
 
 	price = user_item.price
 	tax = price * delivery_vars["tax"]
-	delivery_cost = 7 if (auto_gen_distance * delivery_vars["rate_per_km"] < 7) else 2 + (auto_gen_distance * delivery_vars["rate_per_km"])
+	min_cost = 7
+	cost_bump_for_long_distances = 2
+	delivery_cost = min_cost if (auto_gen_distance * delivery_vars["rate_per_km"] < min_cost) else cost_bump_for_long_distances + (auto_gen_distance * delivery_vars["rate_per_km"])
 
 	cost = price + tax + delivery_cost + tip
 
-	return round(cost, 2), round(auto_gen_distance, 2)
+	return round(cost, number_decimal_places), auto_gen_distance
 
 def customer_branch(user_id: str):
 	"""
@@ -68,7 +72,7 @@ def customer_branch(user_id: str):
 	while(True): # for repeated actions
 		customer: Customer = get_user_by_id(user_id)
 		print("Select Valid Option: '0' Search, '1' View Order Status, '2' Create or Edit Order, '3' Log out")
-		while(True): # for ensuring valid actions
+		while(True): 
 			option = input()
 			if (option == "0" or option == "1" or option == "2" or option == "3"):
 				break
@@ -80,7 +84,6 @@ def customer_branch(user_id: str):
 		elif (option == "2"):
 			create_or_edit_order(user_id)
 		elif (option == "3"):
-			#write back customer with changes to the DB #TODO
 			break
 
 def search():
@@ -91,9 +94,9 @@ def search():
 		Paginated search query results
 		Allowing user to go forward or back pages, or exit.
 	"""
-	while(True): # for repeated searches
+	while(True):
 		print("Select Valid Option: '0' Search by price low to high, '1' Search by price high to low, '2' Exit search engine")
-		while(True): # for ensuring valid entry of filter
+		while(True):
 				option = input()
 				if (option == "0" or option == "1" or option == "2"):
 					break
@@ -111,9 +114,9 @@ def search():
 		search:Search = create_search(SearchCreate(query=search_query, filter=search_filter))
 		index = 0
 		valid_search = display_page(search, index)
-		while(valid_search): # for repeated changes in page
+		while(valid_search): 
 			print("\nSelect Valid Option: '0' Next Page, '1' Previous Page, '2' Exit Search")
-			while(True): # for ensuring valid entry of filter
+			while(True): 
 				option = input()
 				if (option == "0" or option == "1" or option == "2"):
 					break
@@ -137,7 +140,7 @@ def display_page(search: Search, index: int):
 	"""
 	if(len(search.search_results) == 0):
 		print("No search results\n")
-		return False #
+		return False 
 	
 	num_pages = len(search.search_results)
 	print("Page " + str(index%num_pages+1) + " of "+ str(num_pages))
@@ -148,37 +151,57 @@ def display_page(search: Search, index: int):
 		print(str(item.item_id) + "  \t$" + str(item.price))
 	return True
 
-def view_order_status(customer: Customer):
+def view_order_status(user):
 	"""
 	Lists all orders corresponding to user, with their associated statuses.
 	
-	No separate options in this function.
+	Functions for drivers and customers
 	"""
 
-	if(len(customer.ordersList) == 0):
-		print("\nNo orders associated with account.\n")
-		return
-	
-	else:
-		for order_id in customer.ordersList:
-			order = get_order_by_order_id(order_id)
-			print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nItems:")
-			if len(order.item_ids) == 0:
-				print("\tNo items in order")
-				return
-			for item_id in order.item_ids:
-				item = get_item_by_item_ID(item_id)
-				print("\t"+item.name+ ": $" + str(item.price))			
-			print()
+	if isinstance(user, Customer):
+		customer:Customer = user
+		if(len(customer.ordersList) == 0):
+			print("\nNo orders associated with account.\n")
+			return
+		
+		else:
+			for order_id in customer.ordersList:
+				order = get_order_by_order_id(order_id)
+				print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nItems:")
+				if len(order.item_ids) == 0:
+					print("\tNo items in order")
+					return
+				for item_id in order.item_ids:
+					item = get_item_by_item_ID(item_id)
+					print("\t"+item.name+ ": $" + str(item.price))			
+				print()
+
+	elif isinstance(user, Driver):
+		driver:Driver = user
+		if(len(driver.ordersTaken) == 0):
+			print("\nNo orders associated with account.\n")
+			return
+		else:
+			for order_id in driver.ordersTaken:
+				order = get_order_by_order_id(order_id)
+				# Drivers would also want the TODO value to driver
+				print("Order: "+ order_id+"\Distance: " + order.delivery_distance+"km\nItems:")
+				if len(order.item_ids) == 0:
+					print("\tNo items in order")
+					return
+				for item_id in order.item_ids:
+					item = get_item_by_item_ID(item_id)
+					print("\t"+item.name+ ": $" + str(item.price))	
+
 
 def create_or_edit_order(user_id):
 	"""
 	Lists all orders corresponding to user
 	"""
-	while(True): # for repeated actions
+	while(True): 
 		print("Select Valid Option: '0' Create Order, '1' Edit Order, '2' Exit Order Changes")
 		customer:Customer = get_user_by_id(user_id)
-		while(True): # for ensuring valid actions
+		while(True): 
 			option = input()
 			if (option == "0" or option == "1" or option == "2"):
 				break
@@ -271,7 +294,7 @@ def edit_order(customer:Customer):
 			print("Invalid entry. Try again.")
 		
 	order_id = order_list_dict[int(inputted_value)]
-	while(True): # Can do multiple things in an order
+	while(True): 
 		print("Input '0' To add items, '1' to remove items, '2' to delete the order, '3' to complete order or '4' to quit editing this order")
 		option = -1
 		while(True):
@@ -358,7 +381,7 @@ def alter_order_json(new_order: Order):
 			break
 	save_orders(orders)
 
-def driver_branch():
+def driver_branch(user_id):
 	"""	
 	Responsible for all driver logic in main branch.
 
@@ -369,8 +392,29 @@ def driver_branch():
 		3. start delivery of a taken order
 		3. Logout
 	"""
+	while(True): 
+		driver: Driver = get_user_by_id(user_id)
+		print("Select Valid Option: '0' Search sent orders (awaiting drivers), '1' View Orders Accepted, '2' Create or Edit Order, '3' Log out")
+		while(True): 
+			option = input()
+			if (option == "0" or option == "1" or option == "2" or option == "3"):
+				break
+			print("Invalid Entry. Try Again.")
+		if (option == "0"): 
+			driver_search()
+		elif (option == "1"):
+			view_order_status(driver) 
+		elif (option == "2"):
+			create_or_edit_order(user_id)
+		elif (option == "3"):
+			break
 
-def manager_branch():
+def driver_search():
+	pass
+
+
+
+def manager_branch(user_id):
 	"""	
 	Responsible for all manager logic in main branch.
 
@@ -380,3 +424,22 @@ def manager_branch():
 		2. Edit their restauarant's menu
 		3. Logout
 	"""
+	
+	while(True): 
+		manager: Manager = get_user_by_id(user_id)
+		print("Select Valid Option: '0' Search sent orders (awaiting drivers), '1' View Order Status, '2' Create or Edit Order, '3' Log out")
+		while(True): 
+			option = input()
+			if (option == "0" or option == "1" or option == "2" or option == "3"):
+				break
+			print("Invalid Entry. Try Again.")
+		if (option == "0"): 
+			search()
+		elif (option == "1"):
+			view_order_status(manager) 
+		elif (option == "2"):
+			create_or_edit_order(user_id)
+		elif (option == "3"):
+			break
+
+
