@@ -7,7 +7,7 @@ from Backend.FastAPI_DB.services.orders_service import create_orders
 from Backend.FastAPI_DB.services.payment_processor_service import process_payment
 from Backend.FastAPI_DB.schemas.payment_processor import PaymentProcessorCreate
 
-newUser = users_service.UserCreate(username="testUser", password="testPW")
+newUser = users_service.UserCreate(username="testUser", password="testPW", type=1)
 newUser = users_service.create_users(newUser)
 newOrder = OrderCreate(order_id = "test_order_payment", restaurant_id=16, food_item="Taccos",
                        order_time="",delivery_time="",delivery_distance=1,order_value=1,
