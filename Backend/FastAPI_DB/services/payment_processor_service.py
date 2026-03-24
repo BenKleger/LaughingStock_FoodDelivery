@@ -147,7 +147,9 @@ def checkName(name: str):
     Description:
         This function checks the name isn't empty.
     """
-    if (len(name.strip()) > 0) and name.isalpha(): return None
+    name = name.strip()
+    name = name.replace(" ", "")
+    if (len(name) > 0) and (name.isalpha()): return None
     else: return "INVALID CARDHOLDER NAME!"
 
 def checkPostal(postal: str):
