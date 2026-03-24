@@ -13,7 +13,7 @@ class Order(BaseModel):
     traffic_condition: str
     weather_condition: str
     item_ids: List[str]
-    order_status: str # "being_created", "sent", "accepted", "delivered"
+    order_status: str # "being_created", "paid", "sent", "accepted", "delivered"
 
 class OrderCreate(BaseModel):
     order_id: str
@@ -27,4 +27,4 @@ class OrderCreate(BaseModel):
     traffic_condition: str
     weather_condition: str
     item_ids: List[str]
-    order_status: str # "being_created", "sent", "accepted", "delivered"
+    order_status: str # "being_created", "paid", "sent", "accepted", "delivered"

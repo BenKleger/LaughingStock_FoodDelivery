@@ -18,5 +18,15 @@
     "id": "f3f6c584-421c-415c-9e83-a2b0e49a903e",
     "username": "aiden",
     "password": "123"
+  },
+  {
+    "id": "4ffa25fe-cf98-4bba-8924-300ef8489658",
+    "username": "testUser",
+    "password": "testPW"
+  },
+  {
+    "id": "0a335561-a354-45ca-a9ed-6d1691f7cd86",
+    "username": "testUser",
+    "password": "testPW"
   }
 ]

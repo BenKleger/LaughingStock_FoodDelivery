@@ -4,6 +4,7 @@ from Backend.FastAPI_DB.schemas.payment_processor import PaymentProcessor, Payme
 from Backend.FastAPI_DB.schemas import order
 from fastapi import HTTPException
 from Backend.FastAPI_DB.repositories.order_repo import save_all, load_all
+from Backend.FastAPI_DB.services.orders_service import change_order_status
 
 def process_payment(payload: PaymentProcessorCreate):
     """
@@ -22,7 +23,7 @@ def process_payment(payload: PaymentProcessorCreate):
     if valid["valid"]: 
         orders = load_all()
         chargePaymentMethod() #dummy method
-        payload.order.order_status = "paid"
+        change_order_status(payload.order.order_id, "paid")
         save_all(orders)
         return True
     else: raise HTTPException(status_code=400, detail=valid["errors"])
@@ -146,7 +147,7 @@ def checkName(name: str):
     Description:
         This function checks the name isn't empty.
     """
-    if (len(name.strip()) > 0): return None
+    if (len(name.strip()) > 0) and name.isalpha(): return None
     else: return "INVALID CARDHOLDER NAME!"
 
 def checkPostal(postal: str):
