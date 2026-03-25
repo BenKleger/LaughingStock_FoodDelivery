@@ -452,7 +452,7 @@ def get_unownedRestuarants():
 	return [id for id in all_restaurants if id not in owned]
 
 def get_ownedRestuarants(): 
-	owned = [users["restaurantId"] for users in load_users() if users["type"] == 3 and users["restaurantId"] != None]
+	owned = [users["restaurantId"] for users in load_users() if users["type"] == 3 and users.get("restaurantId") != None]
 	return owned
 
 def create_restaurant(user_id): #This mehtod assumes resaurantIds 1-100 is taken and the limit is 999

@@ -25,6 +25,7 @@
     "username": "aiden",
     "password": "123",
     "type": 3,
+    "resaurantId": 0,
     "restaurantId": 16
   },
   {
