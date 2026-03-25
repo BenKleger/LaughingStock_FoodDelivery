@@ -1,11 +1,11 @@
-from Backend.FastAPI_DB.services import users_service
+from FastAPI_DB.services import users_service
 from fastapi import HTTPException
 import pytest
 
-from Backend.FastAPI_DB.schemas.order import Order, OrderCreate
-from Backend.FastAPI_DB.services.orders_service import create_orders
-from Backend.FastAPI_DB.services.payment_processor_service import process_payment
-from Backend.FastAPI_DB.schemas.payment_processor import PaymentProcessorCreate
+from FastAPI_DB.schemas.order import Order, OrderCreate
+from FastAPI_DB.services.orders_service import create_orders
+from FastAPI_DB.services.payment_processor_service import process_payment
+from FastAPI_DB.schemas.payment_processor import PaymentProcessorCreate
 
 newUser = users_service.UserCreate(username="testUser", password="testPW", type=1)
 newUser = users_service.create_users(newUser)

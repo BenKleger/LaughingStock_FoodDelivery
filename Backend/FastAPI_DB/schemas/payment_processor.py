@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import List
-from Backend.FastAPI_DB.schemas import user as userClass
-from Backend.FastAPI_DB.schemas import order as orderClass
+from FastAPI_DB.schemas import user as userClass
+from FastAPI_DB.schemas import order as orderClass
 
 class PaymentProcessor(BaseModel):
     customer: userClass.User
