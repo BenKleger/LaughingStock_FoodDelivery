@@ -502,8 +502,9 @@
     "password": "0",
     "type": 1,
     "ordersList": [
-      "8e556ec6-846e-4119-9e9e-2c12d275d899",
-      "b19f8a65-e45e-4091-98c3-9e43eb7a6ffc"
+      "91c88151-386b-460c-88fd-2bb2ab4f262f",
+      "bca97d7d-4e8c-4a31-9353-9f2d50a68dcc",
+      "846616ea-c6e8-45e1-b5b2-5d935dcbbada"
     ]
   },
   {
@@ -645,5 +646,15 @@
     "password": "test_password",
     "type": 3,
     "restaurantId": 0
+  },
+  {
+    "id": "be543f83-fdfc-44a2-8be1-da9efb51b896",
+    "username": "2",
+    "password": "2",
+    "type": 2,
+    "ordersTaken": [
+      "bca97d7d-4e8c-4a31-9353-9f2d50a68dcc",
+      "846616ea-c6e8-45e1-b5b2-5d935dcbbada"
+    ]
   }
 ]

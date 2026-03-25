@@ -185,14 +185,13 @@ def view_order_status(user):
 			for order_id in driver.ordersTaken:
 				order = get_order_by_order_id(order_id)
 				# Drivers would also want the TODO value to driver
-				print("Order: "+ order_id+"\Distance: " + order.delivery_distance+"km\nItems:")
+				print("Order: "+ order_id+"\Distance: " + str(order.delivery_distance)+"km\nItems:")
 				if len(order.item_ids) == 0:
 					print("\tNo items in order")
 					return
 				for item_id in order.item_ids:
 					item = get_item_by_item_ID(item_id)
 					print("\t"+item.name+ ": $" + str(item.price))	
-
 
 def create_or_edit_order(user_id):
 	"""
@@ -394,7 +393,7 @@ def driver_branch(user_id):
 	"""
 	while(True): 
 		driver: Driver = get_user_by_id(user_id)
-		print("Select Valid Option: '0' Search sent orders (awaiting drivers), '1' View Orders Accepted, '2' Create or Edit Order, '3' Log out")
+		print("Select Valid Option: '0' Search sent orders (awaiting drivers), '1' View Orders Accepted, '2' Accept an order, '3' Log out")
 		while(True): 
 			option = input()
 			if (option == "0" or option == "1" or option == "2" or option == "3"):
@@ -405,14 +404,44 @@ def driver_branch(user_id):
 		elif (option == "1"):
 			view_order_status(driver) 
 		elif (option == "2"):
-			create_or_edit_order(user_id)
+			accept_order(driver)
 		elif (option == "3"):
 			break
 
 def driver_search():
-	pass
+	"""
+	Returns:
+		list of order IDs in the 'sent' status
+	prints: 
+		Availible orders for pickup (in 'sent' status)				
+	"""
+	orders = load_orders()
+	sent_orders = []
+	for order in orders:
+		if order.get("order_status") == "sent":
+			sent_orders.append(order.get("order_id"))
+	
+	for orderID in sent_orders:
+		order = get_order_by_order_id(orderID)
+		print("OrderID:", order.order_id, "\nStatus:",order.order_status,"\nOrder Distance:", str(order.delivery_distance), "\nOrder Value", str(order.order_value))
 
+	return sent_orders
 
+def accept_order(driver:Driver):
+	sent_orders = driver_search()
+	print("Enter a valid OrderID in the list of 'sent' orders, or 'q' to quit")
+	while True:
+		order_id = input()
+		if order_id in sent_orders:
+			break
+		if order_id == 'q':
+			return
+		print("Invalid order ID")
+	order = get_order_by_order_id(order_id)
+	driver.ordersTaken.append(order_id)
+	order.order_status = "accepted"
+	alter_order_json(order)
+	alter_user_json(driver)
 
 def manager_branch(user_id):
 	"""	
