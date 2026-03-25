@@ -7,6 +7,7 @@ from FastAPI_DB.services.orders_service import get_order_by_order_id, create_ord
 from FastAPI_DB.services.items_service import create_items, get_item_by_item_ID, create_items
 from FastAPI_DB.services.search_service import create_search
 from FastAPI_DB.services.users_service import get_user_by_id
+from FastAPI_DB.services.payment_processor_service import process_payment, validatePaymentMethod
 from FastAPI_DB.repositories.user_repo import load_all as load_users, save_all as save_users
 from FastAPI_DB.repositories.order_repo import load_all as load_orders, save_all as save_orders
 from FastAPI_DB.repositories.menu_repo import load_all as load_menu, save_all as save_menus
@@ -15,6 +16,7 @@ from FastAPI_DB.schemas.search import SearchCreate, Search
 from FastAPI_DB.schemas.order import OrderCreate, Order
 from FastAPI_DB.schemas.item import ItemCreate, Item
 from FastAPI_DB.schemas.user import User, Customer, Driver, Manager
+from FastAPI_DB.schemas.payment_processor import PaymentProcessorCreate
 
 # System variables
 delivery_vars = {
@@ -42,21 +44,25 @@ def get_order_cost(user_order_id: str, tip: float):
 
 			Distance is randomly generated from 1-25km.
 
-			Delivery cost is 7 base cost, or $2 plus delivery cost. (Increased for distances over 10km)
+			Delivery cost is $7 base cost, or $2 plus delivery cost. (Increased for distances over 10km)
 	"""
 
 	user_order = get_order_by_order_id(user_order_id)
 	user_item = get_item_by_item_ID(user_order.item_ids[0])
-
-	auto_gen_distance = round(random.uniform(1, 25), 2)
+	min_distance = 1
+	max_distance = 25
+	number_decimal_places = 2
+	auto_gen_distance = round(random.uniform(min_distance, max_distance), number_decimal_places)
 
 	price = user_item.price
 	tax = price * delivery_vars["tax"]
-	delivery_cost = 7 if (auto_gen_distance * delivery_vars["rate_per_km"] < 7) else 2 + (auto_gen_distance * delivery_vars["rate_per_km"])
+	min_cost = 7
+	cost_bump_for_long_distances = 2
+	delivery_cost = min_cost if (auto_gen_distance * delivery_vars["rate_per_km"] < min_cost) else cost_bump_for_long_distances + (auto_gen_distance * delivery_vars["rate_per_km"])
 
 	cost = price + tax + delivery_cost + tip
 
-	return round(cost, 2), round(auto_gen_distance, 2)
+	return round(cost, number_decimal_places), auto_gen_distance
 
 def customer_branch(user_id: str):
 	"""
@@ -71,11 +77,7 @@ def customer_branch(user_id: str):
 	while(True): # for repeated actions
 		customer: Customer = get_user_by_id(user_id)
 		print("Select Valid Option: '0' Search, '1' View Order Status, '2' Create or Edit Order, '3' Log out")
-		while(True): # for ensuring valid actions
-			option = input()
-			if (option == "0" or option == "1" or option == "2" or option == "3"):
-				break
-			print("Invalid Entry. Try Again.")
+		option = check_input(["0","1","2","3"])
 		if (option == "0"): 
 			search()
 		elif (option == "1"):
@@ -83,8 +85,23 @@ def customer_branch(user_id: str):
 		elif (option == "2"):
 			create_or_edit_order(user_id)
 		elif (option == "3"):
-			#write back customer with changes to the DB #TODO
 			break
+
+def check_input(allowed_values: list[str]):
+	"""
+	Helper function to skip the while loop for checking user input.
+
+	Input: list of options (int[])
+	Output: valid user input
+	"""
+	option = ""
+	while(True):
+		option = input().strip()
+		if(option in allowed_values):
+			break
+		print("Invalid entry. Try again.")
+	print()
+	return option
 
 def search():
 	"""
@@ -94,13 +111,9 @@ def search():
 		Paginated search query results
 		Allowing user to go forward or back pages, or exit.
 	"""
-	while(True): # for repeated searches
+	while(True):
 		print("Select Valid Option: '0' Search by price low to high, '1' Search by price high to low, '2' Exit search engine")
-		while(True): # for ensuring valid entry of filter
-				option = input()
-				if (option == "0" or option == "1" or option == "2"):
-					break
-				print("Invalid Entry. Try Again.")
+		option = check_input(["0","1","2"])
 		if option == "0":
 			search_filter = "price_low_to_high"
 		elif option == "1":
@@ -114,13 +127,9 @@ def search():
 		search:Search = create_search(SearchCreate(query=search_query, filter=search_filter))
 		index = 0
 		valid_search = display_page(search, index)
-		while(valid_search): # for repeated changes in page
+		while(valid_search): 
 			print("\nSelect Valid Option: '0' Next Page, '1' Previous Page, '2' Exit Search")
-			while(True): # for ensuring valid entry of filter
-				option = input()
-				if (option == "0" or option == "1" or option == "2"):
-					break
-				print("Invalid Entry. Try Again.")
+			option = check_input(["0","1","2"])
 			if option == "0":
 				index+=1
 				display_page(search,index)
@@ -129,6 +138,7 @@ def search():
 				display_page(search,index)
 			else:
 				break
+			print()
 	
 def display_page(search: Search, index: int):
 	"""
@@ -140,7 +150,7 @@ def display_page(search: Search, index: int):
 	"""
 	if(len(search.search_results) == 0):
 		print("No search results\n")
-		return False #
+		return False 
 	
 	num_pages = len(search.search_results)
 	print("Page " + str(index%num_pages+1) + " of "+ str(num_pages))
@@ -151,41 +161,67 @@ def display_page(search: Search, index: int):
 		print(str(item.item_id) + "  \t$" + str(item.price))
 	return True
 
-def view_order_status(customer: Customer):
+def view_order_status(user):
 	"""
 	Lists all orders corresponding to user, with their associated statuses.
 	
-	No separate options in this function.
+	Functions for drivers and customers
+	
+	Decrements the distance on an order when called from a customer :)
 	"""
 
-	if(len(customer.ordersList) == 0):
-		print("\nNo orders associated with account.\n")
-		return
-	
-	else:
-		for order_id in customer.ordersList:
-			order = get_order_by_order_id(order_id)
-			print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nItems:")
-			if len(order.item_ids) == 0:
-				print("\tNo items in order")
-				return
-			for item_id in order.item_ids:
-				item = get_item_by_item_ID(item_id)
-				print("\t"+item.name+ ": $" + str(item.price))			
-			print()
+	if isinstance(user, Customer):
+		customer:Customer = user
+		if(len(customer.ordersList) == 0):
+			print("\nNo orders associated with account.\n")
+			return
+		
+		else:
+			for order_id in customer.ordersList:
+				order = get_order_by_order_id(order_id)
+				if order.order_status == "accepted":
+					if order.delivery_distance > 1:  
+						order.delivery_distance = round(order.delivery_distance-1,2)
+					else: 
+						order.delivery_distance = 0
+						order.order_status = "delivered"
+						print("\n\nOrder has been Delivered!\n\n")
+				alter_order_json(order)
+				print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nDistance Remaining: "+ str(order.delivery_distance)+"km\nItems:")
+				if len(order.item_ids) == 0:
+					print("\tNo items in order")
+					return
+				for item_id in order.item_ids:
+					item = get_item_by_item_ID(item_id)
+					print("\t"+item.name+ ": $" + str(item.price))			
+				print()
+
+	elif isinstance(user, Driver):
+		driver:Driver = user
+		if(len(driver.ordersTaken) == 0):
+			print("\nNo orders associated with account.\n")
+			return
+		else:
+			for order_id in driver.ordersTaken:
+				order = get_order_by_order_id(order_id)
+				# Drivers would also want the TODO value to driver
+				print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nDistance: " + str(order.delivery_distance)+"km\nItems:")
+				if len(order.item_ids) == 0:
+					print("\tNo items in order")
+					return
+				for item_id in order.item_ids:
+					item = get_item_by_item_ID(item_id)
+					print("\t"+item.name+ ": $" + str(item.price))
+				print()	
 
 def create_or_edit_order(user_id):
 	"""
 	Lists all orders corresponding to user
 	"""
-	while(True): # for repeated actions
+	while(True): 
 		print("Select Valid Option: '0' Create Order, '1' Edit Order, '2' Exit Order Changes")
 		customer:Customer = get_user_by_id(user_id)
-		while(True): # for ensuring valid actions
-			option = input()
-			if (option == "0" or option == "1" or option == "2"):
-				break
-			print("Invalid Entry. Try again.")
+		option = check_input(["0","1","2"])
 
 		if option == "0":
 			create_new_order(customer)
@@ -203,6 +239,7 @@ def create_new_order(customer: Customer):
 	item = get_item_input()
 	if item == 'q':
 		return
+	print()
 	new_order_create = OrderCreate(restaurant_id=item.restaurant_id, 
 							food_item = item.name,
 							order_time = str(datetime.datetime.now())[:10], 
@@ -217,7 +254,7 @@ def create_new_order(customer: Customer):
 	new_order = create_orders(new_order_create)
 	customer.ordersList.append(new_order.order_id)
 	alter_user_json(customer)
-	print("Order Sucessfully Added!")
+	print("\n\nOrder Sucessfully Added!\n\n")
 	
 def get_item_input():
 	while(True):
@@ -272,16 +309,12 @@ def edit_order(customer:Customer):
 			print("Invalid entry. Try again.")
 		except:
 			print("Invalid entry. Try again.")
-		
+	print()
 	order_id = order_list_dict[int(inputted_value)]
-	while(True): # Can do multiple things in an order
+	while(True): 
 		print("Input '0' To add items, '1' to remove items, '2' to delete the order, '3' to complete order or '4' to quit editing this order")
 		option = -1
-		while(True):
-			option = input()
-			if(option == '0' or option == '1' or option == '2' or option == '3' or option == '4'):
-				break
-			print("Invalid entry. Try again.")
+		option = check_input(["0","1","2","3","4"])
 		
 		if option == '0': 
 			add_item_to_order(order_id)
@@ -291,7 +324,7 @@ def edit_order(customer:Customer):
 			del_order(order_id,customer.id)
 			break
 		elif option == '3':
-			complete_order(order_id)
+			complete_order(order_id,customer.id)
 			break
 		else: return
 
@@ -326,7 +359,8 @@ def remove_item_from_order(order_id):
 		print("Invalid Entry. Try again.")
 
 	delete_order_item(order_id, inputted_value)
-	
+	print()
+
 def del_order(order_id,user_id):
 	"""
 	Deletes the order.
@@ -338,17 +372,42 @@ def del_order(order_id,user_id):
 		user.ordersList.remove(order_id)
 		alter_user_json(user)
 		delete_order(order_id)
-		print("Order Sucessfully Deleted!")
-		return
-	
-def complete_order(order_id):
+		print("\nOrder Sucessfully Deleted!\n")
+
+def complete_order(order_id, user_id):
 	"""
-	Changes order status to sent (awaiting driver acceptance)
+	Prompts the user to input a payment method
 	"""
-	#TODO Add payment system implementation
-	order: Order = get_order_by_order_id(order_id)
-	order.order_status = "sent"
-	alter_order_json(order)
+	user: Customer = get_user_by_id(user_id).model_dump()
+	order: Order = get_order_by_order_id(order_id).model_dump()
+	processor = PaymentProcessorCreate(customer=user,order=order)
+	print("Select payment method: '0': Credit, '1': Debit, '2': Apple Pay, '3': Paypal")
+	option = check_input(["0", "1", "2", "3"])
+	while(True):
+		try:
+			if(option == "0" or option == "1"):
+				if option == "0": processor.payment_method = "CREDIT"
+				else: processor.payment_method = "DEBIT"
+				print("Note: 4 and fifteen 1s is a valid card number")
+				processor.payment_number = input("Card number: ")
+				processor.payment_pin = input("Payment pin (CVV): ")
+				processor.card_holder_name = input("Card holder name: ")
+				processor.billing_address = input("Billing address: ")
+				print("Note: postal code format is A1A 1A1")
+				processor.postal_code = input("Postal code: ")
+			if(option == "2" or option =="3"):
+				if option == "2": processor.payment_method = "APPLEPAY"
+				else: processor.payment_method = "PAYPAL"
+				print("Note: email format is name@domain.TLD")
+				processor.email = input("Payment email: ")
+				processor.email_password = input("Email password: ")
+			if process_payment(processor): break
+			# updates status to "paid" if everything is valid
+			else:
+				print("Invalid payment method. Please try again.")
+		except:
+				print("Invalid payment method. Please try again.")
+	print("Successeful!")
 
 def alter_order_json(new_order: Order):
 	"""
@@ -361,17 +420,70 @@ def alter_order_json(new_order: Order):
 			break
 	save_orders(orders)
 
-def driver_branch():
+def driver_branch(user_id):
 	"""	
 	Responsible for all driver logic in main branch.
 
 	Allows driver users to:
-		0. Search for available orders (in "sent" status)
+		0. Search for available orders (in "paid" status)
 		1. View current orders taken
 		2. View distance for an order taken
 		3. start delivery of a taken order
 		3. Logout
 	"""
+	while(True): 
+		driver: Driver = get_user_by_id(user_id)
+		print("Select Valid Option: '0' Search paid orders (awaiting drivers), '1' View Orders Accepted, '2' Accept an order, '3' Log out")
+		while(True): 
+			option = input()
+			if (option == "0" or option == "1" or option == "2" or option == "3"):
+				break
+			print("Invalid Entry. Try Again.")
+		print()
+		if (option == "0"): 
+			driver_search()
+		elif (option == "1"):
+			view_order_status(driver) 
+		elif (option == "2"):
+			accept_order(driver)
+		elif (option == "3"):
+			break
+
+def driver_search():
+	"""
+	Returns:
+		list of order IDs in the 'paid' status
+	prints: 
+		Availible orders for pickup (in 'paid' status)				
+	"""
+	orders = load_orders()
+	paid_orders = []
+	for order in orders:
+		if order.get("order_status") == "paid":
+			paid_orders.append(order.get("order_id"))
+	
+	for orderID in paid_orders:
+		order = get_order_by_order_id(orderID)
+		print("OrderID:", order.order_id, "\nStatus:",order.order_status,"\nOrder Distance:", str(order.delivery_distance), "\nOrder Value", str(order.order_value))
+
+	return paid_orders
+
+def accept_order(driver:Driver):
+	paid_orders = driver_search()
+	print("Enter a valid OrderID in the list of 'paid' orders, or 'q' to quit")
+	while True:
+		order_id = input()
+		if order_id in paid_orders:
+			break
+		if order_id == 'q':
+			return
+		print("Invalid order ID")
+	print()
+	order = get_order_by_order_id(order_id)
+	driver.ordersTaken.append(order_id)
+	order.order_status = "accepted"
+	alter_order_json(order)
+	alter_user_json(driver)
 
 def manager_branch(user_id):
 	"""	

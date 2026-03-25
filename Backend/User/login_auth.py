@@ -27,9 +27,9 @@ def login():
                 if (get_user_by_username(username_input).password == password_input):
                     print("\nLogin successful!")
                     break
-                print("Incorrect email or password. Please try again.\n")
+                print("Incorrect username or password. Please try again.\n")
             except HTTPException:
-                print("Incorrect email or password. Please try again.\n")
+                print("Incorrect username or password. Please try again.\n")
         
         return get_user_by_username(username_input).id
             
