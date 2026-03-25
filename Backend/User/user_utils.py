@@ -2,16 +2,19 @@ import random
 import json
 import datetime
 
-
+from FastAPI_DB.services.menus_service import get_menu_by_menu_ID
 from FastAPI_DB.services.orders_service import get_order_by_order_id, create_orders, add_order_item, delete_order_item, delete_order
-from FastAPI_DB.services.items_service import get_item_by_item_ID
+from FastAPI_DB.services.items_service import create_items, get_item_by_item_ID, create_items
 from FastAPI_DB.services.search_service import create_search
 from FastAPI_DB.services.users_service import get_user_by_id
 from FastAPI_DB.services.payment_processor_service import process_payment, validatePaymentMethod
 from FastAPI_DB.repositories.user_repo import load_all as load_users, save_all as save_users
 from FastAPI_DB.repositories.order_repo import load_all as load_orders, save_all as save_orders
+from FastAPI_DB.repositories.menu_repo import load_all as load_menu, save_all as save_menus
+from FastAPI_DB.repositories.item_repo import load_all as load_items, save_all as save_items	
 from FastAPI_DB.schemas.search import SearchCreate, Search
 from FastAPI_DB.schemas.order import OrderCreate, Order
+from FastAPI_DB.schemas.item import ItemCreate, Item
 from FastAPI_DB.schemas.user import User, Customer, Driver, Manager
 from FastAPI_DB.schemas.payment_processor import PaymentProcessorCreate
 
@@ -492,22 +495,194 @@ def manager_branch(user_id):
 		2. Edit their restauarant's menu
 		3. Logout
 	"""
-	
-	while(True): 
-		manager: Manager = get_user_by_id(user_id)
-		print("Select Valid Option: '0' Search paid orders (awaiting drivers), '1' View Order Status, '2' Create or Edit Order, '3' Log out")
-		while(True): 
+	while(True):
+		Manger: Manager = get_user_by_id(user_id)
+		print("Select Valid Option: '0' Manage restuarant, '1' View/edit your restuarant's menu, '2' Log out")
+		while(True):
 			option = input()
-			if (option == "0" or option == "1" or option == "2" or option == "3"):
+			if (option == "0" or option == "1" or option == "2"):
 				break
 			print("Invalid Entry. Try Again.")
 		if (option == "0"): 
-			search()
-		elif (option == "1"):
-			view_order_status(manager) 
-		elif (option == "2"):
-			create_or_edit_order(user_id)
-		elif (option == "3"):
+			manage_restaurants(user_id)
+		if(option == "1"):
+			manage_menu(user_id)
+		if(option == "2"):
+			return
+
+def manage_restaurants(user_id):
+	"""
+	Allows a manager to add/change their associated restaurant, or create a new one.
+	"""
+	while(True):
+		print("'0' Select your restaurant, '1' create new restaurant, '2' exit")
+		while(True): #loop waits for user input
+			option = input()
+			if (option == "0" or option == "1" or option == "2"):
+				break
+			print("Invalid Entry. Try Again.")
+		if option == "0":
+			view_restaurants(user_id)
+		elif option == "1":
+			create_restaurant(user_id)
+		elif option == "2":
+			return
+
+
+def view_restaurants(user_id):
+	unowned_restaurants = get_unownedRestuarants()
+	unowned_restaurants.sort()
+	if len(unowned_restaurants) == 0:
+		print("No restaurants available to manage. Please create a new restaurant.")
+		return
+	
+	print("Resuarant Id: ")
+	for restaurant_id in unowned_restaurants:
+		print(restaurant_id)
+	print("Enter the restaurant Id you want to manage. Enter 0(default value) for none, or 'q' to exit")
+	while(True):
+		user_input = input()
+		if user_input == 'q':
+			return
+		if(int(user_input) in unowned_restaurants): #check if user inputted a valid restaurant id
+			manager = get_user_by_id(user_id)
+			manager.restaurantId = int(user_input)
+			alter_user_json(manager)
+			print("Restaurant assigned!")
+			return
+		else:
+			print("Invalid entry. Try again:")
+		
+
+def get_unownedRestuarants():
+	all_restaurants = []
+	for order in load_orders():
+		if order["restaurant_id"] not in all_restaurants:
+			all_restaurants.append(order["restaurant_id"])
+
+	owned = get_ownedRestuarants()
+	return [id for id in all_restaurants if id not in owned]
+
+def get_ownedRestuarants(): 
+	owned = [users["restaurantId"] for users in load_users() if users["type"] == 3 and users.get("restaurantId") != None]
+	return owned
+
+def create_restaurant(user_id): #This mehtod assumes resaurantIds 1-100 is taken and the limit is 999
+	print("Enter your new restaurant id(101-999) or 'q' to exit")
+	while(True):
+		user_input = input()
+		if user_input == 'q':
+			return
+		else:
+			if (not(user_input.isdigit()) or int(user_input) < 100 or int(user_input) in get_ownedRestuarants()): #check if input is a valid id
+				print("Invalid entry, try again:")
+			else:
+				manager = get_user_by_id(user_id)
+				manager.restaurantId = int(user_input)
+				alter_user_json(manager)
+				print("Restaurant created and assigned!")
+				return
+
+def manage_menu(user_id):
+	"""
+	Allows a manager to view and change their menu items
+	"""
+	manager = get_user_by_id(user_id)
+	if manager.restaurantId == 0:
+		print("No restaurant assigned. Please select or create a restaurant first.")
+		return
+
+	while(True): #selection loop 
+		print("'0' View menu, '1' Add item, '2' Remove item, '3' Exit")
+		while(True):
+			user_input = input()
+			if (user_input == '0' or user_input == '1' or user_input == '2' or user_input == '3'):
+				break
+			print("Invalid entry, try again:")
+		if user_input == '0':
+			view_menu(manager.restaurantId)
+		elif user_input == '1':
+			add_menu_item(manager.restaurantId)
+		elif user_input == '2':
+			remove_menu_item(manager.restaurantId)
+		elif user_input == '3':
+			return
+		
+def view_menu(restaurant_id):
+	menu = get_menu_by_menu_ID(str(restaurant_id)).items
+	if len(menu) == 0:
+		print("no items/ no menu")
+		return
+	print("Item id \t\t Item name \t\t Price")
+	for item in menu:
+		print(str(item.item_id) + " \t\t" + item.name + " \t\t $" + str(item.price)) #not sure why they're misalligned
+
+def add_menu_item(restaurant_id): #adds a new item created by the manager to the menu and item database
+	print("Enter new item name or 'q' to exit")
+	while(True):
+		item_name = input()
+		if item_name == 'q':
+			return
+		elif(item_name.isalpha() or (len(item_name)>4 and len(item_name)<20)): #checks that item name is valid
 			break
+		print("Invalid entry try again:")
+
+	print("Enter new item price or 'q' to exit")
+	while(True):
+		item_price = input()
+		if item_price == 'q':
+			return 
+		elif(isFloat(item_price) and float(item_price) > 0): #valid float and positive price check
+			break
+		print("Invalid entry try again:")
+
+	item_id = str(restaurant_id) + "-" + item_name
+	new_Item = ItemCreate(item_id = item_id, restaurant_id = restaurant_id, name = item_name, tags = [], price = float(item_price))
+	create_items(new_Item)
+
+	menus = load_menu()
+	for menu in menus:
+		if menu["menu_id"] == restaurant_id:
+			menu["items"].append(new_Item.model_dump()) #note to self:model dump converts the model to dict
+	save_menus(menus)
+	print("Item added to menu and item database!")
+
+def remove_menu_item(restaurant_id):
+	menu = get_menu_by_menu_ID(str(restaurant_id)).items
+	if len(menu) == 0:
+		print("No items/ no menu")
+		return
+	print("Enter item id to remove or 'q' to exit")
+	while(True):
+		user_input = input()
+		if user_input == 'q':
+			return
+		else:
+			match = False #check if item exists to delete
+			for item in menu:
+				if item.item_id == user_input:
+					match = True
+					break
+			if match:
+				menus = load_menu()
+				for menu in menus:
+					if menu["menu_id"] == restaurant_id:
+						menu["items"] = [item for item in menu["items"] if item["item_id"] != user_input] #relists all items from menu except one for deletion
+						break
+				save_menus(menus)
+				items = load_items()
+				items = [item for item in items if item["item_id"] != user_input] 
+				save_items(items)
+				print("Item removed from menu and item database")
+				return
+			print("No such item id in menu, try again:")
+
+def isFloat(string): #float check helper function returns true if string can be converted to a float, false otherwise
+	try:
+		float(string)
+		return True
+	except ValueError:
+		return False
+
 
 

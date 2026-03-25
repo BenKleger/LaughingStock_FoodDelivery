@@ -18,14 +18,15 @@
     "username": "tom",
     "password": "123",
     "type": 3,
-    "restaurantId": 0
+    "restaurantId": 908
   },
   {
     "id": "f3f6c584-421c-415c-9e83-a2b0e49a903e",
     "username": "aiden",
     "password": "123",
-    "type": 1,
-    "ordersList": []
+    "type": 3,
+    "resaurantId": 0,
+    "restaurantId": 16
   },
   {
     "id": "be587750-35f6-4bea-b49d-b23522483f4e",
