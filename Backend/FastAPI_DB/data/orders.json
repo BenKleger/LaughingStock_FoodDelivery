@@ -160025,7 +160025,7 @@
     "traffic_condition": "",
     "weather_condition": "",
     "item_ids": [],
-    "order_status": "paid"
+    "order_status": "accepted"
   },
   {
     "order_id": "c726b0e1-ad2c-4d15-8efe-10b85b18f367",
