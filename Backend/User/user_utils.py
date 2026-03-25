@@ -214,7 +214,7 @@ def create_new_order(customer: Customer):
 	new_order = create_orders(new_order_create)
 	customer.ordersList.append(new_order.order_id)
 	alter_user_json(customer)
-	print("Order Sucessfully Added!")
+	print("\n\nOrder Sucessfully Added!\n\n")
 	
 def get_item_input():
 	while(True):

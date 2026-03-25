@@ -20,6 +20,10 @@ app.include_router(items_router)
 app.include_router(menus_router)
 
 
+# import datetime
+# print(str(datetime.datetime.now())[17:19])
+# print(str(datetime.datetime.now())[11:19])
+
 """Must be commented out for pytest (Thanks Aiden!)"""
 
 """Main branch of operations"""
