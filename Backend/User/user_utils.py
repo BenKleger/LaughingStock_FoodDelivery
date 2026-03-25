@@ -91,7 +91,7 @@ def check_input(allowed_values: list[str]):
 	"""
 	Helper function to skip the while loop for checking user input.
 
-	Input: list of options (int[])
+	Input: list of options (list[])
 	Output: valid user input
 	"""
 	option = ""
@@ -434,11 +434,7 @@ def driver_branch(user_id):
 	while(True): 
 		driver: Driver = get_user_by_id(user_id)
 		print("Select Valid Option: '0' Search paid orders (awaiting drivers), '1' View Orders Accepted, '2' Accept an order, '3' Log out")
-		while(True): 
-			option = input()
-			if (option == "0" or option == "1" or option == "2" or option == "3"):
-				break
-			print("Invalid Entry. Try Again.")
+		option = check_input(["0","1","2", "3"])
 		print()
 		if (option == "0"): 
 			driver_search()
@@ -498,11 +494,7 @@ def manager_branch(user_id):
 	while(True):
 		Manger: Manager = get_user_by_id(user_id)
 		print("Select Valid Option: '0' Manage restuarant, '1' View/edit your restuarant's menu, '2' Log out")
-		while(True):
-			option = input()
-			if (option == "0" or option == "1" or option == "2"):
-				break
-			print("Invalid Entry. Try Again.")
+		option = check_input(["0","1","2"])
 		if (option == "0"): 
 			manage_restaurants(user_id)
 		if(option == "1"):
@@ -516,11 +508,7 @@ def manage_restaurants(user_id):
 	"""
 	while(True):
 		print("'0' Select your restaurant, '1' create new restaurant, '2' exit")
-		while(True): #loop waits for user input
-			option = input()
-			if (option == "0" or option == "1" or option == "2"):
-				break
-			print("Invalid Entry. Try Again.")
+		option = check_input(["0","1","2"])
 		if option == "0":
 			view_restaurants(user_id)
 		elif option == "1":
@@ -594,11 +582,7 @@ def manage_menu(user_id):
 
 	while(True): #selection loop 
 		print("'0' View menu, '1' Add item, '2' Remove item, '3' Exit")
-		while(True):
-			user_input = input()
-			if (user_input == '0' or user_input == '1' or user_input == '2' or user_input == '3'):
-				break
-			print("Invalid entry, try again:")
+		user_input = check_input(["0","1","2", "3"])
 		if user_input == '0':
 			view_menu(manager.restaurantId)
 		elif user_input == '1':
