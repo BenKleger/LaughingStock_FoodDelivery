@@ -28,11 +28,9 @@
     "ordersList": []
   },
   {
-    "id": "fba460d8-8956-40d1-88f4-66b4538e1959",
-    "username": "test_customer",
-    "password": "test_password",
-    "type": 1,
-    "ordersList": []
+    "id": "4ffa25fe-cf98-4bba-8924-300ef8489658",
+    "username": "testUser",
+    "password": "testPW"
   },
   {
     "id": "3e11ed60-0254-4d6f-8290-14b86b2ee5f9",
