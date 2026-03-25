@@ -18,16 +18,14 @@ def process_payment(payload: PaymentProcessorCreate):
         updating the order status, saves it, and raises an error if the 
         payment method is invalid.
     """
-    try:
-        valid = validatePaymentMethod(payload)
-        if valid["valid"]: 
-            orders = load_all()
-            chargePaymentMethod() #dummy method
-            change_order_status(payload.order.order_id, "paid")
-            save_all(orders)
-            return True
-        else: raise HTTPException(status_code=400, detail=valid["errors"])
-    except: raise HTTPException(status_code=422, detail="Invalid input. Double check?")
+    valid = validatePaymentMethod(payload)
+    if valid["valid"]: 
+        orders = load_all()
+        chargePaymentMethod() #dummy method
+        change_order_status(payload.order.order_id, "paid")
+        save_all(orders)
+        return True
+    else: raise HTTPException(status_code=400, detail=valid["errors"])
 
 def validatePaymentMethod(payload: PaymentProcessorCreate):
     """
