@@ -25,21 +25,22 @@ app.include_router(menus_router)
 """Main branch of operations"""
 
 """LOGIN (or Create account)"""
-#user_id = login()
+user_id = login()
 
 """Depending on user type have separate functionalities."""
-#user_type = get_user_by_id(user_id).type
-#if user_type == 1:
-#    """Customer functionality"""
-#    customer_branch(user_id)
+user_type = get_user_by_id(user_id).type
+if user_type == 1:
+   """Customer functionality"""
+   customer_branch(user_id)
 
 
-#elif user_type == 2:
-#    """Driver functionality"""
-#    while(True):
-#        break
+elif user_type == 2:
+   """Driver functionality"""
+   while(True):
+       break
 
-#elif user_type == 3:
-#    """Manager functionality"""
-#    while(True):
-#        break
+elif user_type == 3:
+   """Manager functionality"""
+   manager_branch(user_id)
+
+
