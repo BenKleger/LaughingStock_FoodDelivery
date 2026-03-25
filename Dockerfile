@@ -11,10 +11,6 @@ COPY Backend ./backend
 # COPY Frontend ./frontend
 EXPOSE 8080
 
-# Setup an app user so the container doesn't run as the root user
-RUN useradd app
-USER app
-
 CMD ["python", "backend/main.py"]
 
 # compliments of https://docs.docker.com/get-started/docker-concepts/building-images/writing-a-dockerfile/#:~:text=Next%20steps-,Explanation,%2C%20startup%20command%2C%20and%20more.
