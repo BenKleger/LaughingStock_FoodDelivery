@@ -314,5 +314,21 @@
     "password": "test_password",
     "type": 3,
     "restaurantId": 0
+  },
+  {
+    "id": "e83a4f78-56db-44f0-8dea-433d53e6d77b",
+    "username": "DanielK",
+    "password": "123",
+    "type": 2,
+    "ordersTaken": [
+      "09879a14-8e2b-466c-8b8e-f50f64c358be"
+    ]
+  },
+  {
+    "id": "73576556-b4d4-455c-b0af-a3b39c244a9b",
+    "username": "DanielKo",
+    "password": "123",
+    "type": 3,
+    "restaurantId": 0
   }
 ]
