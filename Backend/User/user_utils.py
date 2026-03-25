@@ -178,13 +178,13 @@ def view_order_status(user):
 				order = get_order_by_order_id(order_id)
 				if order.order_status == "accepted":
 					if order.delivery_distance > 1:  
-						order.delivery_distance -= 1
+						order.delivery_distance = round(order.delivery_distance-1,2)
 					else: 
 						order.delivery_distance = 0
 						order.order_status = "delivered"
 						print("\n\nOrder has been Delivered!\n\n")
 				alter_order_json(order)
-				print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nDistance Remaining: "+ str(order.delivery_distance)+"\nItems:")
+				print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nDistance Remaining: "+ str(order.delivery_distance)+"km\nItems:")
 				if len(order.item_ids) == 0:
 					print("\tNo items in order")
 					return
@@ -202,13 +202,14 @@ def view_order_status(user):
 			for order_id in driver.ordersTaken:
 				order = get_order_by_order_id(order_id)
 				# Drivers would also want the TODO value to driver
-				print("Order: "+ order_id+"\nDistance: " + str(order.delivery_distance)+"km\nItems:")
+				print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nDistance: " + str(order.delivery_distance)+"km\nItems:")
 				if len(order.item_ids) == 0:
 					print("\tNo items in order")
 					return
 				for item_id in order.item_ids:
 					item = get_item_by_item_ID(item_id)
-					print("\t"+item.name+ ": $" + str(item.price))	
+					print("\t"+item.name+ ": $" + str(item.price))
+				print()	
 
 def create_or_edit_order(user_id):
 	"""

@@ -160096,5 +160096,21 @@
     "weather_condition": "",
     "item_ids": [],
     "order_status": "being_created"
+  },
+  {
+    "order_id": "da2ab91f-1045-4576-8ecd-932a3d09c0ca",
+    "restaurant_id": 1,
+    "food_item": "Pasta",
+    "order_time": "2026-03-24",
+    "delivery_time": "TBD",
+    "delivery_distance": 0,
+    "order_value": 43.91,
+    "delivery_method": "Car",
+    "traffic_condition": "Clear",
+    "weather_condition": "Sunny",
+    "item_ids": [
+      "1-Pasta"
+    ],
+    "order_status": "delivered"
   }
 ]

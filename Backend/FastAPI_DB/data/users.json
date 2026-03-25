@@ -217,10 +217,7 @@
     "username": "2",
     "password": "2",
     "type": 2,
-    "ordersTaken": [
-      "bca97d7d-4e8c-4a31-9353-9f2d50a68dcc",
-      "846616ea-c6e8-45e1-b5b2-5d935dcbbada"
-    ]
+    "ordersTaken": []
   },
   {
     "id": "9b42713b-a108-4b22-9768-cfcfdf4d6781",
@@ -228,7 +225,7 @@
     "password": "1",
     "type": 1,
     "ordersList": [
-      "28fff481-ae39-459d-aa6b-a4d47228af91"
+      "da2ab91f-1045-4576-8ecd-932a3d09c0ca"
     ]
   },
   {
@@ -237,7 +234,7 @@
     "password": "0",
     "type": 2,
     "ordersTaken": [
-      "28fff481-ae39-459d-aa6b-a4d47228af91"
+      "da2ab91f-1045-4576-8ecd-932a3d09c0ca"
     ]
   },
   {
