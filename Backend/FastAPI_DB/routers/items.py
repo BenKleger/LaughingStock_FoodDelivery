@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter
 from typing import List
 from FastAPI_DB.schemas.item import Item, ItemCreate
 from FastAPI_DB.services.items_service import list_items, create_items, get_item_by_item_ID
