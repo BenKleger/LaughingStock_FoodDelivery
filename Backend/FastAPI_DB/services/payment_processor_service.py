@@ -4,6 +4,7 @@ from Backend.FastAPI_DB.schemas.payment_processor import PaymentProcessor, Payme
 from fastapi import HTTPException
 from Backend.FastAPI_DB.repositories.order_repo import save_all, load_all
 from Backend.FastAPI_DB.services.orders_service import change_order_status
+from FastAPI_DB.services.orders_service import get_order_by_order_id
 
 def process_payment(payload: PaymentProcessorCreate):
     """
@@ -20,10 +21,8 @@ def process_payment(payload: PaymentProcessorCreate):
     """
     valid = validatePaymentMethod(payload)
     if valid["valid"]: 
-        orders = load_all()
         chargePaymentMethod() #dummy method
         change_order_status(payload.order.order_id, "paid")
-        save_all(orders)
         return True
     else: raise HTTPException(status_code=400, detail=valid["errors"])
 
