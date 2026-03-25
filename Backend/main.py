@@ -19,7 +19,7 @@ app.include_router(orders_router)
 app.include_router(items_router)
 app.include_router(menus_router)
 
-if __name__ == "__main__":
+if __name__ == "__main__":  
     """Main branch of operations"""
 
     """LOGIN (or Create account)"""

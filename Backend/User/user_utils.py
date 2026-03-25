@@ -205,7 +205,7 @@ def create_or_edit_order(user_id):
 			if (option == "0" or option == "1" or option == "2"):
 				break
 			print("Invalid Entry. Try again.")
-
+		
 		if option == "0":
 			create_new_order(customer)
 		elif option == "1":

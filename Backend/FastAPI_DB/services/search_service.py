@@ -112,4 +112,3 @@ def paginate_list(payload: SearchCreate, items: List[Item]) -> List[List[str]]:
     for i in range(0, len(sorted_items), ITEMS_PER_PAGE):
         paginated_results.append([item.item_id for item in sorted_items[i:i+ITEMS_PER_PAGE]])
     return paginated_results
-
