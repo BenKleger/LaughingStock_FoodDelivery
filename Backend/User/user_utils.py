@@ -472,12 +472,15 @@ def create_restaurant(user_id): #This mehtod assumes resaurantIds 1-100 is taken
 				return
 
 def manage_menu(user_id):
+	"""
+	Allows a manager to view and change their menu items
+	"""
 	manager = get_user_by_id(user_id)
 	if manager.restaurantId == 0:
 		print("No restaurant assigned. Please select or create a restaurant first.")
 		return
 
-	while(True):
+	while(True): #selection loop 
 		print("'0' View menu, '1' Add item, '2' Remove item, '3' Exit")
 		while(True):
 			user_input = input()
@@ -508,7 +511,7 @@ def add_menu_item(restaurant_id): #adds a new item created by the manager to the
 		item_name = input()
 		if item_name == 'q':
 			return
-		elif(item_name.isalpha() or (len(item_name)>4 and len(item_name)<20)):
+		elif(item_name.isalpha() or (len(item_name)>4 and len(item_name)<20)): #checks that item name is valid
 			break
 		print("Invalid entry try again:")
 
@@ -517,7 +520,7 @@ def add_menu_item(restaurant_id): #adds a new item created by the manager to the
 		item_price = input()
 		if item_price == 'q':
 			return 
-		elif(isFloat(item_price) and float(item_price) > 0):
+		elif(isFloat(item_price) and float(item_price) > 0): #valid float and positive price check
 			break
 		print("Invalid entry try again:")
 
