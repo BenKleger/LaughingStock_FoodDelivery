@@ -68,11 +68,7 @@ def customer_branch(user_id: str):
 	while(True): # for repeated actions
 		customer: Customer = get_user_by_id(user_id)
 		print("Select Valid Option: '0' Search, '1' View Order Status, '2' Create or Edit Order, '3' Log out")
-		while(True): # for ensuring valid actions
-			option = input()
-			if (option == "0" or option == "1" or option == "2" or option == "3"):
-				break
-			print("Invalid Entry. Try Again.")
+		option = check_input(["0","1","2","3"])
 		if (option == "0"): 
 			search()
 		elif (option == "1"):
@@ -82,6 +78,21 @@ def customer_branch(user_id: str):
 		elif (option == "3"):
 			#write back customer with changes to the DB #TODO
 			break
+
+def check_input(allowed_values: list[str]):
+	"""
+	Helper function to skip the while loop for checking user input.
+
+	Input: list of options (int[])
+	Output: valid user input
+	"""
+	option = ""
+	while(True):
+		option = input().strip()
+		if(option in allowed_values):
+			break
+		print("Invalid entry. Try again.")
+	return option
 
 def search():
 	"""
@@ -93,11 +104,7 @@ def search():
 	"""
 	while(True): # for repeated searches
 		print("Select Valid Option: '0' Search by price low to high, '1' Search by price high to low, '2' Exit search engine")
-		while(True): # for ensuring valid entry of filter
-				option = input()
-				if (option == "0" or option == "1" or option == "2"):
-					break
-				print("Invalid Entry. Try Again.")
+		option = check_input(["0","1","2"])
 		if option == "0":
 			search_filter = "price_low_to_high"
 		elif option == "1":
@@ -113,11 +120,7 @@ def search():
 		valid_search = display_page(search, index)
 		while(valid_search): # for repeated changes in page
 			print("\nSelect Valid Option: '0' Next Page, '1' Previous Page, '2' Exit Search")
-			while(True): # for ensuring valid entry of filter
-				option = input()
-				if (option == "0" or option == "1" or option == "2"):
-					break
-				print("Invalid Entry. Try Again.")
+			option = check_input(["0","1","2"])
 			if option == "0":
 				index+=1
 				display_page(search,index)
@@ -178,11 +181,7 @@ def create_or_edit_order(user_id):
 	while(True): # for repeated actions
 		print("Select Valid Option: '0' Create Order, '1' Edit Order, '2' Exit Order Changes")
 		customer:Customer = get_user_by_id(user_id)
-		while(True): # for ensuring valid actions
-			option = input()
-			if (option == "0" or option == "1" or option == "2"):
-				break
-			print("Invalid Entry. Try again.")
+		option = check_input(["0","1","2"])
 
 		if option == "0":
 			create_new_order(customer)
@@ -274,11 +273,7 @@ def edit_order(customer:Customer):
 	while(True): # Can do multiple things in an order
 		print("Input '0' To add items, '1' to remove items, '2' to delete the order, '3' to complete order or '4' to quit editing this order")
 		option = -1
-		while(True):
-			option = input()
-			if(option == '0' or option == '1' or option == '2' or option == '3' or option == '4'):
-				break
-			print("Invalid entry. Try again.")
+		option = check_input(["0","1","2","3","4"])
 		
 		if option == '0': 
 			add_item_to_order(order_id)
