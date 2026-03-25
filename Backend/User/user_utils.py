@@ -7,11 +7,13 @@ from FastAPI_DB.services.orders_service import get_order_by_order_id, create_ord
 from FastAPI_DB.services.items_service import get_item_by_item_ID
 from FastAPI_DB.services.search_service import create_search
 from FastAPI_DB.services.users_service import get_user_by_id
+from FastAPI_DB.services.payment_processor_service import process_payment, validatePaymentMethod
 from FastAPI_DB.repositories.user_repo import load_all as load_users, save_all as save_users
 from FastAPI_DB.repositories.order_repo import load_all as load_orders, save_all as save_orders
 from FastAPI_DB.schemas.search import SearchCreate, Search
 from FastAPI_DB.schemas.order import OrderCreate, Order
 from FastAPI_DB.schemas.user import User, Customer, Driver, Manager
+from FastAPI_DB.schemas.payment_processor import PaymentProcessorCreate
 
 # System variables
 delivery_vars = {
@@ -68,11 +70,7 @@ def customer_branch(user_id: str):
 	while(True): # for repeated actions
 		customer: Customer = get_user_by_id(user_id)
 		print("Select Valid Option: '0' Search, '1' View Order Status, '2' Create or Edit Order, '3' Log out")
-		while(True): # for ensuring valid actions
-			option = input()
-			if (option == "0" or option == "1" or option == "2" or option == "3"):
-				break
-			print("Invalid Entry. Try Again.")
+		option = check_input(["0","1","2","3"])
 		if (option == "0"): 
 			search()
 		elif (option == "1"):
@@ -82,6 +80,21 @@ def customer_branch(user_id: str):
 		elif (option == "3"):
 			#write back customer with changes to the DB #TODO
 			break
+
+def check_input(allowed_values: list[str]):
+	"""
+	Helper function to skip the while loop for checking user input.
+
+	Input: list of options (int[])
+	Output: valid user input
+	"""
+	option = ""
+	while(True):
+		option = input().strip()
+		if(option in allowed_values):
+			break
+		print("Invalid entry. Try again.")
+	return option
 
 def search():
 	"""
@@ -93,11 +106,7 @@ def search():
 	"""
 	while(True): # for repeated searches
 		print("Select Valid Option: '0' Search by price low to high, '1' Search by price high to low, '2' Exit search engine")
-		while(True): # for ensuring valid entry of filter
-				option = input()
-				if (option == "0" or option == "1" or option == "2"):
-					break
-				print("Invalid Entry. Try Again.")
+		option = check_input(["0","1","2"])
 		if option == "0":
 			search_filter = "price_low_to_high"
 		elif option == "1":
@@ -113,11 +122,7 @@ def search():
 		valid_search = display_page(search, index)
 		while(valid_search): # for repeated changes in page
 			print("\nSelect Valid Option: '0' Next Page, '1' Previous Page, '2' Exit Search")
-			while(True): # for ensuring valid entry of filter
-				option = input()
-				if (option == "0" or option == "1" or option == "2"):
-					break
-				print("Invalid Entry. Try Again.")
+			option = check_input(["0","1","2"])
 			if option == "0":
 				index+=1
 				display_page(search,index)
@@ -178,11 +183,7 @@ def create_or_edit_order(user_id):
 	while(True): # for repeated actions
 		print("Select Valid Option: '0' Create Order, '1' Edit Order, '2' Exit Order Changes")
 		customer:Customer = get_user_by_id(user_id)
-		while(True): # for ensuring valid actions
-			option = input()
-			if (option == "0" or option == "1" or option == "2"):
-				break
-			print("Invalid Entry. Try again.")
+		option = check_input(["0","1","2"])
 
 		if option == "0":
 			create_new_order(customer)
@@ -274,11 +275,7 @@ def edit_order(customer:Customer):
 	while(True): # Can do multiple things in an order
 		print("Input '0' To add items, '1' to remove items, '2' to delete the order, '3' to complete order or '4' to quit editing this order")
 		option = -1
-		while(True):
-			option = input()
-			if(option == '0' or option == '1' or option == '2' or option == '3' or option == '4'):
-				break
-			print("Invalid entry. Try again.")
+		option = check_input(["0","1","2","3","4"])
 		
 		if option == '0': 
 			add_item_to_order(order_id)
@@ -288,7 +285,7 @@ def edit_order(customer:Customer):
 			del_order(order_id,customer.id)
 			break
 		elif option == '3':
-			complete_order(order_id)
+			complete_order(order_id,customer.id)
 			break
 		else: return
 
@@ -337,15 +334,38 @@ def del_order(order_id,user_id):
 		delete_order(order_id)
 		print("Order Sucessfully Deleted!")
 		return
-	
-def complete_order(order_id):
+
+def complete_order(order_id, user_id):
 	"""
-	Changes order status to sent (awaiting driver acceptance)
+	Prompts the user to input a payment method
 	"""
-	#TODO Add payment system implementation
-	order: Order = get_order_by_order_id(order_id)
-	order.order_status = "sent"
-	alter_order_json(order)
+	user: Customer = get_user_by_id(user_id).model_dump()
+	order: Order = get_order_by_order_id(order_id).model_dump()
+	processor = PaymentProcessorCreate(customer=user,order=order)
+	print("Select payment method: '0': Credit, '1': Debit, '2': Apple Pay, '3': Paypal")
+	option = check_input(["0", "1", "2", "3"])
+	while(True):
+		if(option == "0" or option == "1"):
+			if option == "0": processor.payment_method = "CREDIT"
+			else: processor.payment_method = "DEBIT"
+			print("Note: 4 and fifteen 1s is a valid card number")
+			processor.payment_number = input("Card number: ")
+			processor.payment_pin = input("Payment pin (CVV): ")
+			processor.card_holder_name = input("Card holder name: ")
+			processor.billing_address = input("Billing address: ")
+			print("Note: postal code format is A1A 1A1")
+			processor.postal_code = input("Postal code: ")
+		if(option == "2" or option =="3"):
+			if option == "2": processor.payment_method = "APPLEPAY"
+			else: processor.payment_method = "PAYPAL"
+			print("Note: email format is name@domain.TLD")
+			processor.email = input("Payment email: ")
+			processor.email_password = input("Email password: ")
+		if process_payment(processor): break
+		# updates status to "paid" if everything is valid
+		else:
+			print("Invalid payment method. Please try again.")
+	print("Successeful!")
 
 def alter_order_json(new_order: Order):
 	"""

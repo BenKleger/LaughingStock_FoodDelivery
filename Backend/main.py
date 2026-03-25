@@ -20,30 +20,26 @@ app.include_router(items_router)
 app.include_router(menus_router)
 
 
-# import datetime
-# print(str(datetime.datetime.now())[17:19])
-# print(str(datetime.datetime.now())[11:19])
+# """Must be commented out for pytest (Thanks Aiden!)"""
 
-"""Must be commented out for pytest (Thanks Aiden!)"""
+# """Main branch of operations"""
 
-"""Main branch of operations"""
+# """LOGIN (or Create account)"""
+# user_id = login()
 
-"""LOGIN (or Create account)"""
-#user_id = login()
-
-"""Depending on user type have separate functionalities."""
-#user_type = get_user_by_id(user_id).type
-#if user_type == 1:
+# """Depending on user type have separate functionalities."""
+# user_type = get_user_by_id(user_id).type
+# if user_type == 1:
 #    """Customer functionality"""
 #    customer_branch(user_id)
 
 
-#elif user_type == 2:
+# elif user_type == 2:
 #    """Driver functionality"""
 #    while(True):
 #        break
 
-#elif user_type == 3:
+# elif user_type == 3:
 #    """Manager functionality"""
 #    while(True):
 #        break
