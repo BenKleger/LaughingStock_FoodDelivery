@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List
-from .item import Item
+from schemas.item import Item
 
 class Menu(BaseModel):
     menu_id: int

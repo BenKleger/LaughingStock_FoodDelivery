@@ -1,10 +1,10 @@
 from fastapi import HTTPException
 import pytest
 
-from ..FastAPI_DB.schemas.item import Item, ItemCreate
-from ..FastAPI_DB.services.items_service import create_items
-from ..FastAPI_DB.schemas.order import Order, OrderCreate
-from ..FastAPI_DB.services.orders_service import create_orders, add_order_item, delete_order_item, delete_order, get_order_by_order_id, change_order_status
+from Backend.FastAPI_DB.schemas.item import Item, ItemCreate
+from Backend.FastAPI_DB.services.items_service import create_items
+from Backend.FastAPI_DB.schemas.order import Order, OrderCreate
+from Backend.FastAPI_DB.services.orders_service import create_orders, add_order_item, delete_order_item, delete_order, get_order_by_order_id, change_order_status
     
 order: Order = None
 

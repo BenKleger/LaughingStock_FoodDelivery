@@ -1,8 +1,8 @@
 import uuid
 from typing import List
 from fastapi import HTTPException
-from ..schemas.user import Customer, Driver, User, UserCreate, Manager
-from ..repositories.user_repo import load_all, save_all
+from FastAPI_DB.schemas.user import Customer, Driver, User, UserCreate, Manager
+from FastAPI_DB.repositories.user_repo import load_all, save_all
 
 
 def list_users() -> List[User]:

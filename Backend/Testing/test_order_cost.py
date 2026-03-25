@@ -1,7 +1,7 @@
-from ..FastAPI_DB.services.orders_service import get_order_by_order_id
-from ..FastAPI_DB.services.items_service import get_item_by_item_ID
+from Backend.FastAPI_DB.services.orders_service import get_order_by_order_id
+from Backend.FastAPI_DB.services.items_service import get_item_by_item_ID
 
-from ..User.user_utils import get_order_cost
+from Backend.User.user_utils import get_order_cost
 
 def test_order_cost():
     """Tests order cost calculations"""

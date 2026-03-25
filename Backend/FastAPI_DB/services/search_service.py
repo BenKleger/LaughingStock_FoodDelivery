@@ -4,10 +4,10 @@ from fastapi import HTTPException
 
 from FastAPI_DB.schemas.item import Item
 
-from ..schemas.search import Search, SearchCreate
-from .menus_service import get_menu_by_menu_ID
-from .items_service import get_item_by_item_ID
-from ..repositories.item_repo import load_all as items_load
+from FastAPI_DB.schemas.search import Search, SearchCreate
+from services.menus_service import get_menu_by_menu_ID
+from services.items_service import get_item_by_item_ID
+from FastAPI_DB.repositories.item_repo import load_all as items_load
 
 ITEMS_PER_PAGE = 10
 

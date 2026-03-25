@@ -1,5 +1,5 @@
-from ..FastAPI_DB.services.items_service import list_items, reset_items_DB
-from ..FastAPI_DB.schemas.item import Item
+from Backend.FastAPI_DB.services.items_service import list_items, reset_items_DB
+from Backend.FastAPI_DB.schemas.item import Item
 
 
 def test_item_database_creation():

@@ -1,10 +1,10 @@
 from typing import List
 from fastapi import HTTPException
 
-from ..schemas.menu import Menu, MenuCreate
-from ..repositories.menu_repo import load_all as menus_load, save_all as menus_save
+from FastAPI_DB.schemas.menu import Menu, MenuCreate
+from FastAPI_DB.repositories.menu_repo import load_all as menus_load, save_all as menus_save
 
-from ..repositories.item_repo import load_all as items_load
+from FastAPI_DB.repositories.item_repo import load_all as items_load
 
 
 def list_menus() -> List[Menu]:

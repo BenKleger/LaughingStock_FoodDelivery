@@ -1,9 +1,9 @@
 from fastapi import HTTPException
 import pytest
 
-from ..FastAPI_DB.schemas.search import Search, SearchCreate
-from ..FastAPI_DB.services.search_service import create_search
-from ..FastAPI_DB.services.items_service import get_item_by_item_ID
+from Backend.FastAPI_DB.schemas.search import Search, SearchCreate
+from Backend.FastAPI_DB.services.search_service import create_search
+from Backend.FastAPI_DB.services.items_service import get_item_by_item_ID
     
 def test_search_service_by_item_id():
     """

@@ -1,10 +1,10 @@
 from typing import List
 from fastapi import HTTPException
 
-from ..schemas.item import Item, ItemCreate
-from ..repositories.item_repo import load_all as items_load, save_all as items_save
+from FastAPI_DB.schemas.item import Item, ItemCreate
+from FastAPI_DB.repositories.item_repo import load_all as items_load, save_all as items_save
 
-from ..repositories.order_repo import load_all as orders_load
+from FastAPI_DB.repositories.order_repo import load_all as orders_load
 
 
 def list_items() -> List[Item]:

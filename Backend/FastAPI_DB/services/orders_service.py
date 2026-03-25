@@ -1,11 +1,11 @@
 from typing import List
 from fastapi import HTTPException
-from ..schemas.order import Order, OrderCreate
-from ..repositories.order_repo import load_all, save_all
+from FastAPI_DB.schemas.order import Order, OrderCreate
+from FastAPI_DB.repositories.order_repo import load_all, save_all
 import csv
 import uuid
-from .items_service import get_item_by_item_ID
-from ..schemas.item import Item as item 
+from services.items_service import get_item_by_item_ID
+from FastAPI_DB.schemas.item import Item as item 
 
 def list_orders() -> List[Order]:
     return [Order(**it) for it in load_all()]

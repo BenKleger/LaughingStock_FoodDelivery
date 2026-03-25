@@ -1,4 +1,4 @@
-from ..FastAPI_DB.services.menus_service import get_menu_by_menu_ID
+from Backend.FastAPI_DB.services.menus_service import get_menu_by_menu_ID
 
 def test_menu_by_menu_ID():
     """

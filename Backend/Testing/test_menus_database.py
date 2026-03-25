@@ -1,5 +1,5 @@
-from ..FastAPI_DB.services.menus_service import list_menus, reset_menus_DB
-from ..FastAPI_DB.schemas.menu import Menu
+from Backend.FastAPI_DB.services.menus_service import list_menus, reset_menus_DB
+from Backend.FastAPI_DB.schemas.menu import Menu
 
 
 def test_menu_database_creation():
