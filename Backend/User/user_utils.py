@@ -176,12 +176,13 @@ def view_order_status(user):
 		else:
 			for order_id in customer.ordersList:
 				order = get_order_by_order_id(order_id)
-				if order.delivery_distance > 1:  
-					order.delivery_distance-=1
-				else: 
-					order.delivery_distance = 0
-					order.order_status = "delivered"
-					print("\n\nOrder has been Delivered!\n\n")
+				if order.order_status == "accepted":
+					if order.delivery_distance > 1:  
+						order.delivery_distance -= 1
+					else: 
+						order.delivery_distance = 0
+						order.order_status = "delivered"
+						print("\n\nOrder has been Delivered!\n\n")
 				alter_order_json(order)
 				print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nItems:")
 				if len(order.item_ids) == 0:
