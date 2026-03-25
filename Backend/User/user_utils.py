@@ -184,7 +184,7 @@ def view_order_status(user):
 						order.order_status = "delivered"
 						print("\n\nOrder has been Delivered!\n\n")
 				alter_order_json(order)
-				print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nItems:")
+				print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nDistance Remaining: "+ str(order.delivery_distance)+"\nItems:")
 				if len(order.item_ids) == 0:
 					print("\tNo items in order")
 					return
