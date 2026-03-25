@@ -151,8 +151,9 @@ def add_order_item(user_order_id: str, new_item_id: str):
     
     save_all(orders)
 
-    return o
+    print("\n\n", item_to_add.name, " is successfully added to the order (", o.order_id, "\n\n")
 
+    return o
 
 
 
@@ -201,6 +202,8 @@ def delete_order_item(user_order_id: str, item_id_to_remove: str):
     order_dict['item_ids'] = o.item_ids
     
     save_all(orders)
+
+    print("\n\n", get_item_by_item_ID(item_id_to_remove).name, " is successfully removed from the order (", o.order_id, "\n\n")
     
     return o
 
@@ -230,6 +233,9 @@ def delete_order(user_order_id: str):
                 raise HTTPException(status_code=400, detail=f"Order '{user_order_id}' cannot be deleted because it is not in 'being_created' status")
             orders.remove(order)
             save_all(orders)
+            
+            print("\n\nOrder (", order.get("order_id"), ") is successfully deleted\n\n")
+
             return True
     
     raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
@@ -280,5 +286,7 @@ def change_order_status(user_order_id: str, new_status: str):
     order_dict['order_status'] = o.order_status
     
     save_all(orders)
+
+    print("\n\nOrder (", o.order_id, ") status changed to ", o.order_status, "\n\n")
 
     return o

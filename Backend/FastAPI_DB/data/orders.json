@@ -160000,7 +160000,7 @@
     "order_status": "delivered"
   },
   {
-    "order_id": "cc9d4d5b-d488-44c2-a769-bd949fbaaa76",
+    "order_id": "5b0c61a7-6f4c-4021-9270-6ab90442c79b",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160014,7 +160014,21 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "d942b671-0d65-4351-8353-8bbeea188df6",
+    "order_id": "ac911cd9-a0a5-4a94-a98e-453ed16593ee",
+    "restaurant_id": 16,
+    "food_item": "Taccos",
+    "order_time": "",
+    "delivery_time": "",
+    "delivery_distance": 1.0,
+    "order_value": 1.0,
+    "delivery_method": "",
+    "traffic_condition": "",
+    "weather_condition": "",
+    "item_ids": [],
+    "order_status": "paid"
+  },
+  {
+    "order_id": "50c90cd8-641a-40c9-9985-afb9251af25a",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160028,7 +160042,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "3e11ab11-c1da-4449-830f-384d5c4f020b",
+    "order_id": "8df2cc10-6380-4b69-9b7e-d6ebfe18bed7",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160042,7 +160056,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "8f60b1db-2146-4223-94a4-930d37592343",
+    "order_id": "f683e282-b81d-4525-ab20-ca702a76a686",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160056,7 +160070,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "87b983db-b7b7-4f7d-8e5a-7e8da76448f3",
+    "order_id": "fa91c9d2-9aa8-421b-993d-35a093bb8e21",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160067,24 +160081,10 @@
     "traffic_condition": "",
     "weather_condition": "",
     "item_ids": [],
-    "order_status": "being_created"
+    "order_status": "paid"
   },
   {
-    "order_id": "df75a0e7-098b-4d78-b395-4fa40a628617",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "90ac8808-68a5-458d-856f-5768a7d18210",
+    "order_id": "12392c8b-ef86-4179-bbb5-410509de034f",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",

@@ -7,11 +7,13 @@ from FastAPI_DB.services.orders_service import get_order_by_order_id, create_ord
 from FastAPI_DB.services.items_service import get_item_by_item_ID
 from FastAPI_DB.services.search_service import create_search
 from FastAPI_DB.services.users_service import get_user_by_id
+from FastAPI_DB.services.payment_processor_service import process_payment, validatePaymentMethod
 from FastAPI_DB.repositories.user_repo import load_all as load_users, save_all as save_users
 from FastAPI_DB.repositories.order_repo import load_all as load_orders, save_all as save_orders
 from FastAPI_DB.schemas.search import SearchCreate, Search
 from FastAPI_DB.schemas.order import OrderCreate, Order
 from FastAPI_DB.schemas.user import User, Customer, Driver, Manager
+from FastAPI_DB.schemas.payment_processor import PaymentProcessorCreate
 
 # System variables
 delivery_vars = {
@@ -188,7 +190,7 @@ def view_order_status(user):
 			for order_id in driver.ordersTaken:
 				order = get_order_by_order_id(order_id)
 				# Drivers would also want the TODO value to driver
-				print("Order: "+ order_id+"\Distance: " + str(order.delivery_distance)+"km\nItems:")
+				print("Order: "+ order_id+"\nDistance: " + str(order.delivery_distance)+"km\nItems:")
 				if len(order.item_ids) == 0:
 					print("\tNo items in order")
 					return
@@ -235,7 +237,7 @@ def create_new_order(customer: Customer):
 	new_order = create_orders(new_order_create)
 	customer.ordersList.append(new_order.order_id)
 	alter_user_json(customer)
-	print("Order Sucessfully Added!")
+	print("\n\nOrder Sucessfully Added!\n\n")
 	
 def get_item_input():
 	while(True):
@@ -305,7 +307,7 @@ def edit_order(customer:Customer):
 			del_order(order_id,customer.id)
 			break
 		elif option == '3':
-			complete_order(order_id)
+			complete_order(order_id,customer.id)
 			break
 		else: return
 
@@ -354,15 +356,38 @@ def del_order(order_id,user_id):
 		delete_order(order_id)
 		print("Order Sucessfully Deleted!")
 		return
-	
-def complete_order(order_id):
+
+def complete_order(order_id, user_id):
 	"""
-	Changes order status to sent (awaiting driver acceptance)
+	Prompts the user to input a payment method
 	"""
-	#TODO Add payment system implementation
-	order: Order = get_order_by_order_id(order_id)
-	order.order_status = "sent"
-	alter_order_json(order)
+	user: Customer = get_user_by_id(user_id).model_dump()
+	order: Order = get_order_by_order_id(order_id).model_dump()
+	processor = PaymentProcessorCreate(customer=user,order=order)
+	print("Select payment method: '0': Credit, '1': Debit, '2': Apple Pay, '3': Paypal")
+	option = check_input(["0", "1", "2", "3"])
+	while(True):
+		if(option == "0" or option == "1"):
+			if option == "0": processor.payment_method = "CREDIT"
+			else: processor.payment_method = "DEBIT"
+			print("Note: 4 and fifteen 1s is a valid card number")
+			processor.payment_number = input("Card number: ")
+			processor.payment_pin = input("Payment pin (CVV): ")
+			processor.card_holder_name = input("Card holder name: ")
+			processor.billing_address = input("Billing address: ")
+			print("Note: postal code format is A1A 1A1")
+			processor.postal_code = input("Postal code: ")
+		if(option == "2" or option =="3"):
+			if option == "2": processor.payment_method = "APPLEPAY"
+			else: processor.payment_method = "PAYPAL"
+			print("Note: email format is name@domain.TLD")
+			processor.email = input("Payment email: ")
+			processor.email_password = input("Email password: ")
+		if process_payment(processor): break
+		# updates status to "paid" if everything is valid
+		else:
+			print("Invalid payment method. Please try again.")
+	print("Successeful!")
 
 def alter_order_json(new_order: Order):
 	"""
