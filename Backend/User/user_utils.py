@@ -240,12 +240,17 @@ def create_new_order(customer: Customer):
 	if item == 'q':
 		return
 	print()
+	date_digits = 10
+	low_distance = 1
+	high_distance = 25
+	num_decimals = 2
+	delivery_fee = 7
 	new_order_create = OrderCreate(restaurant_id=item.restaurant_id, 
 							food_item = item.name,
-							order_time = str(datetime.datetime.now())[:10], 
+							order_time = str(datetime.datetime.now())[:date_digits], 
 							delivery_time = "TBD", 
-							delivery_distance = round(random.uniform(1, 25), 2), 
-							order_value = 7 + item.price, 
+							delivery_distance = round(random.uniform(low_distance, high_distance), num_decimals), 
+							order_value = delivery_fee + item.price, 
 							delivery_method = "Car", 
 							traffic_condition = "Clear", 
 							weather_condition = "Sunny",
@@ -341,7 +346,8 @@ def add_item_to_order(order_id):
 
 def remove_item_from_order(order_id):
 	order = get_order_by_order_id(order_id)
-	if(len(order.item_ids) == 0):
+	empty = 0
+	if(len(order.item_ids) == empty):
 		print("No items in order!")
 		return
 	
@@ -520,7 +526,8 @@ def manage_restaurants(user_id):
 def view_restaurants(user_id):
 	unowned_restaurants = get_unownedRestuarants()
 	unowned_restaurants.sort()
-	if len(unowned_restaurants) == 0:
+	empty = 0
+	if len(unowned_restaurants) == empty:
 		print("No restaurants available to manage. Please create a new restaurant.")
 		return
 	
@@ -576,7 +583,8 @@ def manage_menu(user_id):
 	Allows a manager to view and change their menu items
 	"""
 	manager = get_user_by_id(user_id)
-	if manager.restaurantId == 0:
+	no_restaurant = 0
+	if manager.restaurantId == no_restaurant:
 		print("No restaurant assigned. Please select or create a restaurant first.")
 		return
 
@@ -594,7 +602,8 @@ def manage_menu(user_id):
 		
 def view_menu(restaurant_id):
 	menu = get_menu_by_menu_ID(str(restaurant_id)).items
-	if len(menu) == 0:
+	empty = 0
+	if len(menu) == empty:
 		print("no items/ no menu")
 		return
 	print("Item id \t\t Item name \t\t Price")
