@@ -505,9 +505,9 @@ def manager_branch(user_id):
 			print("Invalid Entry. Try Again.")
 		if (option == "0"): 
 			manage_restaurants(user_id)
-		if(option == "1"):
+		elif(option == "1"):
 			manage_menu(user_id)
-		if(option == "2"):
+		elif(option == "2"):
 			return
 
 def manage_restaurants(user_id):
@@ -573,15 +573,14 @@ def create_restaurant(user_id): #This mehtod assumes resaurantIds 1-100 is taken
 		user_input = input()
 		if user_input == 'q':
 			return
+		if (not(user_input.isdigit()) or int(user_input) in get_unownedRestuarants() or int(user_input) in get_ownedRestuarants() or int(user_input) > 999): #check if input is a valid id
+			print("Invalid entry, try again:")
 		else:
-			if (not(user_input.isdigit()) or int(user_input) < 100 or int(user_input) in get_ownedRestuarants()): #check if input is a valid id
-				print("Invalid entry, try again:")
-			else:
-				manager = get_user_by_id(user_id)
-				manager.restaurantId = int(user_input)
-				alter_user_json(manager)
-				print("Restaurant created and assigned!")
-				return
+			manager = get_user_by_id(user_id)
+			manager.restaurantId = int(user_input)
+			alter_user_json(manager)
+			print("Restaurant created and assigned!")
+			return
 
 def manage_menu(user_id):
 	"""
@@ -667,7 +666,9 @@ def remove_menu_item(restaurant_id):
 				menus = load_menu()
 				for menu in menus:
 					if menu["menu_id"] == restaurant_id:
-						menu["items"] = [item for item in menu["items"] if item["item_id"] != user_input] #relists all items from menu except one for deletion
+						menu["items"] = [
+							item for item in menu["items"] 
+							if item["item_id"] != user_input] #relists all items from menu except one for deletion
 						break
 				save_menus(menus)
 				items = load_items()
