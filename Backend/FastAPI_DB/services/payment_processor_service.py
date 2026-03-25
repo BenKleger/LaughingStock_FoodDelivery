@@ -1,9 +1,9 @@
 import re
 # from Backend.FastAPI_DB.schemas import user as userClass
-from Backend.FastAPI_DB.schemas.payment_processor import PaymentProcessor, PaymentProcessorCreate
+from FastAPI_DB.schemas.payment_processor import PaymentProcessor, PaymentProcessorCreate
 from fastapi import HTTPException
-from Backend.FastAPI_DB.repositories.order_repo import save_all, load_all
-from Backend.FastAPI_DB.services.orders_service import change_order_status
+from FastAPI_DB.repositories.order_repo import save_all, load_all
+from FastAPI_DB.services.orders_service import change_order_status
 
 def process_payment(payload: PaymentProcessorCreate):
     """
@@ -233,10 +233,10 @@ def checkPassword(password):
     else: return "EMAIL PASSWORD TOO SHORT!"
 import re
 # from Backend.FastAPI_DB.schemas import user as userClass
-from Backend.FastAPI_DB.schemas.payment_processor import PaymentProcessor, PaymentProcessorCreate
+from FastAPI_DB.schemas.payment_processor import PaymentProcessor, PaymentProcessorCreate
 from fastapi import HTTPException
-from Backend.FastAPI_DB.repositories.order_repo import save_all, load_all
-from Backend.FastAPI_DB.services.orders_service import change_order_status
+from FastAPI_DB.repositories.order_repo import save_all, load_all
+from FastAPI_DB.services.orders_service import change_order_status
 from FastAPI_DB.services.orders_service import get_order_by_order_id
 
 def process_payment(payload: PaymentProcessorCreate):

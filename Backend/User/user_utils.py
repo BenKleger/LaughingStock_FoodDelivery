@@ -97,6 +97,7 @@ def check_input(allowed_values: list[str]):
 		if(option in allowed_values):
 			break
 		print("Invalid entry. Try again.")
+	print()
 	return option
 
 def search():
@@ -134,6 +135,7 @@ def search():
 				display_page(search,index)
 			else:
 				break
+			print()
 	
 def display_page(search: Search, index: int):
 	"""
@@ -161,6 +163,8 @@ def view_order_status(user):
 	Lists all orders corresponding to user, with their associated statuses.
 	
 	Functions for drivers and customers
+	
+	Decrements the distance on an order when called from a customer :)
 	"""
 
 	if isinstance(user, Customer):
@@ -172,7 +176,15 @@ def view_order_status(user):
 		else:
 			for order_id in customer.ordersList:
 				order = get_order_by_order_id(order_id)
-				print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nItems:")
+				if order.order_status == "accepted":
+					if order.delivery_distance > 1:  
+						order.delivery_distance = round(order.delivery_distance-1,2)
+					else: 
+						order.delivery_distance = 0
+						order.order_status = "delivered"
+						print("\n\nOrder has been Delivered!\n\n")
+				alter_order_json(order)
+				print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nDistance Remaining: "+ str(order.delivery_distance)+"km\nItems:")
 				if len(order.item_ids) == 0:
 					print("\tNo items in order")
 					return
@@ -190,13 +202,14 @@ def view_order_status(user):
 			for order_id in driver.ordersTaken:
 				order = get_order_by_order_id(order_id)
 				# Drivers would also want the TODO value to driver
-				print("Order: "+ order_id+"\nDistance: " + str(order.delivery_distance)+"km\nItems:")
+				print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nDistance: " + str(order.delivery_distance)+"km\nItems:")
 				if len(order.item_ids) == 0:
 					print("\tNo items in order")
 					return
 				for item_id in order.item_ids:
 					item = get_item_by_item_ID(item_id)
-					print("\t"+item.name+ ": $" + str(item.price))	
+					print("\t"+item.name+ ": $" + str(item.price))
+				print()	
 
 def create_or_edit_order(user_id):
 	"""
@@ -223,6 +236,7 @@ def create_new_order(customer: Customer):
 	item = get_item_input()
 	if item == 'q':
 		return
+	print()
 	new_order_create = OrderCreate(restaurant_id=item.restaurant_id, 
 							food_item = item.name,
 							order_time = str(datetime.datetime.now())[:10], 
@@ -292,7 +306,7 @@ def edit_order(customer:Customer):
 			print("Invalid entry. Try again.")
 		except:
 			print("Invalid entry. Try again.")
-		
+	print()
 	order_id = order_list_dict[int(inputted_value)]
 	while(True): 
 		print("Input '0' To add items, '1' to remove items, '2' to delete the order, '3' to complete order or '4' to quit editing this order")
@@ -342,7 +356,8 @@ def remove_item_from_order(order_id):
 		print("Invalid Entry. Try again.")
 
 	delete_order_item(order_id, inputted_value)
-	
+	print()
+
 def del_order(order_id,user_id):
 	"""
 	Deletes the order.
@@ -354,8 +369,7 @@ def del_order(order_id,user_id):
 		user.ordersList.remove(order_id)
 		alter_user_json(user)
 		delete_order(order_id)
-		print("Order Sucessfully Deleted!")
-		return
+		print("\nOrder Sucessfully Deleted!\n")
 
 def complete_order(order_id, user_id):
 	"""
@@ -367,26 +381,29 @@ def complete_order(order_id, user_id):
 	print("Select payment method: '0': Credit, '1': Debit, '2': Apple Pay, '3': Paypal")
 	option = check_input(["0", "1", "2", "3"])
 	while(True):
-		if(option == "0" or option == "1"):
-			if option == "0": processor.payment_method = "CREDIT"
-			else: processor.payment_method = "DEBIT"
-			print("Note: 4 and fifteen 1s is a valid card number")
-			processor.payment_number = input("Card number: ")
-			processor.payment_pin = input("Payment pin (CVV): ")
-			processor.card_holder_name = input("Card holder name: ")
-			processor.billing_address = input("Billing address: ")
-			print("Note: postal code format is A1A 1A1")
-			processor.postal_code = input("Postal code: ")
-		if(option == "2" or option =="3"):
-			if option == "2": processor.payment_method = "APPLEPAY"
-			else: processor.payment_method = "PAYPAL"
-			print("Note: email format is name@domain.TLD")
-			processor.email = input("Payment email: ")
-			processor.email_password = input("Email password: ")
-		if process_payment(processor): break
-		# updates status to "paid" if everything is valid
-		else:
-			print("Invalid payment method. Please try again.")
+		try:
+			if(option == "0" or option == "1"):
+				if option == "0": processor.payment_method = "CREDIT"
+				else: processor.payment_method = "DEBIT"
+				print("Note: 4 and fifteen 1s is a valid card number")
+				processor.payment_number = input("Card number: ")
+				processor.payment_pin = input("Payment pin (CVV): ")
+				processor.card_holder_name = input("Card holder name: ")
+				processor.billing_address = input("Billing address: ")
+				print("Note: postal code format is A1A 1A1")
+				processor.postal_code = input("Postal code: ")
+			if(option == "2" or option =="3"):
+				if option == "2": processor.payment_method = "APPLEPAY"
+				else: processor.payment_method = "PAYPAL"
+				print("Note: email format is name@domain.TLD")
+				processor.email = input("Payment email: ")
+				processor.email_password = input("Email password: ")
+			if process_payment(processor): break
+			# updates status to "paid" if everything is valid
+			else:
+				print("Invalid payment method. Please try again.")
+		except:
+				print("Invalid payment method. Please try again.")
 	print("Successeful!")
 
 def alter_order_json(new_order: Order):
@@ -405,7 +422,7 @@ def driver_branch(user_id):
 	Responsible for all driver logic in main branch.
 
 	Allows driver users to:
-		0. Search for available orders (in "sent" status)
+		0. Search for available orders (in "paid" status)
 		1. View current orders taken
 		2. View distance for an order taken
 		3. start delivery of a taken order
@@ -413,12 +430,13 @@ def driver_branch(user_id):
 	"""
 	while(True): 
 		driver: Driver = get_user_by_id(user_id)
-		print("Select Valid Option: '0' Search sent orders (awaiting drivers), '1' View Orders Accepted, '2' Accept an order, '3' Log out")
+		print("Select Valid Option: '0' Search paid orders (awaiting drivers), '1' View Orders Accepted, '2' Accept an order, '3' Log out")
 		while(True): 
 			option = input()
 			if (option == "0" or option == "1" or option == "2" or option == "3"):
 				break
 			print("Invalid Entry. Try Again.")
+		print()
 		if (option == "0"): 
 			driver_search()
 		elif (option == "1"):
@@ -431,32 +449,33 @@ def driver_branch(user_id):
 def driver_search():
 	"""
 	Returns:
-		list of order IDs in the 'sent' status
+		list of order IDs in the 'paid' status
 	prints: 
-		Availible orders for pickup (in 'sent' status)				
+		Availible orders for pickup (in 'paid' status)				
 	"""
 	orders = load_orders()
-	sent_orders = []
+	paid_orders = []
 	for order in orders:
-		if order.get("order_status") == "sent":
-			sent_orders.append(order.get("order_id"))
+		if order.get("order_status") == "paid":
+			paid_orders.append(order.get("order_id"))
 	
-	for orderID in sent_orders:
+	for orderID in paid_orders:
 		order = get_order_by_order_id(orderID)
 		print("OrderID:", order.order_id, "\nStatus:",order.order_status,"\nOrder Distance:", str(order.delivery_distance), "\nOrder Value", str(order.order_value))
 
-	return sent_orders
+	return paid_orders
 
 def accept_order(driver:Driver):
-	sent_orders = driver_search()
-	print("Enter a valid OrderID in the list of 'sent' orders, or 'q' to quit")
+	paid_orders = driver_search()
+	print("Enter a valid OrderID in the list of 'paid' orders, or 'q' to quit")
 	while True:
 		order_id = input()
-		if order_id in sent_orders:
+		if order_id in paid_orders:
 			break
 		if order_id == 'q':
 			return
 		print("Invalid order ID")
+	print()
 	order = get_order_by_order_id(order_id)
 	driver.ordersTaken.append(order_id)
 	order.order_status = "accepted"
@@ -476,7 +495,7 @@ def manager_branch(user_id):
 	
 	while(True): 
 		manager: Manager = get_user_by_id(user_id)
-		print("Select Valid Option: '0' Search sent orders (awaiting drivers), '1' View Order Status, '2' Create or Edit Order, '3' Log out")
+		print("Select Valid Option: '0' Search paid orders (awaiting drivers), '1' View Order Status, '2' Create or Edit Order, '3' Log out")
 		while(True): 
 			option = input()
 			if (option == "0" or option == "1" or option == "2" or option == "3"):
