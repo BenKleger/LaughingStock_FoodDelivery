@@ -160000,217 +160000,23 @@
     "order_status": "delivered"
   },
   {
-    "order_id": "f5aed5fd-b123-4589-86e5-46fae1368f6f",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "0b67027e-4548-4b1a-96a2-788a19896484",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "f8a75967-65db-4fe2-b955-cf91dbcb8320",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "f6b50229-ca7e-4fb5-9212-4e770f23d1ae",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "1d591bf5-8866-4ccb-b5b0-c436bb465f5e",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "c6b08e06-3ff7-4883-b241-9bd3698b0ed8",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "a22b21b4-d47d-46c0-8e93-ce0e490f04af",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "4c7b8da1-c8b3-4f41-b8f9-6682674f3379",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "998eb31c-95b9-4240-99fa-ebf1b3a816b0",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "c7c42762-4b48-4105-9e41-cf29987f1964",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "f556c0be-a97a-41c6-9ce5-931bd28d2f19",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "3631f1e9-531b-4253-a1c4-f8f71a35d82d",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "a62254bc-1e23-413a-b553-37f766af6d9d",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "65cd92ef-aab0-4011-a1b6-5779ba3842a3",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "6b0570f2-bf0a-47b7-948f-c53355438c99",
+    "order_id": "c3803eb9-a50e-4922-95cd-239002f9a686",
     "restaurant_id": 101,
     "food_item": "Test Food",
     "order_time": "now",
     "delivery_time": "later",
     "delivery_distance": 5.5,
-    "order_value": 10.12,
+    "order_value": 47.019999999999996,
     "delivery_method": "bike",
     "traffic_condition": "light",
     "weather_condition": "sunny",
-    "item_ids": [],
+    "item_ids": [
+      "21-Pasta"
+    ],
     "order_status": "being_created"
   },
   {
-    "order_id": "a49cf273-3bc5-49df-8e6f-d778046ff651",
+    "order_id": "ab6adf98-36e5-4122-9cc3-2b5a32055701",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160224,7 +160030,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "f6a2c9d6-1f3a-4526-bb15-363a8adc8855",
+    "order_id": "10fccfe0-1774-4ae8-bcd6-c831c9cd4dcc",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160238,7 +160044,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "ecc43c8d-4387-4570-8c9e-e44a253a0da6",
+    "order_id": "6795845a-bab2-423e-bc46-8eea6f8211e9",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160252,7 +160058,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "9da6a597-abbe-46dd-9eef-6f8b2f20e0c7",
+    "order_id": "29d8bae0-8a06-42bb-9200-a7db4ace77ec",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160266,7 +160072,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "786b2986-de48-49ab-9b94-2a4bcb75bbcf",
+    "order_id": "06315c13-80cc-4cd3-a3bd-31d07c910045",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160280,7 +160086,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "766669cf-4662-4e74-a888-cb420c5428ad",
+    "order_id": "b3092ed7-d442-4ee8-9623-d65fcf891a19",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160294,7 +160100,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "9ab8793e-1e4f-4c31-8379-6e7829a89df2",
+    "order_id": "47463056-88c8-4028-8442-3cdba1ff95b9",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160308,7 +160114,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "c0e52b2d-ab4f-4f65-b029-3554c0fe0403",
+    "order_id": "cf27f7cf-6530-4c69-981a-d35fa3074c79",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160322,7 +160128,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "28ed587d-bead-4c9c-b6dd-4782d1ae56e9",
+    "order_id": "ff013441-dfd8-45df-9364-b2b924deaf16",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160336,7 +160142,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "35a2dfe1-cdbd-41b8-9025-f8b998442390",
+    "order_id": "ad722972-1b8f-4e86-b0a8-6055a54ca8a0",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160350,7 +160156,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "240c8b73-71fb-4be4-b286-ef2d52747855",
+    "order_id": "0fa1070b-16ae-4d4c-89c0-218a8d489cee",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160364,7 +160170,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "3336d958-3c4b-4280-8264-61ceacd91008",
+    "order_id": "8f68a398-d116-43b0-97df-0494144c032d",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160378,7 +160184,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "dc815817-0155-4086-a7d4-7a0b799f67e4",
+    "order_id": "84c16c20-1ca6-421a-bd68-176d811f98d4",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160392,105 +160198,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "fd8d59ae-e363-404c-974e-5fbab09162e9",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "b974aed1-c7f5-4d62-9d71-cb32980b2c96",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "8255cc3e-1616-4951-a398-667fe328a67d",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "216ffcd5-86d6-459b-b11c-2bed7eb9bcc7",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "35f7c317-7d47-4be3-b562-3ca7285ab59b",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "9f2bf123-12e6-48bb-8157-20a21e04057d",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "50244c0b-fc74-4356-93d4-38a68dabbaf9",
-    "restaurant_id": 16,
-    "food_item": "Taccos",
-    "order_time": "",
-    "delivery_time": "",
-    "delivery_distance": 1.0,
-    "order_value": 1.0,
-    "delivery_method": "",
-    "traffic_condition": "",
-    "weather_condition": "",
-    "item_ids": [],
-    "order_status": "being_created"
-  },
-  {
-    "order_id": "3711218c-4af4-4362-84ba-1f77ea26cafb",
+    "order_id": "208f3326-a9a4-44bf-8213-2aeb2b875782",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",

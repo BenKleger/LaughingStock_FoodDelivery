@@ -14619,5 +14619,25 @@
       "yummy"
     ],
     "price": 9.99
+  },
+  {
+    "item_id": "101-Test Item",
+    "restaurant_id": 101,
+    "name": "Test Item",
+    "tags": [
+      "tasty",
+      "yummy"
+    ],
+    "price": 9.99
+  },
+  {
+    "item_id": "101-Test Item",
+    "restaurant_id": 101,
+    "name": "Test Item",
+    "tags": [
+      "tasty",
+      "yummy"
+    ],
+    "price": 9.99
   }
 ]
