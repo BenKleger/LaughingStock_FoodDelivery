@@ -160081,7 +160081,7 @@
     "traffic_condition": "",
     "weather_condition": "",
     "item_ids": [],
-    "order_status": "paid"
+    "order_status": "being_created"
   },
   {
     "order_id": "a5371d43-fcfc-43e1-84b6-3a78d8589a12",
