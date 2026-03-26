@@ -1,6 +1,6 @@
 # Build
 FROM python:3.11
-WORKDIR /app/backend
+WORKDIR /app
 
 # Install the application dependencies
 COPY requirements.txt ./
