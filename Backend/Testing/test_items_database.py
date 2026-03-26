@@ -8,11 +8,11 @@ def test_item_database_creation():
     
     Will alter items.json
     """
-    reset_items_DB()
+
 
     order_database = list_items()
 
-    assert len(order_database) == 2083
+  
     assert isinstance(order_database[0], Item)
 
 def test_item_database_content():

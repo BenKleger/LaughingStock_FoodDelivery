@@ -36,6 +36,8 @@ if __name__ == "__main__":
         print()
         
         user_id = login()
+        if user_id is None:
+            break
 
         """Depending on user type have separate functionalities."""
         user_type = get_user_by_id(user_id).type
