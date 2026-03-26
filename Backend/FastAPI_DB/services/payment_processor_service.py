@@ -20,10 +20,8 @@ def process_payment(payload: PaymentProcessorCreate):
     """
     valid = validatePaymentMethod(payload)
     if valid["valid"]: 
-        orders = load_all()
         chargePaymentMethod() #dummy method
         change_order_status(payload.order.order_id, "paid")
-        save_all(orders)
         return True
     else: raise HTTPException(status_code=400, detail=valid["errors"])
 
