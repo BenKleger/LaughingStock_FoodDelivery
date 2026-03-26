@@ -45,20 +45,43 @@ def driver_search():
 	for orderID in paid_orders:
 		order = get_order_by_order_id(orderID)
 		print("OrderID:", order.order_id, "\nStatus:",order.order_status,"\nOrder Distance:", str(order.delivery_distance), "\nOrder Value", str(order.order_value))
-
+	
+	if(len(paid_orders) == 0):
+		print("There are no paid orders available!")
+		return []
+ 
 	return paid_orders
 
 def accept_order(driver:Driver):
 	paid_orders = driver_search()
-	print("Enter a valid OrderID in the list of 'paid' orders, or 'q' to quit")
-	while True:
-		order_id = input()
-		if order_id in paid_orders:
-			break
-		if order_id == 'q':
+	if(len(paid_orders) == 0):
+		return
+	
+	paid_order_list_dict:dict = {}
+	i: int = 0
+	for orderID in paid_orders:
+		order = get_order_by_order_id(orderID)
+		if order.order_status == "paid":
+			paid_order_list_dict[i] = orderID
+			i += 1
+
+	print("Select order to accept:")
+	for key,value in paid_order_list_dict.items():
+		print("Enter '" + str(key) + "' for order with ID: " + value)
+	print("Enter 'q' to exit")
+ 
+	while(True):
+		inputted_value = input()
+		if inputted_value == 'q':
 			return
-		print("Invalid order ID")
+		try:
+			if int(inputted_value) in paid_order_list_dict:
+				break
+			print("Invalid entry. Try again.")
+		except:
+			print("Invalid entry. Try again.")
 	print()
+	order_id = paid_order_list_dict[int(inputted_value)]
 	order = get_order_by_order_id(order_id)
 	driver.ordersTaken.append(order_id)
 	order.order_status = "accepted"
