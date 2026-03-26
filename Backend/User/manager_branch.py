@@ -1,8 +1,14 @@
 from FastAPI_DB.services.users_service import get_user_by_id
 from FastAPI_DB.repositories.user_repo import load_all as load_users
 from FastAPI_DB.repositories.order_repo import load_all as load_orders	
+from FastAPI_DB.repositories.menu_repo import load_all as load_menu, save_all as save_menus	
+from FastAPI_DB.repositories.item_repo import load_all as load_items, save_all as save_items	
 from FastAPI_DB.schemas.user import Manager
-from User.user_utils import check_input, alter_user_json, view_menu, add_menu_item, remove_menu_item
+from User.user_utils import check_input, alter_user_json, isFloat
+from fastapi import HTTPException
+from FastAPI_DB.services.menus_service import get_menu_by_menu_ID
+from FastAPI_DB.schemas.item import Item, ItemCreate
+from FastAPI_DB.services.items_service import create_items
 
 #By Aiden
 def manager_branch(user_id):
@@ -45,7 +51,6 @@ def select_restaurant(user_id):
 
 	"""
 	Select your restaurant
-
 	checks if user inputs a valid restaurant id
 	"""
 	unowned_restaurants = get_unownedRestuarants()
@@ -133,3 +138,94 @@ def manage_menu(user_id):
 			remove_menu_item(manager.restaurantId)
 		elif user_input == '3':
 			return
+		
+def view_menu(restaurant_id):
+	try:
+		menu = get_menu_by_menu_ID(str(restaurant_id)).items
+	except HTTPException:
+		print("no items/ no menu")
+		return
+	empty = 0
+	if len(menu) == empty:
+		print("no items/ no menu")
+		return
+	print("Item id \t\t Item name \t\t Price")
+	for item in menu:
+		print(str(item.item_id) + " \t\t" + item.name + " \t\t $" + str(item.price)) 
+
+def add_menu_item(restaurant_id): 
+	"""
+	Adds a new item created by the manager to the menu and item database
+
+	checks that item name is valid
+		and that a valid float and positive price check
+	"""
+	print("Enter new item name or 'q' to exit")
+	while(True):
+		item_name = input()
+		if item_name == 'q':
+			return
+		elif(item_name.isalpha() or (len(item_name)>4 and len(item_name)<20)): 
+			break
+		print("Invalid entry try again:")
+
+	print("Enter new item price or 'q' to exit")
+	while(True):
+		item_price = input()
+		if item_price == 'q':
+			return 
+		elif(isFloat(item_price) and float(item_price) > 0): 
+			break
+		print("Invalid entry try again:")
+
+	item_id = str(restaurant_id) + "-" + item_name
+	new_Item = ItemCreate(item_id = item_id, restaurant_id = restaurant_id, name = item_name, tags = [], price = float(item_price))
+	create_items(new_Item)
+
+	menus = load_menu()
+
+	menu_exists = any(menu["menu_id"] == restaurant_id for menu in menus) #checks if a menu for manager alr exists
+	if not menu_exists:
+		new_menu = {"menu_id": restaurant_id, "items": [new_Item.model_dump()]}
+		menus.append(new_menu)
+	else:
+		for menu in menus:
+			if menu["menu_id"] == restaurant_id:
+				menu["items"].append(new_Item.model_dump()) #note to self:model dump converts the model to dict
+				break
+
+	save_menus(menus)
+	print("Item added to menu and item database!")
+
+def remove_menu_item(restaurant_id):
+	"""
+	Removes an item from the menu
+	"""
+	menu = get_menu_by_menu_ID(str(restaurant_id)).items
+	if len(menu) == 0:
+		print("No items/ no menu")
+		return
+	print("Enter item id to remove or 'q' to exit")
+	while(True):
+		user_input = input()
+		if user_input == 'q':
+			return
+		else:
+			match = False 
+			for item in menu:
+				if item.item_id == user_input:
+					match = True
+					break
+			if match:
+				menus = load_menu()
+				for menu in menus:
+					if menu["menu_id"] == restaurant_id:
+						menu["items"] = [item for item in menu["items"] if item["item_id"] != user_input]
+						break
+				save_menus(menus)
+				items = load_items()
+				items = [item for item in items if item["item_id"] != user_input] 
+				save_items(items)
+				print("Item removed from menu and item database")
+				return
+			print("No such item id in menu, try again:")
