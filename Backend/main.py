@@ -6,7 +6,7 @@ from FastAPI_DB.routers.menus import router as menus_router
 from FastAPI_DB.routers.payment import router as payment_router
 from User.login_auth import login
 from FastAPI_DB.services.users_service import get_user_by_id
-from User.user_utils import customer_branch, driver_branch, manager_branch
+from User import customer_branch, driver_branch, manager_branch
 
 app = FastAPI()
 
@@ -36,6 +36,8 @@ if __name__ == "__main__":
         print()
         
         user_id = login()
+        if user_id is None:
+            break
 
         """Depending on user type have separate functionalities."""
         user_type = get_user_by_id(user_id).type
