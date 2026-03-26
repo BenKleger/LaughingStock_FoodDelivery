@@ -1,6 +1,5 @@
-from fastapi import APIRouter, status
-from typing import List
-from FastAPI_DB.schemas.user import User, UserCreate, Customer, Driver, Manager
+from fastapi import APIRouter
+from FastAPI_DB.schemas.user import UserCreate, Customer, Driver, Manager
 from FastAPI_DB.services.users_service import list_users, create_users, get_user_by_username
 
 router = APIRouter(prefix="/users", tags=["user"])

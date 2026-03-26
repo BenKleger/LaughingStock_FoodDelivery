@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter
 from typing import List
 from FastAPI_DB.schemas.menu import Menu, MenuCreate
 from FastAPI_DB.services.menus_service import list_menus, create_menus, get_menu_by_menu_ID
