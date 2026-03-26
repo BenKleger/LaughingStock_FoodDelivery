@@ -505,9 +505,9 @@ def manager_branch(user_id):
 		option = check_input(["0","1","2"])
 		if (option == "0"): 
 			manage_restaurants(user_id)
-		if(option == "1"):
+		elif(option == "1"):
 			manage_menu(user_id)
-		if(option == "2"):
+		elif(option == "2"):
 			return
 
 def manage_restaurants(user_id):
@@ -579,22 +579,22 @@ def get_ownedRestuarants():
 def create_restaurant(user_id): 
 	"""
 	This method assumes resaurantIds 1-100 exist, and checks if any other input restaurants are already used.
+  And allow the user to input up to restaurant 999
 	"""
 
-	print("Enter your new restaurant id(101+) or 'q' to exit")
+	print("Enter your new restaurant id(101-999) or 'q' to exit")
 	while(True):
 		user_input = input()
 		if user_input == 'q':
 			return
+		if (not(user_input.isdigit()) or int(user_input) in get_unownedRestuarants() or int(user_input) in get_ownedRestuarants() or int(user_input) > 999): #check if input is a valid id
+			print("Invalid entry, try again:")
 		else:
-			if (not(user_input.isdigit()) or int(user_input) < 100 or int(user_input) in get_ownedRestuarants()):
-				print("Invalid entry, try again:")
-			else:
-				manager = get_user_by_id(user_id)
-				manager.restaurantId = int(user_input)
-				alter_user_json(manager)
-				print("Restaurant created and assigned!")
-				return
+			manager = get_user_by_id(user_id)
+			manager.restaurantId = int(user_input)
+			alter_user_json(manager)
+			print("Restaurant created and assigned!")
+			return
 
 def manage_menu(user_id):
 	"""
