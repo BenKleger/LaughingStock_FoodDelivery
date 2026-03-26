@@ -313,5 +313,49 @@
     "password": "test_password",
     "type": 3,
     "restaurantId": 0
+  },
+  {
+    "id": "e83a4f78-56db-44f0-8dea-433d53e6d77b",
+    "username": "DanielK",
+    "password": "123",
+    "type": 2,
+    "ordersTaken": [
+      "09879a14-8e2b-466c-8b8e-f50f64c358be"
+    ]
+  },
+  {
+    "id": "73576556-b4d4-455c-b0af-a3b39c244a9b",
+    "username": "DanielKo",
+    "password": "123",
+    "type": 3,
+    "restaurantId": 0
+  },
+  {
+    "id": "b778308b-a498-4955-a25f-494c61bfeec1",
+    "username": "testUser",
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "00d29355-7b28-4790-b5ed-62523a7ca62c",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "1c3e35d5-f12c-4ab1-8cb2-5a717d1cd242",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
+  },
+  {
+    "id": "7e3df3c8-97db-4b04-b8f0-f513e149d3de",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   }
 ]

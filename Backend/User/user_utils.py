@@ -18,7 +18,7 @@ from FastAPI_DB.schemas.item import ItemCreate, Item
 from FastAPI_DB.schemas.user import User, Customer, Driver, Manager
 from FastAPI_DB.schemas.payment_processor import PaymentProcessorCreate
 
-# System variables
+"""System Variable"""
 delivery_vars = {
 	"rate_per_km": 0.7,
 	"tax": 0.13
@@ -68,13 +68,15 @@ def customer_branch(user_id: str):
 	"""
 	Responsible for all customer logic in main branch.
 
-	Allows customer users to:
+	Allows customer users to do multiple of the following:
 		0. Search (by restauarants, items, or item_ids)
 		1. View order status on all of their orders
 		2. Create or Edit (assuming it is in being_created status) an order
 		3. Logout
+	
+		
 	"""
-	while(True): # for repeated actions
+	while(True): 
 		customer: Customer = get_user_by_id(user_id)
 		print("Select Valid Option: '0' Search, '1' View Order Status, '2' Create or Edit Order, '3' Log out")
 		option = check_input(["0","1","2","3"])
@@ -91,7 +93,7 @@ def check_input(allowed_values: list[str]):
 	"""
 	Helper function to skip the while loop for checking user input.
 
-	Input: list of options (int[])
+	Input: list of options (list[])
 	Output: valid user input
 	"""
 	option = ""
@@ -204,7 +206,6 @@ def view_order_status(user):
 		else:
 			for order_id in driver.ordersTaken:
 				order = get_order_by_order_id(order_id)
-				# Drivers would also want the TODO value to driver
 				print("Order: "+ order_id+"\nStatus: " + order.order_status+"\nDistance: " + str(order.delivery_distance)+"km\nItems:")
 				if len(order.item_ids) == 0:
 					print("\tNo items in order")
@@ -240,12 +241,17 @@ def create_new_order(customer: Customer):
 	if item == 'q':
 		return
 	print()
+	date_digits = 10
+	low_distance = 1
+	high_distance = 25
+	num_decimals = 2
+	delivery_fee = 7
 	new_order_create = OrderCreate(restaurant_id=item.restaurant_id, 
 							food_item = item.name,
-							order_time = str(datetime.datetime.now())[:10], 
+							order_time = str(datetime.datetime.now())[:date_digits], 
 							delivery_time = "TBD", 
-							delivery_distance = round(random.uniform(1, 25), 2), 
-							order_value = 7 + item.price, 
+							delivery_distance = round(random.uniform(low_distance, high_distance), num_decimals), 
+							order_value = delivery_fee + item.price, 
 							delivery_method = "Car", 
 							traffic_condition = "Clear", 
 							weather_condition = "Sunny",
@@ -341,7 +347,8 @@ def add_item_to_order(order_id):
 
 def remove_item_from_order(order_id):
 	order = get_order_by_order_id(order_id)
-	if(len(order.item_ids) == 0):
+	empty = 0
+	if(len(order.item_ids) == empty):
 		print("No items in order!")
 		return
 	
@@ -377,6 +384,8 @@ def del_order(order_id,user_id):
 def complete_order(order_id, user_id):
 	"""
 	Prompts the user to input a payment method
+	
+	updates status to "paid" if everything is valid
 	"""
 	user: Customer = get_user_by_id(user_id).model_dump()
 	order: Order = get_order_by_order_id(order_id).model_dump()
@@ -402,7 +411,6 @@ def complete_order(order_id, user_id):
 				processor.email = input("Payment email: ")
 				processor.email_password = input("Email password: ")
 			if process_payment(processor): break
-			# updates status to "paid" if everything is valid
 			else:
 				print("Invalid payment method. Please try again.")
 		except:
@@ -434,11 +442,7 @@ def driver_branch(user_id):
 	while(True): 
 		driver: Driver = get_user_by_id(user_id)
 		print("Select Valid Option: '0' Search paid orders (awaiting drivers), '1' View Orders Accepted, '2' Accept an order, '3' Log out")
-		while(True): 
-			option = input()
-			if (option == "0" or option == "1" or option == "2" or option == "3"):
-				break
-			print("Invalid Entry. Try Again.")
+		option = check_input(["0","1","2", "3"])
 		print()
 		if (option == "0"): 
 			driver_search()
@@ -498,11 +502,7 @@ def manager_branch(user_id):
 	while(True):
 		Manger: Manager = get_user_by_id(user_id)
 		print("Select Valid Option: '0' Manage restuarant, '1' View/edit your restuarant's menu, '2' Log out")
-		while(True):
-			option = input()
-			if (option == "0" or option == "1" or option == "2"):
-				break
-			print("Invalid Entry. Try Again.")
+		option = check_input(["0","1","2"])
 		if (option == "0"): 
 			manage_restaurants(user_id)
 		elif(option == "1"):
@@ -516,23 +516,26 @@ def manage_restaurants(user_id):
 	"""
 	while(True):
 		print("'0' Select your restaurant, '1' create new restaurant, '2' exit")
-		while(True): #loop waits for user input
-			option = input()
-			if (option == "0" or option == "1" or option == "2"):
-				break
-			print("Invalid Entry. Try Again.")
+		option = check_input(["0","1","2"])
 		if option == "0":
-			view_restaurants(user_id)
+			select_restaurant(user_id)
 		elif option == "1":
 			create_restaurant(user_id)
 		elif option == "2":
 			return
 
 
-def view_restaurants(user_id):
+def select_restaurant(user_id):
+
+	"""
+	Select your restaurant
+
+	checks if user inputs a valid restaurant id
+	"""
 	unowned_restaurants = get_unownedRestuarants()
 	unowned_restaurants.sort()
-	if len(unowned_restaurants) == 0:
+	empty = 0
+	if len(unowned_restaurants) == empty:
 		print("No restaurants available to manage. Please create a new restaurant.")
 		return
 	
@@ -544,8 +547,8 @@ def view_restaurants(user_id):
 		user_input = input()
 		if user_input == 'q':
 			return
-		if(int(user_input) in unowned_restaurants): #check if user inputted a valid restaurant id
-			manager = get_user_by_id(user_id)
+		if(int(user_input) in unowned_restaurants): 
+			manager:Manager = get_user_by_id(user_id)
 			manager.restaurantId = int(user_input)
 			alter_user_json(manager)
 			print("Restaurant assigned!")
@@ -555,6 +558,9 @@ def view_restaurants(user_id):
 		
 
 def get_unownedRestuarants():
+	""" 
+	Returns restaurants not associated with an manager
+	"""
 	all_restaurants = []
 	for order in load_orders():
 		if order["restaurant_id"] not in all_restaurants:
@@ -564,10 +570,18 @@ def get_unownedRestuarants():
 	return [id for id in all_restaurants if id not in owned]
 
 def get_ownedRestuarants(): 
+	""" 
+	Returns restaurants associated with an manager
+	"""
 	owned = [users["restaurantId"] for users in load_users() if users["type"] == 3 and users.get("restaurantId") != None]
 	return owned
 
-def create_restaurant(user_id): #This mehtod assumes resaurantIds 1-100 is taken and the limit is 999
+def create_restaurant(user_id): 
+	"""
+	This method assumes resaurantIds 1-100 exist, and checks if any other input restaurants are already used.
+  And allow the user to input up to restaurant 999
+	"""
+
 	print("Enter your new restaurant id(101-999) or 'q' to exit")
 	while(True):
 		user_input = input()
@@ -587,17 +601,14 @@ def manage_menu(user_id):
 	Allows a manager to view and change their menu items
 	"""
 	manager = get_user_by_id(user_id)
-	if manager.restaurantId == 0:
+	no_restaurant = 0
+	if manager.restaurantId == no_restaurant:
 		print("No restaurant assigned. Please select or create a restaurant first.")
 		return
 
-	while(True): #selection loop 
+	while(True): 
 		print("'0' View menu, '1' Add item, '2' Remove item, '3' Exit")
-		while(True):
-			user_input = input()
-			if (user_input == '0' or user_input == '1' or user_input == '2' or user_input == '3'):
-				break
-			print("Invalid entry, try again:")
+		user_input = check_input(["0","1","2", "3"])
 		if user_input == '0':
 			view_menu(manager.restaurantId)
 		elif user_input == '1':
@@ -609,20 +620,27 @@ def manage_menu(user_id):
 		
 def view_menu(restaurant_id):
 	menu = get_menu_by_menu_ID(str(restaurant_id)).items
-	if len(menu) == 0:
+	empty = 0
+	if len(menu) == empty:
 		print("no items/ no menu")
 		return
 	print("Item id \t\t Item name \t\t Price")
 	for item in menu:
-		print(str(item.item_id) + " \t\t" + item.name + " \t\t $" + str(item.price)) #not sure why they're misalligned
+		print(str(item.item_id) + " \t\t" + item.name + " \t\t $" + str(item.price)) 
 
-def add_menu_item(restaurant_id): #adds a new item created by the manager to the menu and item database
+def add_menu_item(restaurant_id): 
+	"""
+	Adds a new item created by the manager to the menu and item database
+
+	checks that item name is valid
+		and that a valid float and positive price check
+	"""
 	print("Enter new item name or 'q' to exit")
 	while(True):
 		item_name = input()
 		if item_name == 'q':
 			return
-		elif(item_name.isalpha() or (len(item_name)>4 and len(item_name)<20)): #checks that item name is valid
+		elif(item_name.isalpha() or (len(item_name)>4 and len(item_name)<20)): 
 			break
 		print("Invalid entry try again:")
 
@@ -631,7 +649,7 @@ def add_menu_item(restaurant_id): #adds a new item created by the manager to the
 		item_price = input()
 		if item_price == 'q':
 			return 
-		elif(isFloat(item_price) and float(item_price) > 0): #valid float and positive price check
+		elif(isFloat(item_price) and float(item_price) > 0): 
 			break
 		print("Invalid entry try again:")
 
@@ -647,6 +665,9 @@ def add_menu_item(restaurant_id): #adds a new item created by the manager to the
 	print("Item added to menu and item database!")
 
 def remove_menu_item(restaurant_id):
+	"""
+	Removes an item from the menu
+	"""
 	menu = get_menu_by_menu_ID(str(restaurant_id)).items
 	if len(menu) == 0:
 		print("No items/ no menu")
@@ -657,7 +678,7 @@ def remove_menu_item(restaurant_id):
 		if user_input == 'q':
 			return
 		else:
-			match = False #check if item exists to delete
+			match = False 
 			for item in menu:
 				if item.item_id == user_input:
 					match = True
@@ -666,9 +687,7 @@ def remove_menu_item(restaurant_id):
 				menus = load_menu()
 				for menu in menus:
 					if menu["menu_id"] == restaurant_id:
-						menu["items"] = [
-							item for item in menu["items"] 
-							if item["item_id"] != user_input] #relists all items from menu except one for deletion
+						menu["items"] = [item for item in menu["items"] if item["item_id"] != user_input]
 						break
 				save_menus(menus)
 				items = load_items()
@@ -678,7 +697,13 @@ def remove_menu_item(restaurant_id):
 				return
 			print("No such item id in menu, try again:")
 
-def isFloat(string): #float check helper function returns true if string can be converted to a float, false otherwise
+def isFloat(string): 
+	"""
+	float check helper function 
+	Returns 
+		true if string can be converted to a float
+		false otherwise
+	"""
 	try:
 		float(string)
 		return True

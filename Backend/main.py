@@ -31,7 +31,6 @@ if __name__ == "__main__":
         """Customer functionality"""
         customer_branch(user_id)
 
-
     elif user_type == 2:
         """Driver functionality"""
         driver_branch(user_id)

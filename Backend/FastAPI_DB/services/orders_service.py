@@ -112,7 +112,7 @@ def add_order_item(user_order_id: str, new_item_id: str):
         new_item_id (str): id of the item to add to the order.
 
     Returns:
-        o (Order): The updated order item.
+        order (Order): The updated order item.
 
     Raises:
         HTTPException status 404: If no order with user_order_id exists in orders.json,
@@ -126,34 +126,34 @@ def add_order_item(user_order_id: str, new_item_id: str):
     orders = load_all()
 
     order_dict = None
-    for order in orders:
-        if order.get("order_id") == user_order_id:
-            order_dict = order
+    for saved_order in orders:
+        if saved_order.get("order_id") == user_order_id:
+            order_dict = saved_order
             break
     
     if order_dict is None:
         raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
     
-    o = Order(**order_dict)
+    order = Order(**order_dict)
     
-    if o.order_status != "being_created":
+    if order.order_status != "being_created":
         raise HTTPException(status_code=400, detail=f"Order '{user_order_id}' cannot be changed because it is not in 'being_created' status")
                
     # May return HTTPException 404 if item is not found in the items.json file.           
     item_to_add = get_item_by_item_ID(new_item_id)
     
-    o.item_ids.append(new_item_id)
-    o.order_value += item_to_add.price
+    order.item_ids.append(new_item_id)
+    order.order_value += item_to_add.price
     
     # Update the dict in the list
-    order_dict['item_ids'] = o.item_ids
-    order_dict['order_value'] = o.order_value
+    order_dict['item_ids'] = order.item_ids
+    order_dict['order_value'] = order.order_value
     
     save_all(orders)
 
-    print("\n\n", item_to_add.name, " is successfully added to the order (", o.order_id, "\n\n")
+    print("\n\n", item_to_add.name, " is successfully added to the order (", order.order_id, "\n\n")
 
-    return o
+    return order
 
 
 
@@ -166,7 +166,7 @@ def delete_order_item(user_order_id: str, item_id_to_remove: str):
         item_id_to_remove (str): id of the item to remove.
        
     Returns:
-        o (Order): Updated order after item removal.
+        order (Order): Updated order after item removal.
     
     Raises:
         HTTPException status 404: If no order with user_order_id exists in orders.json, or
@@ -179,33 +179,33 @@ def delete_order_item(user_order_id: str, item_id_to_remove: str):
     orders = load_all()
     
     order_dict = None
-    for order in orders:
-        if order.get("order_id") == user_order_id:
-            order_dict = order
+    for saved_order in orders:
+        if saved_order.get("order_id") == user_order_id:
+            order_dict = saved_order
             break
     
     if order_dict is None:
         raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
     
-    o = Order(**order_dict)
+    order = Order(**order_dict)
     
-    if o.order_status != "being_created":
+    if order.order_status != "being_created":
         raise HTTPException(status_code=400, detail=f"Item '{item_id_to_remove}' from order '{user_order_id}' cannot be deleted because it is not in 'being_created' status")
     
-    if item_id_to_remove not in o.item_ids:
+    if item_id_to_remove not in order.item_ids:
         raise HTTPException(status_code=404, detail=f"Item '{item_id_to_remove}' not found in order '{user_order_id}'")
     
     
-    o.item_ids.remove(item_id_to_remove)
+    order.item_ids.remove(item_id_to_remove)
     
     # Update the dict in the list
-    order_dict['item_ids'] = o.item_ids
+    order_dict['item_ids'] = order.item_ids
     
     save_all(orders)
 
-    print("\n\n", get_item_by_item_ID(item_id_to_remove).name, " is successfully removed from the order (", o.order_id, "\n\n")
+    print("\n\n", get_item_by_item_ID(item_id_to_remove).name, " is successfully removed from the order (", order.order_id, "\n\n")
     
-    return o
+    return order
 
 
 def delete_order(user_order_id: str):
@@ -249,7 +249,7 @@ def change_order_status(user_order_id: str, new_status: str):
         new_status (str): the status the order should be updated to
 
     Returns:
-        o (Order): The updated order item.
+        order (Order): The updated order item.
 
     Raises:
         HTTPException status 404: If no order with user_order_id exists in orders.json,
@@ -264,29 +264,29 @@ def change_order_status(user_order_id: str, new_status: str):
     orders = load_all()
 
     order_dict = None
-    for order in orders:
-        if order.get("order_id") == user_order_id:
-            order_dict = order
+    for saved_order in orders:
+        if saved_order.get("order_id") == user_order_id:
+            order_dict = saved_order
             break
     
     if order_dict is None:
         raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
     
-    o = Order(**order_dict)
+    order = Order(**order_dict)
     
-    if o.order_status == "delivered":
+    if order.order_status == "delivered":
         raise HTTPException(status_code=400, detail=f"Order '{user_order_id}' cannot be changed because it was already delivered")
     
     if new_status in ["being_created", "paid", "sent", "accepted"]:
-        o.order_status = new_status
+        order.order_status = new_status
     else: 
         raise HTTPException(status_code=400, detail=f"Status '{new_status}' is not a valid status.")
     
     # Update the dict in the list
-    order_dict['order_status'] = o.order_status
+    order_dict['order_status'] = order.order_status
     
     save_all(orders)
 
-    print("\n\nOrder (", o.order_id, ") status changed to ", o.order_status, "\n\n")
+    print("\n\nOrder (", order.order_id, ") status changed to ", order.order_status, "\n\n")
 
-    return o
+    return order

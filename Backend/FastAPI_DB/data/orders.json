@@ -160000,7 +160000,7 @@
     "order_status": "delivered"
   },
   {
-    "order_id": "377053a3-bbdd-4767-b242-74daaae5ab55",
+    "order_id": "ca912fd1-f384-4e81-a0bf-f1ced7476f0a",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160014,7 +160014,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "09879a14-8e2b-466c-8b8e-f50f64c358be",
+    "order_id": "0b67027e-4548-4b1a-96a2-788a19896484",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160028,7 +160028,7 @@
     "order_status": "paid"
   },
   {
-    "order_id": "c726b0e1-ad2c-4d15-8efe-10b85b18f367",
+    "order_id": "f8a75967-65db-4fe2-b955-cf91dbcb8320",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160042,7 +160042,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "2cdbd7a2-06a1-42e9-83f1-a019ee0515e0",
+    "order_id": "f6b50229-ca7e-4fb5-9212-4e770f23d1ae",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160056,7 +160056,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "a9ac6399-6114-4931-b563-85b25f56ed18",
+    "order_id": "1d591bf5-8866-4ccb-b5b0-c436bb465f5e",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160070,7 +160070,7 @@
     "order_status": "being_created"
   },
   {
-    "order_id": "08a2b8cb-685f-4499-b6a6-2e8376557a55",
+    "order_id": "c6b08e06-3ff7-4883-b241-9bd3698b0ed8",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160084,7 +160084,7 @@
     "order_status": "paid"
   },
   {
-    "order_id": "fb2a8676-ad52-42a0-85fe-bf99d1b0803f",
+    "order_id": "a22b21b4-d47d-46c0-8e93-ce0e490f04af",
     "restaurant_id": 16,
     "food_item": "Taccos",
     "order_time": "",
@@ -160096,21 +160096,5 @@
     "weather_condition": "",
     "item_ids": [],
     "order_status": "being_created"
-  },
-  {
-    "order_id": "da2ab91f-1045-4576-8ecd-932a3d09c0ca",
-    "restaurant_id": 1,
-    "food_item": "Pasta",
-    "order_time": "2026-03-24",
-    "delivery_time": "TBD",
-    "delivery_distance": 0,
-    "order_value": 43.91,
-    "delivery_method": "Car",
-    "traffic_condition": "Clear",
-    "weather_condition": "Sunny",
-    "item_ids": [
-      "1-Pasta"
-    ],
-    "order_status": "delivered"
   }
 ]
