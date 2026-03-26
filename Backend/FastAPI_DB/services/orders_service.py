@@ -5,7 +5,6 @@ from ..repositories.order_repo import load_all, save_all
 import csv
 import uuid
 from .items_service import get_item_by_item_ID
-from ..schemas.item import Item as item 
 
 def list_orders() -> List[Order]:
     return [Order(**it) for it in load_all()]

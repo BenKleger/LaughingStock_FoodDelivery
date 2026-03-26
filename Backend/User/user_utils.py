@@ -7,7 +7,7 @@ from FastAPI_DB.services.orders_service import get_order_by_order_id, create_ord
 from FastAPI_DB.services.items_service import create_items, get_item_by_item_ID, create_items
 from FastAPI_DB.services.search_service import create_search
 from FastAPI_DB.services.users_service import get_user_by_id
-from FastAPI_DB.services.payment_processor_service import process_payment, validatePaymentMethod
+from FastAPI_DB.services.payment_processor_service import process_payment
 from FastAPI_DB.repositories.user_repo import load_all as load_users, save_all as save_users
 from FastAPI_DB.repositories.order_repo import load_all as load_orders, save_all as save_orders
 from FastAPI_DB.repositories.menu_repo import load_all as load_menu, save_all as save_menus
