@@ -1,3 +1,4 @@
+from fastapi import FastAPI
 from fastapi.exceptions import HTTPException
 from FastAPI_DB.services.users_service import create_users, get_user_by_username
 from FastAPI_DB.schemas.user import UserCreate
@@ -5,11 +6,11 @@ from FastAPI_DB.schemas.user import UserCreate
 invalid = True
 
 def login():
-    print("Select Valid Option: \n(0) Login\n(1) Create New Account\n")
+    print("Select Valid Option: \n(0) Login\n(1) Create New Account\n(2) Exit")
 
     while(invalid):
         option = input()
-        if (option == "0" or option == "1"):
+        if (option == "0" or option == "1" or option =="2"):
             break
         print("Invalid Entry. Try Again.\n")
 
@@ -17,6 +18,8 @@ def login():
 
     if (option == "1"): 
         return create()
+    if (option == "2"): 
+        return
     else: 
         while(invalid):
             username_input = input("Username: ")
@@ -26,9 +29,9 @@ def login():
                 if (get_user_by_username(username_input).password == password_input):
                     print("\nLogin successful!")
                     break
-                print("Incorrect username or password. Please try again.\n")
+                print("Incorrect email or password. Please try again.\n")
             except HTTPException:
-                print("Incorrect username or password. Please try again.\n")
+                print("Incorrect email or password. Please try again.\n")
         
         return get_user_by_username(username_input).id
             

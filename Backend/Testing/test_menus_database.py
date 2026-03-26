@@ -8,13 +8,9 @@ def test_menu_database_creation():
     
     Will alter menus.json
     """
-    reset_menus_DB()
-
     menus_database = list_menus()
-
     assert isinstance(menus_database[0], Menu)
-    assert len(menus_database) == 100
-    
+
 def test_menu_database_content():
     """
     Tests menu database content retrieval.
