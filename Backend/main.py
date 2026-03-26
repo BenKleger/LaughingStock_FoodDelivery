@@ -7,6 +7,10 @@ from FastAPI_DB.routers.payment import router as payment_router
 from User.login_auth import login
 from FastAPI_DB.services.users_service import get_user_by_id
 from User import customer_branch, driver_branch, manager_branch
+from User.manager_branch import manager_branch
+from User.customer_branch import customer_branch
+from User.driver_branch import driver_branch
+
 
 app = FastAPI()
 
