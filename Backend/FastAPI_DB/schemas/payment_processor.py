@@ -1,11 +1,7 @@
 from pydantic import BaseModel
-from typing import List
-from FastAPI_DB.schemas import user as userClass
-from FastAPI_DB.schemas import order as orderClass
-
 class PaymentProcessor(BaseModel):
-    customer: userClass.User
-    order: orderClass.Order
+    customer_id: str
+    order_id: str
     billing_address: str
     payment_number: str
     payment_pin: str
@@ -16,8 +12,8 @@ class PaymentProcessor(BaseModel):
     email_password: str
 
 class PaymentProcessorCreate(BaseModel):
-    customer: userClass.User
-    order: orderClass.Order
+    customer_id: str
+    order_id: str
     billing_address: str = ""
     payment_number: str = ""
     payment_pin: str = ""

@@ -1,9 +1,8 @@
 import re
-# from Backend.FastAPI_DB.schemas import user as userClass
 from FastAPI_DB.schemas.payment_processor import PaymentProcessorCreate
 from fastapi import HTTPException
-from FastAPI_DB.repositories.order_repo import save_all, load_all
 from FastAPI_DB.services.orders_service import change_order_status
+from FastAPI_DB.services.orders_service import get_order_by_order_id
 
 def process_payment(payload: PaymentProcessorCreate):
     """
@@ -18,12 +17,13 @@ def process_payment(payload: PaymentProcessorCreate):
         updating the order status, saves it, and raises an error if the 
         payment method is invalid.
     """
-    valid = validatePaymentMethod(payload)
-    if valid["valid"]: 
+    validity = validatePaymentMethod(payload)
+    if validity["valid"]: 
+        validateOrder(payload)
         chargePaymentMethod() #dummy method
-        change_order_status(payload.order.order_id, "paid")
+        change_order_status(payload.order_id, "paid")
         return True
-    else: raise HTTPException(status_code=400, detail=valid["errors"])
+    else: raise HTTPException(status_code=400, detail=validity["errors"])
 
 def validatePaymentMethod(payload: PaymentProcessorCreate):
     """
@@ -35,6 +35,7 @@ def validatePaymentMethod(payload: PaymentProcessorCreate):
     Returns:
         valid (bool): True if valid
         errors (str[]): array of error messages
+        HTTPException 404: if order does not exist in the database
 
     Description:
         This function validates the given payment method using helper functions and stores
@@ -51,9 +52,6 @@ def validatePaymentMethod(payload: PaymentProcessorCreate):
         valid = [checkEmail(payload.email), checkPassword(payload.email_password)]
     else: 
         errors.append("INVALID PAYMENT METHOD!")
-
-    if(payload.order.order_status != "being_created"):
-        errors.append("ORDER CANNOT BE MODIFIED IN THIS STATE!")
     # add error messages (if any) to the errors array, if errors is not empty
     # return false and list of errors 
     for item in valid:
@@ -62,6 +60,12 @@ def validatePaymentMethod(payload: PaymentProcessorCreate):
         # print(errors)
         return {"valid": False, "errors": errors}
     return {"valid": True}
+
+def validateOrder(payload: PaymentProcessorCreate):
+    order = get_order_by_order_id(payload.order_id)
+    if(order.order_status != "being_created"):
+        raise HTTPException(status_code=400, detail="ORDER CANNOT BE MODIFIED IN THIS STATE!")
+    return True
 
 def chargePaymentMethod():
     """

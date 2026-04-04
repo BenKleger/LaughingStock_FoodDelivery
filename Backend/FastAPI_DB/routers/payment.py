@@ -5,10 +5,10 @@ from FastAPI_DB.services.payment_processor_service import process_payment, valid
 
 router = APIRouter(prefix="/payment", tags=["payment"])
 
-@router.post("")
+@router.post("/process")
 def process_payment_endpoint(payload: PaymentProcessorCreate):
     return process_payment(payload)
 
-@router.post("validate_order")
+@router.post("/validate")
 def validate_payment_endpoint(payload: PaymentProcessorCreate):
     return validatePaymentMethod(payload)

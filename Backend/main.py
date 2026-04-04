@@ -18,6 +18,10 @@ app = FastAPI()
 def health():
     return {"status": "ok"}
 
+@app.get("/")
+def root():
+    return {"status": "running"}
+
 app.include_router(users_router)
 app.include_router(orders_router)
 app.include_router(items_router)
