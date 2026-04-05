@@ -1,8 +1,9 @@
 import re
 from FastAPI_DB.schemas.payment_processor import PaymentProcessorCreate
 from fastapi import HTTPException
-from FastAPI_DB.services.orders_service import change_order_status
-from FastAPI_DB.services.orders_service import get_order_by_order_id
+from FastAPI_DB.services.orders_service import change_order_status, get_order_by_order_id
+from FastAPI_DB.services.users_service import get_user_by_id
+from FastAPI_DB.schemas.user import Customer
 
 def process_payment(payload: PaymentProcessorCreate):
     """
@@ -35,7 +36,6 @@ def validatePaymentMethod(payload: PaymentProcessorCreate):
     Returns:
         valid (bool): True if valid
         errors (str[]): array of error messages
-        HTTPException 404: if order does not exist in the database
 
     Description:
         This function validates the given payment method using helper functions and stores
@@ -58,11 +58,30 @@ def validatePaymentMethod(payload: PaymentProcessorCreate):
         if item: errors.append(item)
     if errors:
         # print(errors)
-        return {"valid": False, "errors": errors}
+        # return {"valid": False, "errors": errors}
+        raise HTTPException(status_code=400, detail=errors)
     return {"valid": True}
 
 def validateOrder(payload: PaymentProcessorCreate):
+    """
+    Checks whether an order belongs to the user in question and that it is still modifiable.
+    
+    Parameters:
+        payload (PaymentProcessorCreate): Object containing payment data
+
+    Returns:
+        valid (bool): True if valid
+        HTTPException 404: if the order does not belong to the user
+    """
+    
     order = get_order_by_order_id(payload.order_id)
+    user: Customer = get_user_by_id(payload.customer_id)
+    
+    for id in user.ordersList:
+        if id == payload.order_id: break
+    else:
+        raise HTTPException(status_code=404, detail="USER DOES NOT HAVE THIS ORDER!")
+    
     if(order.order_status != "being_created"):
         raise HTTPException(status_code=400, detail="ORDER CANNOT BE MODIFIED IN THIS STATE!")
     return True
