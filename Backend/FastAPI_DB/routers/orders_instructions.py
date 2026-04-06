@@ -16,8 +16,8 @@ def get_cooking_instructions(order_id: str):
     return OrderInstructions(order_id=id, instructions=inst)
 
 @router.post("/delivery", response_model=OrderInstructions)
-def post_delivery_instructions(order_id: str, instructions: str):
-    id, inst = set_order_delivery_instructions(order_id, instructions)
+def post_delivery_instructions(payload: OrderInstructions):
+    id, inst = set_order_delivery_instructions(payload.order_id, payload.instructions)
     return OrderInstructions(order_id=id, instructions=inst)
 
 @router.post("/cooking", response_model=OrderInstructions)

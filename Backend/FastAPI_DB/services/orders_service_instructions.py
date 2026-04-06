@@ -4,15 +4,21 @@ from fastapi import HTTPException
 
 def set_order_delivery_instructions(order_id: str, instructions: str):
     order = get_order_by_order_id(order_id)
-    order.delivery_instructions = instructions
-    alter_order_json(order)
-    return order.order_id, order.delivery_instructions
+    if(order.order_status == "being_created"):
+        order.delivery_instructions = instructions
+        alter_order_json(order)
+        return order.order_id, order.delivery_instructions
+    else:
+        raise HTTPException(status_code=404, detail="Order cannot be modified in this state!")
 
 def set_order_cooking_instructions(order_id: str, instructions: str):
     order = get_order_by_order_id(order_id)
-    order.cooking_instructions = instructions
-    alter_order_json(order)
-    return order.order_id, order.cooking_instructions
+    if(order.order_status == "being_created"):
+        order.cooking_instructions = instructions
+        alter_order_json(order)
+        return order.order_id, order.cooking_instructions
+    else:
+        raise HTTPException(status_code=404, detail="Order cannot be modified in this state!")
     
 def get_order_delivery_instructions(order_id: str):
     order = get_order_by_order_id(order_id)
