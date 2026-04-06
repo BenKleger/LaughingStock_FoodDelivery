@@ -72,6 +72,7 @@ def validateOrder(payload: PaymentProcessorCreate):
     Returns:
         valid (bool): True if valid
         HTTPException 404: if the order does not belong to the user
+                      400: if the order is not "being_created"
     """
     
     order = get_order_by_order_id(payload.order_id)
