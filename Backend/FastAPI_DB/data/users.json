@@ -4,7 +4,9 @@
     "username": "daniel",
     "password": "123",
     "type": 1,
-    "ordersList": []
+    "ordersList": [
+      "f4d84dC"
+    ]
   },
   {
     "id": "f826bc95-f107-481d-9bac-99944123bd2c",
@@ -26,33 +28,5 @@
     "password": "123",
     "type": 3,
     "restaurantId": 102
-  },
-  {
-    "id": "b84434dc-84e3-4d0f-b80c-6e233ab1b5e7",
-    "username": "testUser",
-    "password": "testPW",
-    "type": 1,
-    "ordersList": []
-  },
-  {
-    "id": "f5334a39-4a71-4c09-93a4-db55f9c36d2f",
-    "username": "test_customer",
-    "password": "test_password",
-    "type": 1,
-    "ordersList": []
-  },
-  {
-    "id": "254ab646-fa31-4ae9-89a4-9f231f9a2be2",
-    "username": "test_driver",
-    "password": "test_password",
-    "type": 2,
-    "ordersTaken": []
-  },
-  {
-    "id": "ad512a8a-0797-4145-8842-636e2a4b588c",
-    "username": "test_manager",
-    "password": "test_password",
-    "type": 3,
-    "restaurantId": 0
   }
 ]
