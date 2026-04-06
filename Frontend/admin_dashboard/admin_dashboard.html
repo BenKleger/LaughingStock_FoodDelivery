@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f6f8;
+      color: #1f2937;
+    }
+
+    .dashboard {
+      display: grid;
+      min-height: 100vh;
+    }
+
+    .main {
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .topbar h1 {
+      font-size: 28px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+
+    .card h3 {
+      font-size: 15px;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+
+    .card .value {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+
+    .panel h2 {
+      margin-bottom: 18px;
+      font-size: 20px;
+    }
+
+    .chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+      height: 260px;
+      padding-top: 10px;
+    }
+
+    .bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      height: 100%;
+    }
+
+    .bar {
+      width: 100%;
+      max-width: 48px;
+      background: linear-gradient(to top, #2563eb, #60a5fa);
+      border-radius: 10px 10px 0 0;
+    }
+
+    .bar-label {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .status-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f9fafb;
+      padding: 12px 14px;
+      border-radius: 10px;
+    }
+
+    .orders-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .orders-table th,
+    .orders-table td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .orders-table th {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .preparing {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .out-for-delivery {
+      background: #e0e7ff;
+      color: #4338ca;
+    }
+
+    .completed {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <main class="main">
+      <div class="topbar">
+        <h1>Analytics Dashboard</h1>
+        <p>Last updated: Apr 5, 2026 7:30 PM</p>
+      </div>
+
+      <section class="cards">
+        <div class="card">
+          <h3>Total Orders</h3>
+          <div class="value">184</div>
+        </div>
+        <div class="card">
+          <h3>Gross Earnings</h3>
+          <div class="value">$7,842.90</div>
+        </div>
+        <div class="card">
+          <h3>Orders Today</h3>
+          <div class="value">26</div>
+        </div>
+        <div class="card">
+          <h3>Average Order Value</h3>
+          <div class="value">$42.62</div>
+        </div>
+      </section>
+
+      <section class="grid-2">
+        <div class="panel">
+          <h2>Orders Per Day</h2>
+          <div class="chart">
+            <div class="bar-group">
+              <div class="bar" style="height: 90px;"></div>
+              <div class="bar-label">Mon</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar" style="height: 130px;"></div>
+              <div class="bar-label">Tue</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar" style="height: 110px;"></div>
+              <div class="bar-label">Wed</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar" style="height: 160px;"></div>
+              <div class="bar-label">Thu</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar" style="height: 200px;"></div>
+              <div class="bar-label">Fri</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar" style="height: 220px;"></div>
+              <div class="bar-label">Sat</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar" style="height: 150px;"></div>
+              <div class="bar-label">Sun</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Order Status Stages</h2>
+          <div class="status-list">
+            <div class="status-row">
+              <span>Pending</span>
+              <strong>12</strong>
+            </div>
+            <div class="status-row">
+              <span>Preparing</span>
+              <strong>18</strong>
+            </div>
+            <div class="status-row">
+              <span>Out for Delivery</span>
+              <strong>9</strong>
+            </div>
+            <div class="status-row">
+              <span>Completed</span>
+              <strong>145</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Current Orders</h2>
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Restaurant</th>
+              <th>Total</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ORD-1001</td>
+              <td>Alice Johnson</td>
+              <td>Sushi Place</td>
+              <td>$28.99</td>
+              <td><span class="badge pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td>ORD-1002</td>
+              <td>Bob Smith</td>
+              <td>Burger House</td>
+              <td>$19.50</td>
+              <td><span class="badge preparing">Preparing</span></td>
+            </tr>
+            <tr>
+              <td>ORD-1003</td>
+              <td>Charlie Brown</td>
+              <td>Pizza Hub</td>
+              <td>$34.25</td>
+              <td><span class="badge out-for-delivery">Out for Delivery</span></td>
+            </tr>
+            <tr>
+              <td>ORD-1004</td>
+              <td>Diana Lee</td>
+              <td>Taco Town</td>
+              <td>$16.75</td>
+              <td><span class="badge completed">Completed</span></td>
+            </tr>
+            <tr>
+              <td>ORD-1005</td>
+              <td>Ethan White</td>
+              <td>Noodle Bar</td>
+              <td>$22.40</td>
+              <td><span class="badge preparing">Preparing</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
