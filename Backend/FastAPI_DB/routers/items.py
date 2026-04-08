@@ -13,6 +13,6 @@ def get_items():
 def post_item(payload: ItemCreate):
     return create_items(payload)
 
-@router.get("/{item}", response_model=Item)
+@router.get("/{item_id}", response_model=Item)
 def get_item(item_id: str):
     return get_item_by_item_ID(item_id)
