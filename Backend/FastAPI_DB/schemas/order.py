@@ -16,6 +16,7 @@ class Order(BaseModel):
     order_status: str # "being_created", "paid", "accepted", "delivered"
     delivery_instructions: str = ""
     cooking_instructions: str = ""
+    tip: float = 0
 
 class OrderCreate(BaseModel):
     restaurant_id: int
@@ -31,3 +32,4 @@ class OrderCreate(BaseModel):
     order_status: str # "being_created", "paid", "accepted", "delivered"
     delivery_instructions: str = ""
     cooking_instructions: str = ""
+    tip: float = 0
