@@ -14,6 +14,8 @@ class Order(BaseModel):
     weather_condition: str
     item_ids: List[str]
     order_status: str # "being_created", "paid", "accepted", "delivered"
+    delivery_instructions: str = ""
+    cooking_instructions: str = ""
 
 class OrderCreate(BaseModel):
     restaurant_id: int
@@ -27,3 +29,5 @@ class OrderCreate(BaseModel):
     weather_condition: str
     item_ids: List[str]
     order_status: str # "being_created", "paid", "accepted", "delivered"
+    delivery_instructions: str = ""
+    cooking_instructions: str = ""

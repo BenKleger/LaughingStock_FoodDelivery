@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manager Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        .main {
+            padding: 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .topbar h1 {
+            font-size: 28px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
+        }
+
+        .panel h2 {
+            margin-bottom: 18px;
+            font-size: 20px;
+        }
+
+        /* Restaurant section */
+        .restaurant-status {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .restaurant-badge {
+            background: #dcfce7;
+            color: #166534;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .restaurant-badge.none {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Forms */
+        .form-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            border-color: #2563eb;
+        }
+
+        button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.88;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
+        /* Available restaurants */
+        .restaurant-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .restaurant-chip {
+            background: #eff6ff;
+            color: #1d4ed8;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .restaurant-chip button {
+            padding: 4px 10px;
+            font-size: 12px;
+        }
+
+        /* Menu table */
+        .menu-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .menu-table th,
+        .menu-table td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .menu-table th {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* Messages */
+        .msg {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .msg.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .msg.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .msg.show {
+            display: block;
+        }
+
+        .section-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 700px) {
+            .form-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <div class="topbar">
+            <h1>Manager Dashboard</h1>
+            <!-- When login is ready: show logged-in username here -->
+            <span style="color:#6b7280; font-size:14px;">Logged in as: <strong id="display-username">testmanager</strong></span>
+        </div>
+
+        <!-- Current Restaurant -->
+        <div class="panel">
+            <h2>My Restaurant</h2>
+            <div class="restaurant-status">
+                <span class="section-label">Currently managing:</span>
+                <span class="restaurant-badge none" id="current-restaurant">None assigned</span>
+            </div>
+        </div>
+
+        <!-- Assign Existing Restaurant -->
+        <div class="panel">
+            <h2>Available Restaurants</h2>
+            <p class="section-label">Pick an unowned restaurant to manage:</p>
+            <div class="restaurant-list" id="available-list">
+                <span style="color:#6b7280; font-size:14px;">Loading...</span>
+            </div>
+            <div class="msg" id="assign-msg"></div>
+        </div>
+
+        <!-- Create New Restaurant -->
+        <div class="panel">
+            <h2>Create New Restaurant</h2>
+            <p class="section-label">Enter a restaurant ID between 101–999:</p>
+            <div class="form-row">
+                <input type="number" id="new-restaurant-id" placeholder="e.g. 305" min="101" max="999" />
+                <button class="btn-primary" onclick="createRestaurant()">Create & Assign</button>
+            </div>
+            <div class="msg" id="create-msg"></div>
+        </div>
+
+        <!-- Menu -->
+        <div class="panel">
+            <h2>Menu</h2>
+            <table class="menu-table">
+                <thead>
+                    <tr>
+                        <th>Item ID</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="menu-body">
+                    <tr><td colspan="4" style="color:#6b7280;">Load your menu after selecting a restaurant.</td></tr>
+                </tbody>
+            </table>
+            <div class="msg" id="menu-msg"></div>
+
+            <!-- Add Menu Item -->
+            <div style="margin-top: 20px;">
+                <h3 style="font-size:16px; margin-bottom:10px;">Add Item</h3>
+                <div class="form-row">
+                    <input type="text" id="item-name" placeholder="Item name (5–20 letters)" />
+                    <input type="number" id="item-price" placeholder="Price (e.g. 9.99)" step="0.01" min="0.01" />
+                    <button class="btn-primary" onclick="addMenuItem()">Add to Menu</button>
+                </div>
+                <div class="msg" id="add-item-msg"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = "http://127.0.0.1:8000/managers";
+
+        // --- When login is ready, replace this with the actual logged-in username from the login response ---
+        const USERNAME = "testmanager"; //change this to the actual logged in user or whatever user you want to test
+        document.getElementById("display-username").textContent = USERNAME;
+
+        function showMsg(id, text, type) {
+            const el = document.getElementById(id);
+            el.textContent = text;
+            el.className = `msg ${type} show`;
+            setTimeout(() => el.classList.remove("show"), 4000);
+        }
+
+        // Load available restaurants
+        async function loadAvailableRestaurants() {
+            const list = document.getElementById("available-list");
+            try {
+                const res = await fetch(`${BASE_URL}/restuarants/available`);
+                const data = await res.json();
+
+                if (!data.length) {
+                    list.innerHTML = `<span style="color:#6b7280; font-size:14px;">No available restaurants.</span>`;
+                    return;
+                }
+
+                list.innerHTML = "";
+                for (const id of data) {
+                    const chip = document.createElement("div");
+                    chip.className = "restaurant-chip";
+                    chip.innerHTML = `
+                        Restaurant #${id}
+                        <button class="btn-primary" onclick="assignRestaurant(${id})">Assign to me</button>
+                    `;
+                    list.appendChild(chip);
+                }
+            } catch (err) {
+                list.innerHTML = `<span style="color:#ef4444; font-size:14px;">Failed to load restaurants.</span>`;
+            }
+        }
+
+        // Assign an existing restaurant
+        async function assignRestaurant(restaurantId) {
+            try {
+                const res = await fetch(`${BASE_URL}/${USERNAME}/restuarants/assign`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ restaurant_id: restaurantId })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    showMsg("assign-msg", data.detail || "Failed to assign.", "error");
+                    return;
+                }
+                showMsg("assign-msg", data.message, "success");
+                updateCurrentRestaurant(restaurantId);
+                loadAvailableRestaurants();
+                loadMenu();
+            } catch (err) {
+                showMsg("assign-msg", "Request failed.", "error");
+            }
+        }
+
+        // Create a new restaurant
+        async function createRestaurant() {
+            const id = parseInt(document.getElementById("new-restaurant-id").value);
+            if (!id) {
+                showMsg("create-msg", "Please enter a restaurant ID.", "error");
+                return;
+            }
+            try {
+                const res = await fetch(`${BASE_URL}/restuarants/create?username=${USERNAME}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ restaurant_id: id })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    showMsg("create-msg", data.detail || "Failed to create.", "error");
+                    return;
+                }
+                showMsg("create-msg", data.message, "success");
+                updateCurrentRestaurant(id);
+                loadAvailableRestaurants();
+                loadMenu();
+            } catch (err) {
+                showMsg("create-msg", "Request failed.", "error");
+            }
+        }
+
+        function updateCurrentRestaurant(id) {
+            const badge = document.getElementById("current-restaurant");
+            badge.textContent = `Restaurant #${id}`;
+            badge.className = "restaurant-badge";
+        }
+
+        // Load menu
+        async function loadMenu() {
+            const tbody = document.getElementById("menu-body");
+            tbody.innerHTML = `<tr><td colspan="4" style="color:#6b7280;">Loading...</td></tr>`;
+            try {
+                const res = await fetch(`${BASE_URL}/${USERNAME}/menu`);
+                const data = await res.json();
+                if (!res.ok) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="color:#ef4444;">${data.detail || "Failed to load menu."}</td></tr>`;
+                    return;
+                }
+                if (!data.length) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="color:#6b7280;">No items in menu yet.</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = "";
+                for (const item of data) {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${item.item_id ?? "-"}</td>
+                        <td>${item.name ?? "-"}</td>
+                        <td>$${Number(item.price || 0).toFixed(2)}</td>
+                        <td><button class="btn-danger" onclick="removeMenuItem('${item.item_id}')">Remove</button></td>
+                    `;
+                    tbody.appendChild(row);
+                }
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="4" style="color:#ef4444;">Request failed.</td></tr>`;
+            }
+        }
+
+        // Add menu item
+        async function addMenuItem() {
+            const name = document.getElementById("item-name").value.trim();
+            const price = parseFloat(document.getElementById("item-price").value);
+            if (!name || !price) {
+                showMsg("add-item-msg", "Please fill in both name and price.", "error");
+                return;
+            }
+            try {
+                const res = await fetch(`${BASE_URL}/${USERNAME}/menu/add`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, price })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    showMsg("add-item-msg", data.detail || "Failed to add item.", "error");
+                    return;
+                }
+                showMsg("add-item-msg", data.message, "success");
+                document.getElementById("item-name").value = "";
+                document.getElementById("item-price").value = "";
+                loadMenu();
+            } catch (err) {
+                showMsg("add-item-msg", "Request failed.", "error");
+            }
+        }
+
+        // Remove menu item
+        async function removeMenuItem(itemId) {
+            try {
+                const res = await fetch(`${BASE_URL}/${USERNAME}/menu/remove/${itemId}`, {
+                    method: "DELETE"
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    showMsg("menu-msg", data.detail || "Failed to remove item.", "error");
+                    return;
+                }
+                showMsg("menu-msg", data.message, "success");
+                loadMenu();
+            } catch (err) {
+                showMsg("menu-msg", "Request failed.", "error");
+            }
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            loadAvailableRestaurants();
+            loadMenu();
+        });
+    </script>
+</body>
+
+</html>
