@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Driver Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        .main {
+            padding: 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .topbar h1,
+        .topbar h2 {
+            font-size: 28px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
+        }
+
+        .panel h2 {
+            margin-bottom: 18px;
+            font-size: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            min-width: 240px;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            border-color: #2563eb;
+        }
+
+        button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.88;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th,
+        .orders-table td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+
+        .orders-table th {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .msg {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .msg.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .msg.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .msg.show {
+            display: block;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 760px) {
+            .form-row {
+                flex-direction: column;
+            }
+
+            .orders-table th,
+            .orders-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="topbar">
+            <h1>Driver Dashboard</h1>
+            <button class="btn-secondary" onclick="logout()">Logout</button>
+        </div>
+
+    <div id="dashboard">
+        <div class="panel">
+            <div class="topbar">
+                <div>
+                    <h2>Welcome, <span id="display-driver"></span></h2>
+                    <p id="driver-status" style="color:#6b7280; margin-top:8px;">Search paid orders, accept an order, and view your accepted orders.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Orders awaiting drivers</h2>
+            <div class="form-row">
+                <button class="btn-success" onclick="loadAvailableOrders()">Refresh available orders</button>
+            </div>
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Restaurant</th>
+                        <th>Food Item</th>
+                        <th>Distance</th>
+                        <th>Order Value</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="available-orders-body">
+                    <tr><td colspan="7" style="color:#6b7280;">Loading available orders...</td></tr>
+                </tbody>
+            </table>
+            <div class="msg" id="available-msg"></div>
+        </div>
+
+        <div class="panel">
+            <h2>Your accepted orders</h2>
+            <div class="form-row">
+                <button class="btn-success" onclick="loadAcceptedOrders()">Refresh accepted orders</button>
+            </div>
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Restaurant</th>
+                        <th>Food Item</th>
+                        <th>Distance</th>
+                        <th>Order Value</th>
+                        <th>Delivery Method</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="accepted-orders-body">
+                    <tr><td colspan="7" style="color:#6b7280;">No accepted orders yet.</td></tr>
+                </tbody>
+            </table>
+            <div class="msg" id="accepted-msg"></div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://localhost:8080";
+
+        // Check authentication
+        const username = sessionStorage.getItem("username");
+        const userType = sessionStorage.getItem("userType");
+
+        if (!username || userType !== "2") {
+            window.location.href = "../login_dashboard/login_dashboard.html";
+        }
+
+        const driverUsername = username;
+
+        function showMsg(id, message, type) {
+            const el = document.getElementById(id);
+            el.textContent = message;
+            el.className = `msg ${type} show`;
+            setTimeout(() => el.classList.remove("show"), 4000);
+        }
+
+        async function loadAvailableOrders() {
+            const body = document.getElementById("available-orders-body");
+            body.innerHTML = `<tr><td colspan="7" style="color:#6b7280;">Loading available orders...</td></tr>`;
+
+            try {
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(driverUsername)}/available_orders`);
+                if (!response.ok) {
+                    const data = await response.json();
+                    showMsg("available-msg", data.detail || "Failed to load available orders.", "error");
+                    body.innerHTML = `<tr><td colspan="7" style="color:#ef4444;">Unable to load available orders.</td></tr>`;
+                    return;
+                }
+
+                const orders = await response.json();
+                if (!orders.length) {
+                    body.innerHTML = `<tr><td colspan="7" style="color:#6b7280;">No orders are waiting for drivers right now.</td></tr>`;
+                    return;
+                }
+
+                body.innerHTML = "";
+                for (const order of orders) {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${order.order_id}</td>
+                        <td>${order.restaurant_id}</td>
+                        <td>${order.food_item}</td>
+                        <td>${order.delivery_distance} km</td>
+                        <td>$${Number(order.order_value).toFixed(2)}</td>
+                        <td>${order.order_status}</td>
+                        <td><button class="btn-primary" onclick="acceptOrder('${order.order_id}')">Accept</button></td>
+                    `;
+                    body.appendChild(row);
+                }
+            } catch (error) {
+                showMsg("available-msg", "Unable to fetch available orders.", "error");
+                body.innerHTML = `<tr><td colspan="7" style="color:#ef4444;">Unable to fetch available orders.</td></tr>`;
+            }
+        }
+
+        async function loadAcceptedOrders() {
+            const body = document.getElementById("accepted-orders-body");
+            body.innerHTML = `<tr><td colspan="7" style="color:#6b7280;">Loading accepted orders...</td></tr>`;
+
+            try {
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(driverUsername)}/accepted_orders`);
+                if (!response.ok) {
+                    const data = await response.json();
+                    showMsg("accepted-msg", data.detail || "Failed to load accepted orders.", "error");
+                    body.innerHTML = `<tr><td colspan="7" style="color:#ef4444;">Unable to load accepted orders.</td></tr>`;
+                    return;
+                }
+
+                const orders = await response.json();
+                if (!orders.length) {
+                    body.innerHTML = `<tr><td colspan="7" style="color:#6b7280;">No accepted orders yet.</td></tr>`;
+                    return;
+                }
+
+                body.innerHTML = "";
+                for (const order of orders) {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${order.order_id}</td>
+                        <td>${order.restaurant_id}</td>
+                        <td>${order.food_item}</td>
+                        <td>${order.delivery_distance} km</td>
+                        <td>$${Number(order.order_value).toFixed(2)}</td>
+                        <td>${order.delivery_method}</td>
+                        <td>${order.order_status}</td>
+                    `;
+                    body.appendChild(row);
+                }
+            } catch (error) {
+                showMsg("accepted-msg", "Unable to fetch accepted orders.", "error");
+                body.innerHTML = `<tr><td colspan="7" style="color:#ef4444;">Unable to fetch accepted orders.</td></tr>`;
+            }
+        }
+
+        async function acceptOrder(orderId) {
+            try {
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(driverUsername)}/accept/${encodeURIComponent(orderId)}`, {
+                    method: "POST"
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    showMsg("available-msg", data.detail || "Unable to accept order.", "error");
+                    return;
+                }
+
+                showMsg("available-msg", `Order ${orderId} accepted successfully.`, "success");
+                loadAvailableOrders();
+                loadAcceptedOrders();
+            } catch (error) {
+                showMsg("available-msg", "Unable to accept order.", "error");
+            }
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = "../login_dashboard/login_dashboard.html";
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("display-driver").textContent = driverUsername;
+            loadAvailableOrders();
+            loadAcceptedOrders();
+        });
+    </script>
+</body>
+</html>
