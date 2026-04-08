@@ -66,6 +66,7 @@ def test_api_paymentProcessor_process_order_valid():
     """
     Tries to process a valid order.
     """    
+    change_order_status("f4d84dC", "being_created") #reset status
     response = test_client.post("/payment/process", json={
         "customer_id": "1fb6ba46-4857-46d4-9ea9-45f12c21623a",
         "order_id": "f4d84dC",
@@ -79,7 +80,6 @@ def test_api_paymentProcessor_process_order_valid():
         "email_password": "123456789"
     })
     assert response.status_code == 200
-    change_order_status("f4d84dC", "being_created") #reset status
     
 def test_api_paymentProcessor_process_order_invalid_customer():
     """

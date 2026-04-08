@@ -2,7 +2,7 @@ import re
 from FastAPI_DB.schemas.payment_processor import PaymentProcessorCreate
 from fastapi import HTTPException
 from FastAPI_DB.services.orders_service import change_order_status, get_order_by_order_id
-from FastAPI_DB.services.users_service import get_user_by_id
+from FastAPI_DB.services.users_service import get_user_by_id, get_user_by_username
 from FastAPI_DB.schemas.user import Customer
 
 def process_payment(payload: PaymentProcessorCreate):
@@ -76,10 +76,17 @@ def validateOrder(payload: PaymentProcessorCreate):
     """
     
     order = get_order_by_order_id(payload.order_id)
-    user: Customer = get_user_by_id(payload.customer_id)
+    try:
+        user: Customer = get_user_by_id(payload.customer_id)
+    except HTTPException:
+        user = get_user_by_username(payload.customer_id)
     
+    if user.type != 1:
+        raise HTTPException(status_code=400, detail="USER IS NOT A CUSTOMER!")
+
     for id in user.ordersList:
-        if id == payload.order_id: break
+        if id == payload.order_id:
+            break
     else:
         raise HTTPException(status_code=404, detail="USER DOES NOT HAVE THIS ORDER!")
     
