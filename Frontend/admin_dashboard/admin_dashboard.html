@@ -75,6 +75,7 @@
             border-radius: 14px;
             padding: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
         }
 
         .panel h2 {
@@ -215,6 +216,97 @@
             color: #166534;
         }
 
+        .pagination-wrap {
+            margin-top: 18px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .page-btn {
+            border: none;
+            background: #e5e7eb;
+            color: #111827;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: #d1d5db;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .active-page {
+            background: #2563eb;
+            color: white;
+        }
+
+        .pagination-dots {
+            padding: 0 4px;
+            color: #6b7280;
+        }
+
+        .expand-btn {
+            border: none;
+            background: #eff6ff;
+            color: #1d4ed8;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .expand-btn:hover {
+            background: #dbeafe;
+        }
+
+        .restaurant-details-row {
+            background: #f9fafb;
+        }
+
+        .restaurant-details-cell {
+            padding: 0 !important;
+        }
+
+        .restaurant-details-content {
+            padding: 16px 20px;
+        }
+
+        .menu-items-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .menu-item-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .menu-item-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .menu-item-meta {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .empty-menu {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
         @media (max-width: 900px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -304,17 +396,40 @@
                     <tbody id="orders-body"></tbody>
                 </table>
 
-                <div id="pagination" style="margin-top: 18px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;"></div>
+                <div id="pagination" class="pagination-wrap"></div>
+            </section>
+
+            <section class="panel">
+                <h2>Restaurants</h2>
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Restaurant ID</th>
+                            <th>Name</th>
+                            <th>Menu Items</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="restaurants-body"></tbody>
+                </table>
+
+                <div id="restaurants-pagination" class="pagination-wrap"></div>
             </section>
         </main>
     </div>
 
     <script>
         const ORDERS_API_URL = "http://127.0.0.1:8080/orders";
+        const MENUS_API_URL = "http://127.0.0.1:8080/menus";
 
         let allOrders = [];
         let currentPage = 1;
         const ordersPerPage = 25;
+
+        let allRestaurants = [];
+        let restaurantsCurrentPage = 1;
+        const restaurantsPerPage = 10;
+        let expandedRestaurantIds = new Set();
 
         function getStatusClass(status) {
             if (status === "being_created") return "pending";
@@ -472,7 +587,7 @@
             function createNavButton(label, disabled, onClick) {
                 const btn = document.createElement("button");
                 btn.textContent = label;
-                btn.className = "page-btn nav-btn";
+                btn.className = "page-btn";
                 btn.disabled = disabled;
                 btn.onclick = onClick;
                 return btn;
@@ -504,7 +619,7 @@
 
                 if (endPage >= totalPages) {
                     endPage = totalPages - 1;
-                    startPage = endPage - maxVisiblePages + 1;
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
                 }
             }
 
@@ -524,6 +639,197 @@
                 currentPage++;
                 renderOrdersTable();
                 renderPagination();
+            });
+            pagination.appendChild(nextBtn);
+        }
+
+        function buildRestaurantsFromMenus(menus) {
+            return menus.map(menu => {
+                const restaurantId = String(menu.menu_id ?? "-");
+                const items = Array.isArray(menu.items) ? menu.items : [];
+
+                let restaurantName = `Restaurant ${restaurantId}`;
+                if (items.length > 0) {
+                    const firstItem = items[0];
+                    restaurantName =
+                        firstItem.restaurant_name ??
+                        firstItem.restaurant ??
+                        `Restaurant ${restaurantId}`;
+                }
+
+                return {
+                    restaurant_id: restaurantId,
+                    restaurant_name: restaurantName,
+                    items: items
+                };
+            });
+        }
+
+        function toggleRestaurant(restaurantId) {
+            const id = String(restaurantId);
+
+            if (expandedRestaurantIds.has(id)) {
+                expandedRestaurantIds.delete(id);
+            } else {
+                expandedRestaurantIds.add(id);
+            }
+
+            renderRestaurantsTable();
+        }
+
+        function renderRestaurantsTable() {
+            const tbody = document.getElementById("restaurants-body");
+            if (!tbody) return;
+
+            tbody.innerHTML = "";
+
+            if (!allRestaurants.length) {
+                tbody.innerHTML = `<tr><td colspan="4">No restaurants found.</td></tr>`;
+                return;
+            }
+
+            const startIndex = (restaurantsCurrentPage - 1) * restaurantsPerPage;
+            const endIndex = startIndex + restaurantsPerPage;
+            const pageRestaurants = allRestaurants.slice(startIndex, endIndex);
+
+            for (const restaurant of pageRestaurants) {
+                const restaurantId = String(restaurant.restaurant_id);
+                const isExpanded = expandedRestaurantIds.has(restaurantId);
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${restaurantId}</td>
+                    <td>${restaurant.restaurant_name}</td>
+                    <td>${restaurant.items.length}</td>
+                    <td>
+                        <button type="button" class="expand-btn" data-restaurant-id="${restaurantId}">
+                            ${isExpanded ? "Hide Menu" : "View Menu"}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+
+                if (isExpanded) {
+                    const detailsRow = document.createElement("tr");
+                    detailsRow.className = "restaurant-details-row";
+
+                    let itemsHtml = `<div class="empty-menu">No menu items found.</div>`;
+
+                    if (restaurant.items.length > 0) {
+                        itemsHtml = `
+                            <div class="menu-items-list">
+                                ${restaurant.items.map(item => `
+                                    <div class="menu-item-card">
+                                        <div class="menu-item-title">
+                                            ${item.name ?? item.food_item ?? item.item_name ?? "Unnamed Item"}
+                                        </div>
+                                        <div class="menu-item-meta">
+                                            Price: $${Number(item.price || 0).toFixed(2)}
+                                        </div>
+                                    </div>
+                                `).join("")}
+                            </div>
+                        `;
+                    }
+
+                    detailsRow.innerHTML = `
+                        <td colspan="4" class="restaurant-details-cell">
+                            <div class="restaurant-details-content">
+                                ${itemsHtml}
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(detailsRow);
+                }
+            }
+
+            const buttons = tbody.querySelectorAll(".expand-btn");
+            buttons.forEach(button => {
+                button.addEventListener("click", function () {
+                    toggleRestaurant(this.dataset.restaurantId);
+                });
+            });
+        }
+
+        function renderRestaurantsPagination() {
+            const pagination = document.getElementById("restaurants-pagination");
+            if (!pagination) return;
+
+            pagination.innerHTML = "";
+
+            const totalPages = Math.ceil(allRestaurants.length / restaurantsPerPage);
+            if (totalPages <= 1) return;
+
+            const maxVisiblePages = 10;
+
+            function createPageButton(pageNumber, isActive = false) {
+                const btn = document.createElement("button");
+                btn.textContent = pageNumber;
+                btn.className = "page-btn" + (isActive ? " active-page" : "");
+                btn.disabled = isActive;
+                btn.onclick = () => {
+                    restaurantsCurrentPage = pageNumber;
+                    renderRestaurantsTable();
+                    renderRestaurantsPagination();
+                };
+                return btn;
+            }
+
+            function createNavButton(label, disabled, onClick) {
+                const btn = document.createElement("button");
+                btn.textContent = label;
+                btn.className = "page-btn";
+                btn.disabled = disabled;
+                btn.onclick = onClick;
+                return btn;
+            }
+
+            function createDots() {
+                const dots = document.createElement("span");
+                dots.textContent = "...";
+                dots.className = "pagination-dots";
+                return dots;
+            }
+
+            const prevBtn = createNavButton("Previous", restaurantsCurrentPage === 1, () => {
+                restaurantsCurrentPage--;
+                renderRestaurantsTable();
+                renderRestaurantsPagination();
+            });
+            pagination.appendChild(prevBtn);
+
+            let startPage;
+            let endPage;
+
+            if (totalPages <= maxVisiblePages) {
+                startPage = 1;
+                endPage = totalPages;
+            } else {
+                startPage = Math.max(1, restaurantsCurrentPage - Math.floor(maxVisiblePages / 2));
+                endPage = startPage + maxVisiblePages - 1;
+
+                if (endPage >= totalPages) {
+                    endPage = totalPages - 1;
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                pagination.appendChild(createPageButton(i, i === restaurantsCurrentPage));
+            }
+
+            if (endPage < totalPages - 1) {
+                pagination.appendChild(createDots());
+            }
+
+            if (totalPages > maxVisiblePages && endPage < totalPages) {
+                pagination.appendChild(createPageButton(totalPages, restaurantsCurrentPage === totalPages));
+            }
+
+            const nextBtn = createNavButton("Next", restaurantsCurrentPage === totalPages, () => {
+                restaurantsCurrentPage++;
+                renderRestaurantsTable();
+                renderRestaurantsPagination();
             });
             pagination.appendChild(nextBtn);
         }
@@ -556,7 +862,6 @@
                 renderOrdersChart(allOrders);
                 renderOrdersTable();
                 renderPagination();
-
             } catch (error) {
                 console.error(error);
                 tbody.innerHTML = `<tr><td colspan="9">Failed to load orders.</td></tr>`;
@@ -564,7 +869,41 @@
             }
         }
 
-        window.addEventListener("DOMContentLoaded", loadOrders);
+        async function loadRestaurantsFromMenus() {
+            const tbody = document.getElementById("restaurants-body");
+            if (!tbody) return;
+
+            tbody.innerHTML = `<tr><td colspan="4">Loading restaurants...</td></tr>`;
+
+            try {
+                const response = await fetch(MENUS_API_URL);
+
+                if (!response.ok) {
+                    tbody.innerHTML = `<tr><td colspan="4">HTTP error: ${response.status}</td></tr>`;
+                    return;
+                }
+
+                const menus = await response.json();
+
+                allRestaurants = buildRestaurantsFromMenus(menus);
+                restaurantsCurrentPage = 1;
+                expandedRestaurantIds = new Set();
+
+                renderRestaurantsTable();
+                renderRestaurantsPagination();
+            } catch (error) {
+                console.error(error);
+                tbody.innerHTML = `<tr><td colspan="4">Failed to load restaurants.</td></tr>`;
+            }
+        }
+
+        window.toggleRestaurant = toggleRestaurant;
+
+        window.addEventListener("DOMContentLoaded", () => {
+            loadOrders();
+            loadRestaurantsFromMenus();
+        });
     </script>
 </body>
+
 </html>
