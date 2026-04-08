@@ -25,7 +25,11 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5500",
-        "http://127.0.0.1:5500"
+        "http://127.0.0.1:5500",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:8080",
+        "http://127.0.0.1:8080"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -52,35 +56,3 @@ app.include_router(order_cost_router)
 app.include_router(reviews_router)
 app.include_router(login_router)
 
-#if __name__ == "__main__":  
- #   """Main branch of operations"""
-#
- #   """LOGIN (or Create account)"""
-  #  while True:
-   #     option = input("Select an option: '0' Login / Register, '1' Exit\n")
-    #    if(option != "0" and option != "1"):
-     #       print("Invalid option! Try again.")
-      #      continue
-
-#        if option == "1":
- #           break
-        
-
-  #      print()
-   #     
-    #    user_id = login()
-     #   if user_id is None:
-      #      break
-
-       # """Depending on user type have separate functionalities."""
-        #user_type = get_user_by_id(user_id).type
-#        if user_type == 1:
- #           """Customer functionality"""
-  #          customer_branch(user_id)
-#
- #       elif user_type == 2:
-  #          """Driver functionality"""
-  #
-   #     elif user_type == 3:
-    #        """Manager functionality"""
-     #       manager_branch(user_id)
