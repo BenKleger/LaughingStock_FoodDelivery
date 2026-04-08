@@ -1,8 +1,10 @@
 import uuid
 from typing import List
 from fastapi import HTTPException
+from ..schemas.order import Order
 from ..schemas.user import Customer, Driver, User, UserCreate, Manager
 from ..repositories.user_repo import load_all, save_all
+from ..services.orders_service import list_orders, change_order_status, get_order_by_order_id
 
 
 def list_users() -> List[User]:
@@ -61,3 +63,49 @@ def get_user_by_id(user_id: str) -> User:
             elif it.get("type") == 3:
                 return Manager(**it)
     raise HTTPException(status_code=404, detail=f"User '{user_id}' not found")
+
+
+def save_user(user: User) -> User:
+    users = load_all()
+    for idx, it in enumerate(users):
+        if it.get("id") == user.id:
+            users[idx] = user.model_dump()
+            save_all(users)
+            return user
+    raise HTTPException(status_code=404, detail=f"User '{user.id}' not found")
+
+
+def get_driver_available_orders(user_username: str) -> List[Order]:
+    driver = get_user_by_username(user_username)
+    if not isinstance(driver, Driver):
+        raise HTTPException(status_code=400, detail=f"User '{user_username}' is not a driver")
+
+    return [order for order in list_orders() if order.order_status == "paid"]
+
+
+def get_driver_accepted_orders(user_username: str) -> List[Order]:
+    driver = get_user_by_username(user_username)
+    if not isinstance(driver, Driver):
+        raise HTTPException(status_code=400, detail=f"User '{user_username}' is not a driver")
+
+    accepted_orders: List[Order] = []
+    for order_id in driver.ordersTaken:
+        accepted_orders.append(get_order_by_order_id(order_id))
+    return accepted_orders
+
+
+def accept_order_for_driver(user_username: str, order_id: str) -> Order:
+    driver = get_user_by_username(user_username)
+    if not isinstance(driver, Driver):
+        raise HTTPException(status_code=400, detail=f"User '{user_username}' is not a driver")
+
+    order = get_order_by_order_id(order_id)
+    if order.order_status != "paid":
+        raise HTTPException(status_code=400, detail="Only orders in paid status can be accepted.")
+
+    order = change_order_status(order_id, "accepted")
+    if order_id not in driver.ordersTaken:
+        driver.ordersTaken.append(order_id)
+        save_user(driver)
+
+    return order
