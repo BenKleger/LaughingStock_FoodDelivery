@@ -10,9 +10,7 @@
     "delivery_method": "Bike",
     "traffic_condition": "Medium",
     "weather_condition": "Snowy",
-    "item_ids": [
-      "16-Taccos"
-    ],
+    "item_ids": [],
     "order_status": "delivered"
   },
   {
@@ -77,7 +75,9 @@
     "item_ids": [
       "15-Sushi"
     ],
-    "order_status": "delivered"
+    "order_status": "being_created",
+    "delivery_instructions": "Leave in mailbox",
+    "cooking_instructions": "well done"
   },
   {
     "order_id": "070428H",
@@ -159998,21 +159998,5 @@
       "26-Pasta"
     ],
     "order_status": "delivered"
-  },
-  {
-    "order_id": "c3803eb9-a50e-4922-95cd-239002f9a686",
-    "restaurant_id": 101,
-    "food_item": "Test Food",
-    "order_time": "now",
-    "delivery_time": "later",
-    "delivery_distance": 5.5,
-    "order_value": 47.019999999999996,
-    "delivery_method": "bike",
-    "traffic_condition": "light",
-    "weather_condition": "sunny",
-    "item_ids": [
-      "21-Pasta"
-    ],
-    "order_status": "being_created"
   }
 ]
