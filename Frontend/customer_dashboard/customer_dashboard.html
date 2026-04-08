@@ -224,34 +224,6 @@
                 </div>
                 <div id="create-msg" class="msg"></div>
             </div>
-
-            <div class="panel" id="payment-panel" style="display: none;">
-                <h2>Complete Payment</h2>
-                <div id="payment-msg" class="msg"></div>
-                <div class="form-row">
-                    <select id="payment-method">
-                        <option value="CREDIT">Credit Card</option>
-                        <option value="DEBIT">Debit Card</option>
-                        <option value="APPLEPAY">Apple Pay</option>
-                        <option value="PAYPAL">PayPal</option>
-                    </select>
-                </div>
-                <div id="card-fields" class="form-row">
-                    <input type="text" id="card-number" placeholder="Card Number" />
-                    <input type="text" id="cvv" placeholder="CVV" />
-                    <input type="text" id="card-holder" placeholder="Card Holder Name" />
-                    <input type="text" id="billing-address" placeholder="Billing Address" />
-                    <input type="text" id="postal-code" placeholder="Postal Code (A1A 1A1)" />
-                </div>
-                <div id="digital-fields" class="form-row" style="display: none;">
-                    <input type="email" id="email" placeholder="Email" />
-                    <input type="password" id="email-password" placeholder="Password" />
-                </div>
-                <div class="form-row">
-                    <button class="btn-success" onclick="processPayment()">Submit Payment</button>
-                    <button class="btn-secondary" onclick="hidePaymentForm()">Cancel</button>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -267,6 +239,7 @@
         }
 
         const customerUsername = username;
+        let customerId = null;
 
         function showMsg(id, message, type) {
             const el = document.getElementById(id);
@@ -275,15 +248,14 @@
             setTimeout(() => el.classList.remove("show"), 4000);
         }
 
-        let currentOrderId = null;
+
 
         function showPaymentForm(orderId) {
-            currentOrderId = orderId;
-            document.getElementById("payment-panel").style.display = "block";
-            document.getElementById("payment-method").value = "CREDIT";
-            togglePaymentFields();
-            // Scroll to payment form
-            document.getElementById("payment-panel").scrollIntoView();
+            if (customerId) {
+                window.location.href = `../payment_dashboard/payment.html?order_id=${orderId}&customer_id=${customerId}`;
+            } else {
+                showMsg("orders-msg", "Unable to load customer details.", "error");
+            }
         }
 
         function hidePaymentForm() {
@@ -299,70 +271,9 @@
             document.getElementById("email-password").value = "";
         }
 
-        function togglePaymentFields() {
-            const method = document.getElementById("payment-method").value;
-            const cardFields = document.getElementById("card-fields");
-            const digitalFields = document.getElementById("digital-fields");
-            if (method === "CREDIT" || method === "DEBIT") {
-                cardFields.style.display = "flex";
-                digitalFields.style.display = "none";
-            } else {
-                cardFields.style.display = "none";
-                digitalFields.style.display = "flex";
-            }
-        }
 
-        document.getElementById("payment-method").addEventListener("change", togglePaymentFields);
 
-        async function processPayment() {
-            if (!currentOrderId) return;
 
-            try {
-                const method = document.getElementById("payment-method").value;
-                const payload = {
-                    customer_id: customerUsername,
-                    order_id: currentOrderId,
-                    payment_method: method,
-                    payment_number: "",
-                    payment_pin: "",
-                    card_holder_name: "",
-                    billing_address: "",
-                    postal_code: "",
-                    email: "",
-                    email_password: ""
-                };
-
-                if (method === "CREDIT" || method === "DEBIT") {
-                    payload.payment_number = document.getElementById("card-number").value;
-                    payload.payment_pin = document.getElementById("cvv").value;
-                    payload.card_holder_name = document.getElementById("card-holder").value;
-                    payload.billing_address = document.getElementById("billing-address").value;
-                    payload.postal_code = document.getElementById("postal-code").value;
-                } else {
-                    payload.email = document.getElementById("email").value;
-                    payload.email_password = document.getElementById("email-password").value;
-                }
-
-                const response = await fetch(`${API_BASE}/payment/process`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await response.json();
-                if (!response.ok) {
-                    showMsg("payment-msg", data.detail || "Payment failed.", "error");
-                    return;
-                }
-
-                // Payment successful, change order status to paid
-                await changeOrderStatus(currentOrderId, 'paid');
-                hidePaymentForm();
-                showMsg("orders-msg", "Order completed successfully.", "success");
-            } catch (error) {
-                showMsg("payment-msg", "Unable to process payment.", "error");
-            }
-        }
 
         async function searchItems() {
             const query = document.getElementById("search-query").value.trim();
@@ -769,8 +680,20 @@
             window.location.href = "../login_dashboard/login_dashboard.html";
         }
 
-        window.addEventListener("DOMContentLoaded", () => {
+        window.addEventListener("DOMContentLoaded", async () => {
             document.getElementById("display-customer").textContent = customerUsername;
+            // Fetch customer ID
+            try {
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(customerUsername)}`);
+                if (response.ok) {
+                    const user = await response.json();
+                    customerId = user.id;
+                } else {
+                    console.error("Failed to fetch user details");
+                }
+            } catch (error) {
+                console.error("Error fetching user:", error);
+            }
             loadOrders();
         });
     </script>
