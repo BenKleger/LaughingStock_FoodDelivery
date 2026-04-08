@@ -35,5 +35,89 @@
     "password": "123",
     "type": 3,
     "restaurantId": 64
+  },
+  {
+    "id": "3a82e744-8317-465f-9994-df4dcc73b661",
+    "username": "testUser",
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "aaeffd0c-b070-4264-ab43-69d35741e19a",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "968af062-9956-4233-89c4-19490d8d98b3",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
+  },
+  {
+    "id": "c2683f74-47f2-422a-8d15-0f427947ebfc",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
+  },
+  {
+    "id": "621d07e9-2c1b-4953-8548-578b52cd129f",
+    "username": "testUser",
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "a3c337d9-fc6c-4467-8aa5-6a35117718b2",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "5bd6fc0c-76e0-475d-9b15-692a17704c88",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
+  },
+  {
+    "id": "ba10ca96-bcb0-4cf5-9db3-436792ec6712",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
+  },
+  {
+    "id": "97147fd1-0a70-4c0a-b8dc-41fcff297e6f",
+    "username": "testUser",
+    "password": "testPW",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "16ebaee2-1091-4c7c-982d-73d77c07c63b",
+    "username": "test_customer",
+    "password": "test_password",
+    "type": 1,
+    "ordersList": []
+  },
+  {
+    "id": "b9b68cba-f5b0-4670-94ce-34cacf29008e",
+    "username": "test_driver",
+    "password": "test_password",
+    "type": 2,
+    "ordersTaken": []
+  },
+  {
+    "id": "ed55291d-aaac-4305-9299-dbce23850bf0",
+    "username": "test_manager",
+    "password": "test_password",
+    "type": 3,
+    "restaurantId": 0
   }
 ]
