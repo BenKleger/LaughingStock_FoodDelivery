@@ -303,12 +303,18 @@
                     </thead>
                     <tbody id="orders-body"></tbody>
                 </table>
+
+                <div id="pagination" style="margin-top: 18px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;"></div>
             </section>
         </main>
     </div>
 
     <script>
         const ORDERS_API_URL = "http://127.0.0.1:8080/orders";
+
+        let allOrders = [];
+        let currentPage = 1;
+        const ordersPerPage = 25;
 
         function getStatusClass(status) {
             if (status === "being_created") return "pending";
@@ -407,6 +413,121 @@
             return date.toLocaleString();
         }
 
+        function renderOrdersTable() {
+            const tbody = document.getElementById("orders-body");
+            if (!tbody) return;
+
+            tbody.innerHTML = "";
+
+            if (!allOrders.length) {
+                tbody.innerHTML = `<tr><td colspan="9">No orders found.</td></tr>`;
+                return;
+            }
+
+            const startIndex = (currentPage - 1) * ordersPerPage;
+            const endIndex = startIndex + ordersPerPage;
+            const pageOrders = allOrders.slice(startIndex, endIndex);
+
+            for (const order of pageOrders) {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${order.order_id ?? "-"}</td>
+                    <td>${order.restaurant_id ?? "-"}</td>
+                    <td>${order.food_item ?? "-"}</td>
+                    <td>${formatDate(order.order_time)}</td>
+                    <td>${formatDate(order.delivery_time)}</td>
+                    <td>${order.delivery_distance ?? "-"} km</td>
+                    <td>$${Number(order.order_value || 0).toFixed(2)}</td>
+                    <td>${order.delivery_method ?? "-"}</td>
+                    <td><span class="badge ${getStatusClass(order.order_status)}">${order.order_status ?? "-"}</span></td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+
+        function renderPagination() {
+            const pagination = document.getElementById("pagination");
+            if (!pagination) return;
+
+            pagination.innerHTML = "";
+
+            const totalPages = Math.ceil(allOrders.length / ordersPerPage);
+            if (totalPages <= 1) return;
+
+            const maxVisiblePages = 10;
+
+            function createPageButton(pageNumber, isActive = false) {
+                const btn = document.createElement("button");
+                btn.textContent = pageNumber;
+                btn.className = "page-btn" + (isActive ? " active-page" : "");
+                btn.disabled = isActive;
+                btn.onclick = () => {
+                    currentPage = pageNumber;
+                    renderOrdersTable();
+                    renderPagination();
+                };
+                return btn;
+            }
+
+            function createNavButton(label, disabled, onClick) {
+                const btn = document.createElement("button");
+                btn.textContent = label;
+                btn.className = "page-btn nav-btn";
+                btn.disabled = disabled;
+                btn.onclick = onClick;
+                return btn;
+            }
+
+            function createDots() {
+                const dots = document.createElement("span");
+                dots.textContent = "...";
+                dots.className = "pagination-dots";
+                return dots;
+            }
+
+            const prevBtn = createNavButton("Previous", currentPage === 1, () => {
+                currentPage--;
+                renderOrdersTable();
+                renderPagination();
+            });
+            pagination.appendChild(prevBtn);
+
+            let startPage;
+            let endPage;
+
+            if (totalPages <= maxVisiblePages) {
+                startPage = 1;
+                endPage = totalPages;
+            } else {
+                startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                endPage = startPage + maxVisiblePages - 1;
+
+                if (endPage >= totalPages) {
+                    endPage = totalPages - 1;
+                    startPage = endPage - maxVisiblePages + 1;
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                pagination.appendChild(createPageButton(i, i === currentPage));
+            }
+
+            if (endPage < totalPages - 1) {
+                pagination.appendChild(createDots());
+            }
+
+            if (totalPages > maxVisiblePages && endPage < totalPages) {
+                pagination.appendChild(createPageButton(totalPages, currentPage === totalPages));
+            }
+
+            const nextBtn = createNavButton("Next", currentPage === totalPages, () => {
+                currentPage++;
+                renderOrdersTable();
+                renderPagination();
+            });
+            pagination.appendChild(nextBtn);
+        }
+
         async function loadOrders() {
             const tbody = document.getElementById("orders-body");
 
@@ -428,31 +549,14 @@
 
                 const orders = await response.json();
 
-                updateDashboardCounts(orders);
-                renderOrdersChart(orders);
+                allOrders = orders;
+                currentPage = 1;
 
-                tbody.innerHTML = "";
+                updateDashboardCounts(allOrders);
+                renderOrdersChart(allOrders);
+                renderOrdersTable();
+                renderPagination();
 
-                if (!orders.length) {
-                    tbody.innerHTML = `<tr><td colspan="9">No orders found.</td></tr>`;
-                    return;
-                }
-
-                for (const order of orders) {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${order.order_id ?? "-"}</td>
-                        <td>${order.restaurant_id ?? "-"}</td>
-                        <td>${order.food_item ?? "-"}</td>
-                        <td>${formatDate(order.order_time)}</td>
-                        <td>${formatDate(order.delivery_time)}</td>
-                        <td>${order.delivery_distance ?? "-"} km</td>
-                        <td>$${Number(order.order_value || 0).toFixed(2)}</td>
-                        <td>${order.delivery_method ?? "-"}</td>
-                        <td><span class="badge ${getStatusClass(order.order_status)}">${order.order_status ?? "-"}</span></td>
-                    `;
-                    tbody.appendChild(row);
-                }
             } catch (error) {
                 console.error(error);
                 tbody.innerHTML = `<tr><td colspan="9">Failed to load orders.</td></tr>`;
@@ -463,5 +567,4 @@
         window.addEventListener("DOMContentLoaded", loadOrders);
     </script>
 </body>
-
 </html>
