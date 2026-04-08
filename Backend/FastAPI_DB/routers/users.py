@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from FastAPI_DB.schemas.order import Order, OrderCreate
 from FastAPI_DB.schemas.user import UserCreate, Customer, Driver, Manager
 from FastAPI_DB.services.users_service import (
@@ -12,6 +12,8 @@ from FastAPI_DB.services.users_service import (
     accept_order_for_driver,
     get_customer_orders,
     create_order_for_customer,
+    get_total_driver_tips,
+    get_total_customer_tips
 )
 
 router = APIRouter(prefix="/users", tags=["user"])
@@ -52,3 +54,13 @@ def get_customer_orders_endpoint(username: str):
 @router.post("/{username}/orders", response_model=Order, status_code=201)
 def create_order_for_customer_endpoint(username: str, payload: OrderCreate):
     return create_order_for_customer(username, payload.model_dump())
+
+@router.get("/{username}/total_tips")
+def get_total_tips(username: str):
+    user = get_user_by_username(username)
+    if user.type == 1:  # Customer
+        return {"total_tips_given": get_total_customer_tips(username)}
+    elif user.type == 2:  # Driver
+        return {"total_tips_received": get_total_driver_tips(username)}
+    else:
+        raise HTTPException(status_code=400, detail="Invalid user type")

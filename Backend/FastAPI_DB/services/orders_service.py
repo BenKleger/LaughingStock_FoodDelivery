@@ -101,7 +101,6 @@ def reset_order_DB():
 
     return True
 
-
 def add_order_item(user_order_id: str, new_item_id: str):
     """
     Adds an item to an order.
@@ -154,8 +153,6 @@ def add_order_item(user_order_id: str, new_item_id: str):
 
     return order
 
-
-
 def delete_order_item(user_order_id: str, item_id_to_remove: str):
     """
     Removes an item from an order.
@@ -205,7 +202,6 @@ def delete_order_item(user_order_id: str, item_id_to_remove: str):
     print("\n\n", get_item_by_item_ID(item_id_to_remove).name, " is successfully removed from the order (", order.order_id, "\n\n")
     
     return order
-
 
 def delete_order(user_order_id: str):
     """
@@ -289,3 +285,49 @@ def change_order_status(user_order_id: str, new_status: str):
     print("\n\nOrder (", order.order_id, ") status changed to ", order.order_status, "\n\n")
 
     return order
+
+def update_tip(user_order_id: str, new_tip: float):
+    """
+    Updates the tip for an order.
+    Only allows increasing the tip, as decreasing tip after order acceptance 
+    would not be good for drivers.
+    Parameters:
+        user_order_id (str): order id provided by user.
+        new_tip (float): the new tip amount to be updated for the order.
+
+    Raises:
+        HTTPException status 404: If no order with user_order_id exists in orders.json.
+
+        HTTPException status 400: If the order's tip is greater than the new tip.
+
+    Returns:
+        Nothing.
+
+    """
+    orders = load_all()
+
+    order: Order = get_order_by_order_id(user_order_id)
+    
+    order_dict = None
+    for saved_order in orders:
+        if saved_order.get("order_id") == user_order_id:
+            order_dict = saved_order
+            break
+    
+    if order_dict is None:
+        raise HTTPException(status_code=404, detail=f"Order '{user_order_id}' not found")
+    
+    order = Order(**order_dict)
+    
+    if order.tip > new_tip:
+        raise HTTPException(status_code=400, detail=f"Tip cannot be decreased after being set. Current tip: {order.tip}, attempted new tip: {new_tip}")
+
+    # Update the dict in the list
+    order_dict['tip'] = new_tip
+    
+    save_all(orders)
+
+    print("\n\nOrder (", order.order_id, ") tip updated to ", order.tip, "\n\n")
+
+    return order
+
