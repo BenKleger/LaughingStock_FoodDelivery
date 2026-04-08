@@ -167,6 +167,7 @@
     <div class="main">
         <div class="topbar">
             <h1>Driver Dashboard</h1>
+            <button class="btn-secondary" onclick="logout()">Logout</button>
         </div>
 
     <div id="dashboard">
@@ -231,7 +232,16 @@
 
     <script>
         const API_BASE = "http://localhost:8080";
-        const driverUsername = "testdriver"; // Hardcoded for demo - replace with actual logged-in user
+
+        // Check authentication
+        const username = sessionStorage.getItem("username");
+        const userType = sessionStorage.getItem("userType");
+
+        if (!username || userType !== "2") {
+            window.location.href = "../login_dashboard/login_dashboard.html";
+        }
+
+        const driverUsername = username;
 
         function showMsg(id, message, type) {
             const el = document.getElementById(id);
@@ -335,6 +345,11 @@
             } catch (error) {
                 showMsg("available-msg", "Unable to accept order.", "error");
             }
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = "../login_dashboard/login_dashboard.html";
         }
 
         window.addEventListener("DOMContentLoaded", () => {
