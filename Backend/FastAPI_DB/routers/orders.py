@@ -8,7 +8,8 @@ from FastAPI_DB.services.orders_service import (
     change_order_status,
     add_order_item,
     delete_order_item,
-    delete_order
+    delete_order,
+    update_tip
 )
 
 router = APIRouter(prefix="/orders", tags=["order"])
@@ -40,3 +41,7 @@ def remove_item_from_order(order_id: str, item_id: str):
 @router.delete("/{order_id}")
 def delete_order_endpoint(order_id: str):
     return delete_order(order_id)
+
+@router.put("/{order_id}/tip")
+def update_order_tip(order_id: str, tip: float):
+    return update_tip(order_id, tip)
