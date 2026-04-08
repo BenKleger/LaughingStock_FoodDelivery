@@ -145,3 +145,35 @@ def create_order_for_customer(username: str, order_data: dict) -> Order:
         save_user(customer)
 
     return order
+
+def get_total_driver_tips(username: str) -> float:
+    """Calculate total tips earned by a driver"""
+    user = get_user_by_username(username)
+    if user.type != 2:
+        raise HTTPException(status_code=400, detail=f"User '{username}' is not a driver")
+
+    driver = Driver(**user.model_dump())
+    total_tips = 0.0
+    for order_id in driver.ordersTaken:
+        try:
+            order = get_order_by_order_id(order_id)
+            total_tips += order.tip
+        except:
+            pass  # Skip orders that don't exist
+    return total_tips
+
+def get_total_customer_tips(username: str) -> float:
+    """Calculate total tips given by a customer"""
+    user = get_user_by_username(username)
+    if user.type != 1:
+        raise HTTPException(status_code=400, detail=f"User '{username}' is not a customer")
+
+    customer = Customer(**user.model_dump())
+    total_tips = 0.0
+    for order_id in customer.ordersList:
+        try:
+            order = get_order_by_order_id(order_id)
+            total_tips += order.tip
+        except:
+            pass  # Skip orders that don't exist
+    return total_tips
