@@ -15,6 +15,7 @@ from User import customer_branch, driver_branch, manager_branch
 from User.manager_branch import manager_branch
 from User.customer_branch import customer_branch
 from User.driver_branch import driver_branch
+from FastAPI_DB.routers.reviews import router as reviews_router
 
 
 app = FastAPI()
@@ -47,6 +48,7 @@ app.include_router(search_router)
 app.include_router(payment_router)
 app.include_router(manager_router)
 app.include_router(order_cost_router)
+app.include_router(reviews_router)
 
 #if __name__ == "__main__":  
  #   """Main branch of operations"""
