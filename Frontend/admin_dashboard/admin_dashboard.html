@@ -259,6 +259,22 @@
             background: #d1d5db;
         }
 
+        .btn-danger {
+            border: none;
+            background: #dc2626;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
         .active-page {
             background: #2563eb;
             color: white;
@@ -336,6 +352,31 @@
                 display: block;
                 overflow-x: auto;
             }
+        }
+
+        .msg {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .msg.show {
+            opacity: 1;
+        }
+
+        .msg.error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .msg.success {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
         }
     </style>
 </head>
@@ -429,6 +470,8 @@
                     </thead>
                     <tbody id="restaurants-body"></tbody>
                 </table>
+
+                <div class="msg" id="restaurants-msg"></div>
 
                 <div id="restaurants-pagination" class="pagination-wrap"></div>
             </section>
@@ -722,6 +765,9 @@
                         <button type="button" class="expand-btn" data-restaurant-id="${restaurantId}">
                             ${isExpanded ? "Hide Menu" : "View Menu"}
                         </button>
+                        <button type="button" class="btn-danger" onclick="deleteMenu('${restaurantId}')">
+                            Delete Menu
+                        </button>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -915,6 +961,36 @@
         }
 
         window.toggleRestaurant = toggleRestaurant;
+
+        function showMsg(id, text, type) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.textContent = text;
+            el.className = `msg ${type} show`;
+        }
+
+        async function deleteMenu(menuId) {
+            if (!confirm(`Are you sure you want to delete menu ${menuId}? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${MENUS_API_URL}/${menuId}`, {
+                    method: "DELETE"
+                });
+
+                if (response.ok) {
+                    showMsg("restaurants-msg", `Menu ${menuId} deleted successfully.`, "success");
+                    loadRestaurantsFromMenus(); // Refresh the table
+                } else {
+                    const errorData = await response.json();
+                    showMsg("restaurants-msg", errorData.detail || "Unable to delete menu.", "error");
+                }
+            } catch (error) {
+                console.error(error);
+                showMsg("restaurants-msg", "Unable to delete menu.", "error");
+            }
+        }
 
         function logout() {
             sessionStorage.clear();

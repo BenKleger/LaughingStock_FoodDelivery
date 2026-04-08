@@ -82,7 +82,7 @@ def add_menu_item(username: str, payload: menuItemAdd):
 
     menu_exists = any(menu["menu_id"] == manager.restaurantId for menu in menus) #checks if a menu for manager alr exists
     if not menu_exists:
-        new_menu = {"menu_id": manager.restaurant_Id, "items": [new_item.model_dump()]}
+        new_menu = {"menu_id": manager.restaurantId, "items": [new_item.model_dump()]}
         menus.append(new_menu)
     else:
         for menu in menus:
