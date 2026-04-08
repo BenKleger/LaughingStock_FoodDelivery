@@ -18,6 +18,10 @@ class UserUpdate(BaseModel):
     password: str
     type: int 
 
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
 """
 Subclasses and their attributes + defualt values:
 """
