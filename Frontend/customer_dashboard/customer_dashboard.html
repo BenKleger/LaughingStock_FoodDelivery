@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customer Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        .main {
+            padding: 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .topbar h1 {
+            font-size: 28px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
+        }
+
+        .panel h2 {
+            margin-bottom: 18px;
+            font-size: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            min-width: 200px;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            border-color: #2563eb;
+        }
+
+        button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-success {
+            background: #059669;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+
+        .msg {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .msg.show {
+            display: block;
+        }
+
+        .msg.error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .msg.success {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="topbar">
+            <h1>Customer Dashboard</h1>
+            <button class="btn-secondary" onclick="logout()">Logout</button>
+        </div>
+
+        <div id="dashboard">
+            <div class="panel">
+                <div class="topbar">
+                    <div>
+                        <h2>Welcome, <span id="display-customer"></span></h2>
+                        <p style="color:#6b7280; margin-top:8px;">Search for food items, view your orders, and place new orders.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Search Food Items</h2>
+                <div class="form-row">
+                    <input type="text" id="search-query" placeholder="Search for restaurants, items, or item IDs..." />
+                    <select id="search-filter">
+                        <option value="price_low_to_high">Price: Low to High</option>
+                        <option value="price_high_to_low">Price: High to Low</option>
+                    </select>
+                    <button class="btn-primary" onclick="searchItems()">Search</button>
+                    <button class="btn-secondary" onclick="testSearch()">Test Search</button>
+                </div>
+                <div id="search-msg" class="msg"></div>
+                <div id="search-results">
+                    <!-- Search results will be displayed here -->
+                </div>
+                <div id="search-pagination" style="display: none; margin-top: 16px;">
+                    <button class="btn-secondary" onclick="previousPage()" id="prev-btn" disabled>Previous</button>
+                    <span id="page-info">Page 1</span>
+                    <button class="btn-secondary" onclick="nextPage()" id="next-btn">Next</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>My Orders</h2>
+                <div class="form-row">
+                    <button class="btn-success" onclick="loadOrders()">Refresh orders</button>
+                </div>
+                <div id="orders-msg" class="msg"></div>
+                <table id="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Restaurant</th>
+                            <th>Food Item</th>
+                            <th>Status</th>
+                            <th>Value</th>
+                            <th>Delivery Distance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-body">
+                        <tr>
+                            <td colspan="7" style="color:#6b7280;">Loading orders...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="panel">
+                <h2>Create New Order</h2>
+                <div class="form-row">
+                    <input type="text" id="order-item-id" placeholder="Item ID" />
+                    <button class="btn-primary" onclick="createOrder()">Create Order</button>
+                </div>
+                <div id="create-msg" class="msg"></div>
+            </div>
+
+            <div class="panel" id="payment-panel" style="display: none;">
+                <h2>Complete Payment</h2>
+                <div id="payment-msg" class="msg"></div>
+                <div class="form-row">
+                    <select id="payment-method">
+                        <option value="CREDIT">Credit Card</option>
+                        <option value="DEBIT">Debit Card</option>
+                        <option value="APPLEPAY">Apple Pay</option>
+                        <option value="PAYPAL">PayPal</option>
+                    </select>
+                </div>
+                <div id="card-fields" class="form-row">
+                    <input type="text" id="card-number" placeholder="Card Number" />
+                    <input type="text" id="cvv" placeholder="CVV" />
+                    <input type="text" id="card-holder" placeholder="Card Holder Name" />
+                    <input type="text" id="billing-address" placeholder="Billing Address" />
+                    <input type="text" id="postal-code" placeholder="Postal Code (A1A 1A1)" />
+                </div>
+                <div id="digital-fields" class="form-row" style="display: none;">
+                    <input type="email" id="email" placeholder="Email" />
+                    <input type="password" id="email-password" placeholder="Password" />
+                </div>
+                <div class="form-row">
+                    <button class="btn-success" onclick="processPayment()">Submit Payment</button>
+                    <button class="btn-secondary" onclick="hidePaymentForm()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://localhost:8080";
+
+        // Check authentication
+        const username = sessionStorage.getItem("username");
+        const userType = sessionStorage.getItem("userType");
+
+        if (!username || userType !== "1") {
+            window.location.href = "../login_dashboard/login_dashboard.html";
+        }
+
+        const customerUsername = username;
+
+        function showMsg(id, message, type) {
+            const el = document.getElementById(id);
+            el.textContent = message;
+            el.className = `msg ${type} show`;
+            setTimeout(() => el.classList.remove("show"), 4000);
+        }
+
+        let currentOrderId = null;
+
+        function showPaymentForm(orderId) {
+            currentOrderId = orderId;
+            document.getElementById("payment-panel").style.display = "block";
+            document.getElementById("payment-method").value = "CREDIT";
+            togglePaymentFields();
+            // Scroll to payment form
+            document.getElementById("payment-panel").scrollIntoView();
+        }
+
+        function hidePaymentForm() {
+            document.getElementById("payment-panel").style.display = "none";
+            currentOrderId = null;
+            // Clear form
+            document.getElementById("card-number").value = "";
+            document.getElementById("cvv").value = "";
+            document.getElementById("card-holder").value = "";
+            document.getElementById("billing-address").value = "";
+            document.getElementById("postal-code").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("email-password").value = "";
+        }
+
+        function togglePaymentFields() {
+            const method = document.getElementById("payment-method").value;
+            const cardFields = document.getElementById("card-fields");
+            const digitalFields = document.getElementById("digital-fields");
+            if (method === "CREDIT" || method === "DEBIT") {
+                cardFields.style.display = "flex";
+                digitalFields.style.display = "none";
+            } else {
+                cardFields.style.display = "none";
+                digitalFields.style.display = "flex";
+            }
+        }
+
+        document.getElementById("payment-method").addEventListener("change", togglePaymentFields);
+
+        async function processPayment() {
+            if (!currentOrderId) return;
+
+            try {
+                const method = document.getElementById("payment-method").value;
+                const payload = {
+                    customer_id: customerUsername,
+                    order_id: currentOrderId,
+                    payment_method: method,
+                    payment_number: "",
+                    payment_pin: "",
+                    card_holder_name: "",
+                    billing_address: "",
+                    postal_code: "",
+                    email: "",
+                    email_password: ""
+                };
+
+                if (method === "CREDIT" || method === "DEBIT") {
+                    payload.payment_number = document.getElementById("card-number").value;
+                    payload.payment_pin = document.getElementById("cvv").value;
+                    payload.card_holder_name = document.getElementById("card-holder").value;
+                    payload.billing_address = document.getElementById("billing-address").value;
+                    payload.postal_code = document.getElementById("postal-code").value;
+                } else {
+                    payload.email = document.getElementById("email").value;
+                    payload.email_password = document.getElementById("email-password").value;
+                }
+
+                const response = await fetch(`${API_BASE}/payment/process`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    showMsg("payment-msg", data.detail || "Payment failed.", "error");
+                    return;
+                }
+
+                // Payment successful, change order status to paid
+                await changeOrderStatus(currentOrderId, 'paid');
+                hidePaymentForm();
+                showMsg("orders-msg", "Order completed successfully.", "success");
+            } catch (error) {
+                showMsg("payment-msg", "Unable to process payment.", "error");
+            }
+        }
+
+        async function searchItems() {
+            const query = document.getElementById("search-query").value.trim();
+            const filter = document.getElementById("search-filter").value;
+
+            if (!query) {
+                showMsg("search-msg", "Please enter a search query.", "error");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/search`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ query, filter })
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    showMsg("search-msg", data.detail || "Search failed.", "error");
+                    document.getElementById("search-pagination").style.display = "none";
+                    return;
+                }
+
+                const results = await response.json();
+                console.log("Search results:", results); // Debug logging
+                currentSearchResults = results.search_results || [];
+                currentPageIndex = 0;
+
+                console.log("Current search results:", currentSearchResults); // Debug logging
+
+                if (!currentSearchResults.length) {
+                    document.getElementById("search-results").innerHTML = "<p style='color:#6b7280;'>No items found.</p>";
+                    document.getElementById("search-pagination").style.display = "none";
+                    return;
+                }
+
+                await displaySearchPage(currentPageIndex);
+                updatePaginationButtons();
+                document.getElementById("search-pagination").style.display = "block";
+            } catch (error) {
+                showMsg("search-msg", "Unable to search items.", "error");
+                document.getElementById("search-pagination").style.display = "none";
+            }
+        }
+
+        async function displaySearchPage(pageIndex) {
+            const pageItems = currentSearchResults[pageIndex] || [];
+            const container = document.getElementById("search-results");
+
+            if (!pageItems.length) {
+                container.innerHTML = "<p style='color:#6b7280;'>No items on this page.</p>";
+                return;
+            }
+
+            let html = "<table><thead><tr><th>Item ID</th><th>Name</th><th>Restaurant</th><th>Price</th><th>Description</th></tr></thead><tbody>";
+
+            // Fetch details for each item ID
+            for (const itemId of pageItems) {
+                try {
+                    const item = await fetchItemDetails(itemId);
+                    if (item) {
+                        html += `
+                            <tr>
+                                <td>${item.item_id}</td>
+                                <td>${item.name}</td>
+                                <td>${item.restaurant_id}</td>
+                                <td>$${Number(item.price).toFixed(2)}</td>
+                                <td>${item.description || ''}</td>
+                            </tr>
+                        `;
+                    } else {
+                        // If item details fail, just show the ID
+                        html += `
+                            <tr>
+                                <td>${itemId}</td>
+                                <td>Unknown Item</td>
+                                <td>Unknown</td>
+                                <td>$0.00</td>
+                                <td>Item details unavailable</td>
+                            </tr>
+                        `;
+                    }
+                } catch (error) {
+                    console.error("Error fetching item details:", error);
+                    // Still show the item ID even if details fail
+                    html += `
+                        <tr>
+                            <td>${itemId}</td>
+                            <td>Unknown Item</td>
+                            <td>Unknown</td>
+                            <td>$0.00</td>
+                            <td>Item details unavailable</td>
+                        </tr>
+                    `;
+                }
+            }
+
+            html += "</tbody></table>";
+            container.innerHTML = html;
+        }
+
+        async function fetchItemDetails(itemId) {
+            try {
+                const response = await fetch(`${API_BASE}/items/${itemId}`);
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch (error) {
+                console.error("Error fetching item:", error);
+            }
+            return null;
+        }
+
+        function updatePaginationButtons() {
+            const prevBtn = document.getElementById("prev-btn");
+            const nextBtn = document.getElementById("next-btn");
+            const pageInfo = document.getElementById("page-info");
+
+            prevBtn.disabled = currentPageIndex === 0;
+            nextBtn.disabled = currentPageIndex >= currentSearchResults.length - 1;
+
+            pageInfo.textContent = `Page ${currentPageIndex + 1} of ${currentSearchResults.length}`;
+        }
+
+        function nextPage() {
+            if (currentPageIndex < currentSearchResults.length - 1) {
+                currentPageIndex++;
+                displaySearchPage(currentPageIndex);
+                updatePaginationButtons();
+            }
+        }
+
+        function previousPage() {
+            if (currentPageIndex > 0) {
+                currentPageIndex--;
+                displaySearchPage(currentPageIndex);
+                updatePaginationButtons();
+            }
+        }
+
+        async function testSearch() {
+            // Test with a known item ID
+            document.getElementById("search-query").value = "16-Taccos";
+            await searchItems();
+        }
+
+        async function loadOrders() {
+            const body = document.getElementById("orders-body");
+            body.innerHTML = `<tr><td colspan="7" style="color:#6b7280;">Loading orders...</td></tr>`;
+
+            try {
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(customerUsername)}/orders`);
+                if (!response.ok) {
+                    const data = await response.json();
+                    showMsg("orders-msg", data.detail || "Failed to load orders.", "error");
+                    body.innerHTML = `<tr><td colspan="7" style="color:#ef4444;">Unable to load orders.</td></tr>`;
+                    return;
+                }
+
+                const orders = await response.json();
+                if (!orders.length) {
+                    body.innerHTML = `<tr><td colspan="7" style="color:#6b7280;">No orders yet.</td></tr>`;
+                    return;
+                }
+
+                body.innerHTML = "";
+                for (const order of orders) {
+                    const row = document.createElement("tr");
+
+                    // Get item details for display
+                    let itemDetails = order.food_item;
+                    if (order.item_ids && order.item_ids.length > 1) {
+                        itemDetails += ` (+${order.item_ids.length - 1} more items)`;
+                    }
+
+                    let actions = "";
+
+                    if (order.order_status === "being_created") {
+                        actions = `
+                            <button class="btn-success" onclick="showPaymentForm('${order.order_id}')">Complete</button>
+                            <button class="btn-secondary" onclick="deleteOrder('${order.order_id}')">Delete</button>
+                        `;
+                    } else if (order.order_status === "paid") {
+                        actions = `<span style="color:#6b7280;">Processing...</span>`;
+                    } else if (order.order_status === "accepted") {
+                        actions = `<span style="color:#059669;">Out for delivery</span>`;
+                    } else if (order.order_status === "delivered") {
+                        actions = `<span style="color:#059669;">Delivered</span>`;
+                    }
+
+                    row.innerHTML = `
+                        <td>${order.order_id}</td>
+                        <td>${order.restaurant_id}</td>
+                        <td>${itemDetails}</td>
+                        <td>${order.order_status}</td>
+                        <td>$${Number(order.order_value).toFixed(2)}</td>
+                        <td>${order.delivery_distance} km</td>
+                        <td>${actions}</td>
+                    `;
+                    body.appendChild(row);
+                }
+            } catch (error) {
+                showMsg("orders-msg", "Unable to fetch orders.", "error");
+                body.innerHTML = `<tr><td colspan="6" style="color:#ef4444;">Unable to fetch orders.</td></tr>`;
+            }
+        }
+
+        async function changeOrderStatus(orderId, newStatus) {
+            console.log(`Changing order ${orderId} status to ${newStatus}`); // Debug logging
+            try {
+                const response = await fetch(`${API_BASE}/orders/${encodeURIComponent(orderId)}/status?status=${encodeURIComponent(newStatus)}`, {
+                    method: "PUT"
+                });
+
+                console.log("Status change response:", response.status); // Debug logging
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    console.error("Status change error:", data); // Debug logging
+                    showMsg("orders-msg", data.detail || "Unable to update order status.", "error");
+                    return;
+                }
+
+                showMsg("orders-msg", `Order ${orderId} status updated to ${newStatus}.`, "success");
+                loadOrders();
+            } catch (error) {
+                console.error("Status change exception:", error); // Debug logging
+                showMsg("orders-msg", "Unable to update order status.", "error");
+            }
+        }
+
+        async function deleteOrder(orderId) {
+            if (!confirm(`Are you sure you want to delete order ${orderId}?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/orders/${encodeURIComponent(orderId)}`, {
+                    method: "DELETE"
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    showMsg("orders-msg", data.detail || "Unable to delete order.", "error");
+                    return;
+                }
+
+                showMsg("orders-msg", `Order ${orderId} deleted successfully.`, "success");
+                loadOrders();
+            } catch (error) {
+                showMsg("orders-msg", "Unable to delete order.", "error");
+            }
+        }
+
+        async function showOrderItems(orderId) {
+            try {
+                const response = await fetch(`${API_BASE}/orders/${encodeURIComponent(orderId)}`);
+                if (!response.ok) {
+                    showMsg("orders-msg", "Unable to load order details.", "error");
+                    return;
+                }
+
+                const order = await response.json();
+
+                let itemsHtml = `<h3>Items in Order ${orderId}</h3>`;
+                itemsHtml += "<div style='margin-bottom: 16px;'>";
+
+                if (order.item_ids && order.item_ids.length) {
+                    itemsHtml += "<ul>";
+                    for (const itemId of order.item_ids) {
+                        try {
+                            const itemResponse = await fetch(`${API_BASE}/items/${itemId}`);
+                            if (itemResponse.ok) {
+                                const item = await itemResponse.json();
+                                itemsHtml += `<li>${item.name} ($${item.price}) <button class="btn-secondary" onclick="removeItemFromOrder('${orderId}', '${itemId}')">Remove</button></li>`;
+                            }
+                        } catch (error) {
+                            console.error("Error fetching item:", error);
+                        }
+                    }
+                    itemsHtml += "</ul>";
+                } else {
+                    itemsHtml += "<p>No items in this order.</p>";
+                }
+
+                itemsHtml += "</div>";
+                itemsHtml += `<div class="form-row">
+                    <input type="text" id="new-item-id" placeholder="Enter item ID to add" />
+                    <button class="btn-primary" onclick="addItemToOrder('${orderId}')">Add Item</button>
+                    <button class="btn-secondary" onclick="closeOrderEdit()">Close</button>
+                </div>`;
+
+                document.getElementById("search-results").innerHTML = itemsHtml;
+                document.getElementById("search-pagination").style.display = "none";
+            } catch (error) {
+                showMsg("orders-msg", "Unable to load order details.", "error");
+            }
+        }
+
+        async function addItemToOrder(orderId) {
+            const itemId = document.getElementById("new-item-id").value.trim();
+            if (!itemId) {
+                alert("Please enter an item ID.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/orders/${encodeURIComponent(orderId)}/items/${encodeURIComponent(itemId)}`, {
+                    method: "POST"
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    alert(data.detail || "Unable to add item to order.");
+                    return;
+                }
+
+                showOrderItems(orderId); // Refresh the items display
+                loadOrders(); // Refresh orders list to show updated value
+            } catch (error) {
+                alert("Unable to add item to order.");
+            }
+        }
+
+        async function removeItemFromOrder(orderId, itemId) {
+            try {
+                const response = await fetch(`${API_BASE}/orders/${encodeURIComponent(orderId)}/items/${encodeURIComponent(itemId)}`, {
+                    method: "DELETE"
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    alert(data.detail || "Unable to remove item from order.");
+                    return;
+                }
+
+                showOrderItems(orderId); // Refresh the items display
+                loadOrders(); // Refresh orders list to show updated value
+            } catch (error) {
+                alert("Unable to remove item from order.");
+            }
+        }
+
+        function closeOrderEdit() {
+            document.getElementById("search-results").innerHTML = "";
+        }
+
+        async function createOrder() {
+            const itemId = document.getElementById("order-item-id").value.trim();
+
+            if (!itemId) {
+                showMsg("create-msg", "Please enter an item ID.", "error");
+                return;
+            }
+
+            try {
+                // First fetch the item details
+                const itemResponse = await fetch(`${API_BASE}/items/${encodeURIComponent(itemId)}`);
+                if (!itemResponse.ok) {
+                    showMsg("create-msg", "Item not found.", "error");
+                    return;
+                }
+
+                const item = await itemResponse.json();
+
+                // Create order with item details
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(customerUsername)}/orders`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        restaurant_id: item.restaurant_id,
+                        food_item: item.name,
+                        order_time: new Date().toISOString(),
+                        delivery_time: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
+                        delivery_distance: Math.floor(Math.random() * 25) + 1, // Random distance 1-25 km
+                        order_value: item.price + 7.0, // Item price + delivery fee
+                        delivery_method: "Car",
+                        traffic_condition: "Clear",
+                        weather_condition: "Sunny",
+                        item_ids: [itemId],
+                        order_status: "being_created",
+                        tip: 0.0
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    showMsg("create-msg", data.detail || "Unable to create order.", "error");
+                    return;
+                }
+
+                showMsg("create-msg", `Order ${data.order_id} created successfully.`, "success");
+                loadOrders();
+                // Clear form
+                document.getElementById("order-item-id").value = "";
+            } catch (error) {
+                showMsg("create-msg", "Unable to create order.", "error");
+            }
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = "../login_dashboard/login_dashboard.html";
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("display-customer").textContent = customerUsername;
+            loadOrders();
+        });
+    </script>
+</body>
+</html>

@@ -1,10 +1,10 @@
 import uuid
 from typing import List
 from fastapi import HTTPException
-from ..schemas.order import Order
+from ..schemas.order import Order, OrderCreate
 from ..schemas.user import Customer, Driver, User, UserCreate, Manager
 from ..repositories.user_repo import load_all, save_all
-from ..services.orders_service import list_orders, change_order_status, get_order_by_order_id
+from ..services.orders_service import list_orders, change_order_status, get_order_by_order_id, create_orders
 
 
 def list_users() -> List[User]:
@@ -107,5 +107,41 @@ def accept_order_for_driver(user_username: str, order_id: str) -> Order:
     if order_id not in driver.ordersTaken:
         driver.ordersTaken.append(order_id)
         save_user(driver)
+
+    return order
+
+
+def get_customer_orders(username: str) -> List[Order]:
+    """Get all orders for a customer"""
+    user = get_user_by_username(username)
+    if user.type != 1:
+        raise HTTPException(status_code=400, detail=f"User '{username}' is not a customer")
+
+    customer = Customer(**user.model_dump())
+    orders = []
+    for order_id in customer.ordersList:
+        try:
+            order = get_order_by_order_id(order_id)
+            orders.append(order)
+        except:
+            pass  # Skip orders that don't exist
+    return orders
+
+
+def create_order_for_customer(username: str, order_data: dict) -> Order:
+    """Create a new order for a customer"""
+    user = get_user_by_username(username)
+    if user.type != 1:
+        raise HTTPException(status_code=400, detail=f"User '{username}' is not a customer")
+
+    # Create the order
+    order_create = OrderCreate(**order_data)
+    order = create_orders(order_create)
+
+    # Add order to customer's order list
+    customer = Customer(**user.model_dump())
+    if order.order_id not in customer.ordersList:
+        customer.ordersList.append(order.order_id)
+        save_user(customer)
 
     return order

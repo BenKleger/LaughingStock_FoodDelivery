@@ -5,7 +5,10 @@
     "password": "123",
     "type": 1,
     "ordersList": [
-      "f4d84dC"
+      "f4d84dC",
+      "732272ed-9025-4922-a5f2-fbcae24ae0e9",
+      "73a3869b-39a7-416e-a329-9729774b3788",
+      "5812bec1-3b03-43c1-ac62-47298144a8f4"
     ]
   },
   {
@@ -13,7 +16,11 @@
     "username": "ben",
     "password": "123",
     "type": 2,
-    "ordersTaken": []
+    "ordersTaken": [
+      "f4d84dC",
+      "732272ed-9025-4922-a5f2-fbcae24ae0e9",
+      "73a3869b-39a7-416e-a329-9729774b3788"
+    ]
   },
   {
     "id": "79dd6206-0df4-4c74-99a5-dd414111681f",

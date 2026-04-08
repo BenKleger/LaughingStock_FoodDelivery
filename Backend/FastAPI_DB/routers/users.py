@@ -1,7 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter
-from FastAPI_DB.schemas.order import Order
+from FastAPI_DB.schemas.order import Order, OrderCreate
 from FastAPI_DB.schemas.user import UserCreate, Customer, Driver, Manager
 from FastAPI_DB.services.users_service import (
     list_users,
@@ -10,6 +10,8 @@ from FastAPI_DB.services.users_service import (
     get_driver_available_orders,
     get_driver_accepted_orders,
     accept_order_for_driver,
+    get_customer_orders,
+    create_order_for_customer,
 )
 
 router = APIRouter(prefix="/users", tags=["user"])
@@ -41,3 +43,12 @@ def accept_order_for_driver_endpoint(username: str, order_id: str):
 @router.get("/{username}")
 def get_user(username: str):
     return get_user_by_username(username)
+
+
+@router.get("/{username}/orders", response_model=List[Order])
+def get_customer_orders_endpoint(username: str):
+    return get_customer_orders(username)
+
+@router.post("/{username}/orders", response_model=Order, status_code=201)
+def create_order_for_customer_endpoint(username: str, payload: OrderCreate):
+    return create_order_for_customer(username, payload.model_dump())

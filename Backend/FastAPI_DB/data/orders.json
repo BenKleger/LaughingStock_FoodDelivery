@@ -27,7 +27,7 @@
     "item_ids": [
       "30-Briyani rice"
     ],
-    "order_status": "being_created"
+    "order_status": "accepted"
   },
   {
     "order_id": "5a6006W",
@@ -159998,5 +159998,57 @@
       "26-Pasta"
     ],
     "order_status": "delivered"
+  },
+  {
+    "order_id": "732272ed-9025-4922-a5f2-fbcae24ae0e9",
+    "restaurant_id": 3,
+    "food_item": "Pasta",
+    "order_time": "2026-04-08T20:45:48.073Z",
+    "delivery_time": "2026-04-08T21:45:48.073Z",
+    "delivery_distance": 1.0,
+    "order_value": 12.0,
+    "delivery_method": "car",
+    "traffic_condition": "normal",
+    "weather_condition": "clear",
+    "item_ids": [],
+    "order_status": "accepted",
+    "delivery_instructions": "",
+    "cooking_instructions": ""
+  },
+  {
+    "order_id": "73a3869b-39a7-416e-a329-9729774b3788",
+    "restaurant_id": 1,
+    "food_item": "Pasta",
+    "order_time": "2026-04-08T21:56:30.639Z",
+    "delivery_time": "2026-04-08T22:56:30.639Z",
+    "delivery_distance": 17.0,
+    "order_value": 43.91,
+    "delivery_method": "Car",
+    "traffic_condition": "Clear",
+    "weather_condition": "Sunny",
+    "item_ids": [
+      "1-Pasta"
+    ],
+    "order_status": "accepted",
+    "delivery_instructions": "",
+    "cooking_instructions": ""
+  },
+  {
+    "order_id": "5812bec1-3b03-43c1-ac62-47298144a8f4",
+    "restaurant_id": 1,
+    "food_item": "Pasta",
+    "order_time": "2026-04-08T22:04:31.314Z",
+    "delivery_time": "2026-04-08T23:04:31.315Z",
+    "delivery_distance": 13.0,
+    "order_value": 43.91,
+    "delivery_method": "Car",
+    "traffic_condition": "Clear",
+    "weather_condition": "Sunny",
+    "item_ids": [
+      "1-Pasta"
+    ],
+    "order_status": "paid",
+    "delivery_instructions": "",
+    "cooking_instructions": ""
   }
 ]
