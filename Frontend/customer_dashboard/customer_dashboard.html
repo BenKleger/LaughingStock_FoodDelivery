@@ -536,14 +536,6 @@
         let currentPageIndex = 0;
 
         function showPaymentForm(orderId) {
-            currentOrderId = orderId;
-            document.getElementById("payment-panel").style.display = "block";
-            document.getElementById("payment-method").value = "CREDIT";
-            togglePaymentFields();
-            document.getElementById("payment-panel").scrollIntoView();
-        }
-
-        function showPaymentForm(orderId) {
             if (customerId) {
                 window.location.href = `../payment_dashboard/payment.html?order_id=${orderId}&customer_id=${customerId}`;
             } else {
