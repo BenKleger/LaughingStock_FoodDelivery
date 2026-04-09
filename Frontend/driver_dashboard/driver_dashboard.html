@@ -194,12 +194,13 @@
                         <th>Food Item</th>
                         <th>Distance</th>
                         <th>Order Value</th>
+                        <th>Tips</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="available-orders-body">
-                    <tr><td colspan="7" style="color:#6b7280;">Loading available orders...</td></tr>
+                    <tr><td colspan="8" style="color:#6b7280;">Loading available orders...</td></tr>
                 </tbody>
             </table>
             <div class="msg" id="available-msg"></div>
@@ -218,6 +219,7 @@
                         <th>Food Item</th>
                         <th>Distance</th>
                         <th>Order Value</th>
+                        <th>Tips</th>
                         <th>Delivery Method</th>
                         <th>Status</th>
                         <th>Instructions</th>
@@ -225,7 +227,7 @@
                     </tr>
                 </thead>
                 <tbody id="accepted-orders-body">
-                    <tr><td colspan="9" style="color:#6b7280;">No accepted orders yet.</td></tr>
+                    <tr><td colspan="10" style="color:#6b7280;">No accepted orders yet.</td></tr>
                 </tbody>
             </table>
             <div class="msg" id="accepted-msg"></div>
@@ -255,20 +257,20 @@
 
         async function loadAvailableOrders() {
             const body = document.getElementById("available-orders-body");
-            body.innerHTML = `<tr><td colspan="7" style="color:#6b7280;">Loading available orders...</td></tr>`;
+            body.innerHTML = `<tr><td colspan="8" style="color:#6b7280;">Loading available orders...</td></tr>`;
 
             try {
                 const response = await fetch(`${API_BASE}/users/${encodeURIComponent(driverUsername)}/available_orders`);
                 if (!response.ok) {
                     const data = await response.json();
                     showMsg("available-msg", data.detail || "Failed to load available orders.", "error");
-                    body.innerHTML = `<tr><td colspan="7" style="color:#ef4444;">Unable to load available orders.</td></tr>`;
+                    body.innerHTML = `<tr><td colspan="8" style="color:#ef4444;">Unable to load available orders.</td></tr>`;
                     return;
                 }
 
                 const orders = await response.json();
                 if (!orders.length) {
-                    body.innerHTML = `<tr><td colspan="7" style="color:#6b7280;">No orders are waiting for drivers right now.</td></tr>`;
+                    body.innerHTML = `<tr><td colspan="8" style="color:#6b7280;">No orders are waiting for drivers right now.</td></tr>`;
                     return;
                 }
 
@@ -281,6 +283,7 @@
                         <td>${order.food_item}</td>
                         <td>${order.delivery_distance} km</td>
                         <td>$${Number(order.order_value).toFixed(2)}</td>
+                        <td>$${Number(order.tip).toFixed(2)}</td>
                         <td>${order.order_status}</td>
                         <td><button class="btn-primary" onclick="acceptOrder('${order.order_id}')">Accept</button></td>
                     `;
@@ -288,26 +291,26 @@
                 }
             } catch (error) {
                 showMsg("available-msg", "Unable to fetch available orders.", "error");
-                body.innerHTML = `<tr><td colspan="7" style="color:#ef4444;">Unable to fetch available orders.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="8" style="color:#ef4444;">Unable to fetch available orders.</td></tr>`;
             }
         }
 
         async function loadAcceptedOrders() {
             const body = document.getElementById("accepted-orders-body");
-            body.innerHTML = `<tr><td colspan="9" style="color:#6b7280;">Loading accepted orders...</td></tr>`;
+            body.innerHTML = `<tr><td colspan="10" style="color:#6b7280;">Loading accepted orders...</td></tr>`;
 
             try {
                 const response = await fetch(`${API_BASE}/users/${encodeURIComponent(driverUsername)}/accepted_orders`);
                 if (!response.ok) {
                     const data = await response.json();
                     showMsg("accepted-msg", data.detail || "Failed to load accepted orders.", "error");
-                    body.innerHTML = `<tr><td colspan="9" style="color:#ef4444;">Unable to load accepted orders.</td></tr>`;
+                    body.innerHTML = `<tr><td colspan="10" style="color:#ef4444;">Unable to load accepted orders.</td></tr>`;
                     return;
                 }
 
                 const orders = await response.json();
                 if (!orders.length) {
-                    body.innerHTML = `<tr><td colspan="9" style="color:#6b7280;">No accepted orders yet.</td></tr>`;
+                    body.innerHTML = `<tr><td colspan="10" style="color:#6b7280;">No accepted orders yet.</td></tr>`;
                     return;
                 }
 
@@ -326,6 +329,7 @@
                         <td>${order.food_item}</td>
                         <td>${order.delivery_distance} km</td>
                         <td>$${Number(order.order_value).toFixed(2)}</td>
+                        <td>$${Number(order.tip).toFixed(2)}</td>
                         <td>${order.delivery_method}</td>
                         <td>${order.order_status}</td>
                         <td>${instructionsButton}</td>
@@ -339,7 +343,7 @@
                         detailsRow.id = `details-${order.order_id}`;
                         detailsRow.style.display = "none";
                         detailsRow.innerHTML = `
-                            <td colspan="9" style="padding: 12px; background: #f9fafb; border-top: none;">
+                            <td colspan="10" style="padding: 12px; background: #f9fafb; border-top: none;">
                                 <div style="font-weight: bold; margin-bottom: 8px;">Delivery Instructions:</div>
                                 <div style="color: #374151; white-space: pre-wrap;">${order.delivery_instructions}</div>
                             </td>
@@ -349,7 +353,7 @@
                 }
             } catch (error) {
                 showMsg("accepted-msg", "Unable to fetch accepted orders.", "error");
-                body.innerHTML = `<tr><td colspan="9" style="color:#ef4444;">Unable to fetch accepted orders.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="10" style="color:#ef4444;">Unable to fetch accepted orders.</td></tr>`;
             }
         }
 
