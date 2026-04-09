@@ -272,10 +272,10 @@ def change_order_status(user_order_id: str, new_status: str):
     if order.order_status == "delivered":
         raise HTTPException(status_code=400, detail=f"Order '{user_order_id}' cannot be changed because it was already delivered")
     
-    if new_status in ["being_created", "paid", "sent", "accepted"]:
-        order.order_status = new_status
-    else: 
+    if new_status not in ["being_created", "paid", "sent", "accepted", "delivered"]:
         raise HTTPException(status_code=400, detail=f"Status '{new_status}' is not a valid status.")
+
+    order.order_status = new_status
     
     # Update the dict in the list
     order_dict['order_status'] = order.order_status

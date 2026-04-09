@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "review_id": "1-daniel",
+    "restaurant_id": 1,
+    "customer_name": "daniel",
+    "rating": 5.0,
+    "comment": "very nice pasta"
+  }
+]
