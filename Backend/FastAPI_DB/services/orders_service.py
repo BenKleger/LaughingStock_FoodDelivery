@@ -33,7 +33,7 @@ def create_orders(payload: OrderCreate) -> Order:
     new_order = Order(order_id=new_id, restaurant_id=payload.restaurant_id, food_item=payload.food_item.strip(),
                         order_time=payload.order_time.strip(), delivery_time=payload.delivery_time.strip(), delivery_distance=payload.delivery_distance,
                         order_value=payload.order_value, delivery_method=payload.delivery_method.strip(), traffic_condition=payload.traffic_condition.strip(),
-                        weather_condition=payload.weather_condition.strip(), item_ids=payload.item_ids, order_status=payload.order_status)
+                        weather_condition=payload.weather_condition.strip(), item_ids=payload.item_ids, order_status=payload.order_status, tip=payload.tip)
 
     orders.append(new_order.model_dump())
     save_all(orders)

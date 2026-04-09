@@ -235,6 +235,7 @@
                     <div>
                         <h2>Welcome, <span id="display-customer"></span></h2>
                         <p style="color:#6b7280; margin-top:8px;">Search for food items, view your orders, place new orders, and leave reviews.</p>
+                        <p id="customer-tips" style="color:#059669; margin-top:4px; font-weight:500;">Total Tips Given: $<span id="total-tips">0.00</span></p>
                     </div>
                 </div>
             </div>
@@ -273,12 +274,13 @@
                             <th>Food Item</th>
                             <th>Status</th>
                             <th>Value</th>
+                            <th>Tip</th>
                             <th>Delivery Distance</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="orders-body">
-                        <tr><td colspan="7" style="color:#6b7280;">Loading orders...</td></tr>
+                        <tr><td colspan="8" style="color:#6b7280;">Loading orders...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -287,6 +289,7 @@
                 <h2>Create New Order</h2>
                 <div class="form-row">
                     <input type="text" id="order-item-id" placeholder="Item ID" />
+                    <input type="number" id="order-tip" placeholder="Tip (optional)" step="0.01" min="0" />
                     <button class="btn-primary" onclick="createOrder()">Create Order</button>
                 </div>
                 <div id="create-msg" class="msg"></div>
@@ -596,6 +599,7 @@
                 await changeOrderStatus(currentOrderId, 'paid');
                 hidePaymentForm();
                 showMsg("orders-msg", "Order completed successfully.", "success");
+                loadTotalTips();
             } catch (error) {
                 showMsg("payment-msg", "Unable to process payment.", "error");
             }
@@ -645,17 +649,17 @@
                 container.innerHTML = "<p style='color:#6b7280;'>No items on this page.</p>";
                 return;
             }
-            let html = "<table><thead><tr><th>Item ID</th><th>Name</th><th>Restaurant</th><th>Price</th><th>Description</th></tr></thead><tbody>";
+            let html = "<table><thead><tr><th>Item ID</th><th>Name</th><th>Restaurant</th><th>Price</th></tr></thead><tbody>";
             for (const itemId of pageItems) {
                 try {
                     const item = await fetchItemDetails(itemId);
                     if (item) {
-                        html += `<tr><td>${item.item_id}</td><td>${item.name}</td><td>${item.restaurant_id}</td><td>$${Number(item.price).toFixed(2)}</td><td>${item.description || ''}</td></tr>`;
+                        html += `<tr><td>${item.item_id}</td><td>${item.name}</td><td>${item.restaurant_id}</td><td>$${Number(item.price).toFixed(2)}</td></tr>`;
                     } else {
-                        html += `<tr><td>${itemId}</td><td>Unknown Item</td><td>Unknown</td><td>$0.00</td><td>Item details unavailable</td></tr>`;
+                        html += `<tr><td>${itemId}</td><td>Unknown Item</td><td>Unknown</td><td>$0.00</td></tr>`;
                     }
                 } catch (error) {
-                    html += `<tr><td>${itemId}</td><td>Unknown Item</td><td>Unknown</td><td>$0.00</td><td>Item details unavailable</td></tr>`;
+                    html += `<tr><td>${itemId}</td><td>Unknown Item</td><td>Unknown</td><td>$0.00</td></tr>`;
                 }
             }
             html += "</tbody></table>";
@@ -697,20 +701,30 @@
             await searchItems();
         }
 
+        function formatStatus(status) {
+            const statusMap = {
+                "being_created": "being created",
+                "paid": "paid",
+                "accepted": "accepted",
+                "delivered": "delivered"
+            };
+            return statusMap[status] || status;
+        }
+
         async function loadOrders() {
             const body = document.getElementById("orders-body");
-            body.innerHTML = `<tr><td colspan="7" style="color:#6b7280;">Loading orders...</td></tr>`;
+            body.innerHTML = `<tr><td colspan="8" style="color:#6b7280;">Loading orders...</td></tr>`;
             try {
                 const response = await fetch(`${API_BASE}/users/${encodeURIComponent(customerUsername)}/orders`);
                 if (!response.ok) {
                     const data = await response.json();
                     showMsg("orders-msg", data.detail || "Failed to load orders.", "error");
-                    body.innerHTML = `<tr><td colspan="7" style="color:#ef4444;">Unable to load orders.</td></tr>`;
+                    body.innerHTML = `<tr><td colspan="8" style="color:#ef4444;">Unable to load orders.</td></tr>`;
                     return;
                 }
                 const orders = await response.json();
                 if (!orders.length) {
-                    body.innerHTML = `<tr><td colspan="7" style="color:#6b7280;">No orders yet.</td></tr>`;
+                    body.innerHTML = `<tr><td colspan="8" style="color:#6b7280;">No orders yet.</td></tr>`;
                     return;
                 }
                 body.innerHTML = "";
@@ -723,6 +737,10 @@
                         actions = `
                             <div style="display: flex; flex-direction: column; gap: 8px;">
                                 <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                                    <input type="number" id="tip-input-${order.order_id}" placeholder="Tip amount" step="0.01" min="0" value="${order.tip || 0}" style="width: 100px; padding: 4px;" />
+                                    <button class="btn-primary" onclick="increaseTip('${order.order_id}')">Edit Tip</button>
+                                </div>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
                                     <button class="btn-success" onclick="showPaymentForm('${order.order_id}')">Complete</button>
                                     <button class="btn-secondary" onclick="deleteOrder('${order.order_id}')">Delete</button>
                                 </div>
@@ -732,17 +750,43 @@
                             </div>
                         `;
                     } else if (order.order_status === "paid") {
+                        actions = `
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                                    <input type="number" id="tip-input-${order.order_id}" placeholder="Tip amount" step="0.01" min="0" style="width: 100px; padding: 4px;" />
+                                    <button class="btn-primary" onclick="increaseTip('${order.order_id}')">Increase Tip</button>
+                                </div>
+                                <span style="color:#059669;">Paid - Awaiting Driver</span>
+                            </div>
+                        `;
                     } else if (order.order_status === "accepted") {
-                        actions = `<span style="color:#059669;">Out for delivery</span>`;
+                        actions = `
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                                    <input type="number" id="tip-input-${order.order_id}" placeholder="Tip amount" step="0.01" min="0" style="width: 100px; padding: 4px;" />
+                                    <button class="btn-primary" onclick="increaseTip('${order.order_id}')">Increase Tip</button>
+                                </div>
+                                <span style="color:#059669;">Out for delivery</span>
+                            </div>
+                        `;
                     } else if (order.order_status === "delivered") {
-                        actions = `<span style="color:#059669;">Delivered</span>`;
+                        actions = `
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                                    <input type="number" id="tip-input-${order.order_id}" placeholder="Tip amount" step="0.01" min="0" style="width: 100px; padding: 4px;" />
+                                    <button class="btn-primary" onclick="increaseTip('${order.order_id}')">Increase Tip</button>
+                                </div>
+                                <span style="color:#059669;">Delivered</span>
+                            </div>
+                        `;
                     }
                     row.innerHTML = `
                         <td>${order.order_id}</td>
                         <td>${order.restaurant_id}</td>
                         <td>${itemDetails}</td>
-                        <td>${order.order_status}</td>
+                        <td>${formatStatus(order.order_status)}</td>
                         <td>$${Number(order.order_value).toFixed(2)}</td>
+                        <td>$${Number(order.tip || 0).toFixed(2)}</td>
                         <td>${order.delivery_distance} km</td>
                         <td>${actions}</td>
                     `;
@@ -755,7 +799,7 @@
                         instructionsRow.id = `instructions-row-${order.order_id}`;
                         instructionsRow.style.display = "none";
                         instructionsRow.innerHTML = `
-                            <td colspan="7" style="background:#f9fafb; padding:16px;">
+                            <td colspan="8" style="background:#f9fafb; padding:16px;">
                                 <div style="max-width:400px;">
                                     <h4 style="margin-bottom:12px; font-size:16px;">Additional Instructions</h4>
                                     <div style="margin-bottom:12px;">
@@ -775,7 +819,7 @@
                 }
             } catch (error) {
                 showMsg("orders-msg", "Unable to fetch orders.", "error");
-                body.innerHTML = `<tr><td colspan="7" style="color:#ef4444;">Unable to fetch orders.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="8" style="color:#ef4444;">Unable to fetch orders.</td></tr>`;
             }
         }
 
@@ -812,8 +856,13 @@
 
         async function createOrder() {
             const itemId = document.getElementById("order-item-id").value.trim();
+            const tipValue = parseFloat(document.getElementById("order-tip").value) || 0.0;
             if (!itemId) {
                 showMsg("create-msg", "Please enter an item ID.", "error");
+                return;
+            }
+            if (tipValue < 0) {
+                showMsg("create-msg", "Tip cannot be negative.", "error");
                 return;
             }
             try {
@@ -838,7 +887,7 @@
                         weather_condition: "Sunny",
                         item_ids: [itemId],
                         order_status: "being_created",
-                        tip: 0.0
+                        tip: tipValue
                     })
                 });
                 const data = await response.json();
@@ -849,6 +898,7 @@
                 showMsg("create-msg", `Order ${data.order_id} created successfully.`, "success");
                 loadOrders();
                 document.getElementById("order-item-id").value = "";
+                document.getElementById("order-tip").value = "";
             } catch (error) {
                 showMsg("create-msg", "Unable to create order.", "error");
             }
@@ -914,6 +964,78 @@
             window.location.href = "../login_dashboard/login_dashboard.html";
         }
 
+        async function increaseTip(orderId) {
+            const tipInput = document.getElementById(`tip-input-${orderId}`);
+            const inputValue = parseFloat(tipInput.value);
+            if (isNaN(inputValue)) {
+                showMsg("orders-msg", "Please enter a valid tip amount.", "error");
+                return;
+            }
+            
+            try {
+                // First get the current order to know its status and current tip
+                const orderResponse = await fetch(`${API_BASE}/orders/${encodeURIComponent(orderId)}`);
+                if (!orderResponse.ok) {
+                    showMsg("orders-msg", "Unable to fetch order details.", "error");
+                    return;
+                }
+                const order = await orderResponse.json();
+                
+                let newTip;
+                let message;
+                
+                // If order is being created, user can set the tip directly
+                if (order.order_status === "being_created") {
+                    if (inputValue < 0) {
+                        showMsg("orders-msg", "Tip cannot be negative.", "error");
+                        return;
+                    }
+                    newTip = inputValue;
+                    message = `Tip set to $${inputValue.toFixed(2)}.`;
+                } else {
+                    // For other statuses, add to existing tip
+                    if (inputValue <= 0) {
+                        showMsg("orders-msg", "Please enter a valid tip amount greater than 0.", "error");
+                        return;
+                    }
+                    const currentTip = order.tip || 0;
+                    newTip = currentTip + inputValue;
+                    message = `Tip increased by $${inputValue.toFixed(2)}.`;
+                }
+                
+                const response = await fetch(`${API_BASE}/orders/${encodeURIComponent(orderId)}/tip?tip=${newTip}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" }
+                });
+                if (!response.ok) {
+                    const data = await response.json();
+                    showMsg("orders-msg", data.detail || "Unable to update tip.", "error");
+                    return;
+                }
+                showMsg("orders-msg", message, "success");
+                tipInput.value = "";
+                loadOrders();
+                loadTotalTips();
+            } catch (error) {
+                showMsg("orders-msg", "Unable to update tip.", "error");
+            }
+        }
+
+        async function loadTotalTips() {
+            try {
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(customerUsername)}/total_tips`);
+                if (!response.ok) {
+                    console.error("Failed to load total tips");
+                    return;
+                }
+                const data = await response.json();
+                const totalTips = data.total_tips_given || 0;
+                document.getElementById("total-tips").textContent = Number(totalTips).toFixed(2);
+            } catch (error) {
+                console.error("Error loading total tips:", error);
+            }
+        }
+
         window.addEventListener("DOMContentLoaded", async () => {
             document.getElementById("display-customer").textContent = customerUsername;
             // Fetch customer ID
@@ -929,6 +1051,7 @@
                 console.error("Error fetching user:", error);
             }
             loadOrders();
+            loadTotalTips();
         });
     </script>
 </body>

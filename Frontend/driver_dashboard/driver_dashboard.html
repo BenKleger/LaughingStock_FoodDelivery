@@ -176,6 +176,7 @@
                 <div>
                     <h2>Welcome, <span id="display-driver"></span></h2>
                     <p id="driver-status" style="color:#6b7280; margin-top:8px;">Search paid orders, accept an order, and view your accepted orders.</p>
+                    <p id="driver-tips" style="color:#059669; margin-top:4px; font-weight:500;">Total Tips Received: $<span id="total-tips">0.00</span></p>
                 </div>
             </div>
         </div>
@@ -365,6 +366,7 @@
 
                 showMsg("accepted-msg", `Order ${orderId} marked as delivered.`, "success");
                 loadAcceptedOrders();
+                loadTotalTips();
             } catch (error) {
                 showMsg("accepted-msg", "Unable to finish order.", "error");
             }
@@ -403,10 +405,26 @@
             window.location.href = "../login_dashboard/login_dashboard.html";
         }
 
+        async function loadTotalTips() {
+            try {
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(driverUsername)}/total_tips`);
+                if (!response.ok) {
+                    console.error("Failed to load total tips");
+                    return;
+                }
+                const data = await response.json();
+                const totalTips = data.total_tips_received || 0;
+                document.getElementById("total-tips").textContent = Number(totalTips).toFixed(2);
+            } catch (error) {
+                console.error("Error loading total tips:", error);
+            }
+        }
+
         window.addEventListener("DOMContentLoaded", () => {
             document.getElementById("display-driver").textContent = driverUsername;
             loadAvailableOrders();
             loadAcceptedOrders();
+            loadTotalTips();
         });
     </script>
 </body>

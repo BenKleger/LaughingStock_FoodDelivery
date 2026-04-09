@@ -39,7 +39,7 @@ def create_search(payload: SearchCreate) -> Search:
     except:
         try:
             item = get_item_by_item_ID(payload.query)
-            return Search(search_results = [[item.item_id]])
+            return Search(search_results=paginate_list(payload, [item]))
             # Will generate HTTPException when no item with given ID is found.
         except HTTPException:
             try:
