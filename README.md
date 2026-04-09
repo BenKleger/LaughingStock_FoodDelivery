@@ -4,8 +4,6 @@
 The goal of this project is to design and build a scalable full-stack dockerized multiuser food delivery application system. With the real-world online dataset, the system will implement backend functionality utilizing modern software engineering practices to mimic a deployed version of the app. The platform will provide secure login and authorization and will allow users of all types to modify details and interact with app assets. The system will be built on RESTful API which will aid in enabling the implementation of countless features such as filtering orders/menu items, and more. The platform will be built to operate reliably and will act as a full, albeit undeployed, food delivery application system.
 
 ## Maintenance Requirements
-Account credentials:
-  ### REDACTED
 Data management procedures
 Data is stored in .json files in the Backend directory:
 items.json
