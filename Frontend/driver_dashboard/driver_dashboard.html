@@ -219,10 +219,11 @@
                         <th>Order Value</th>
                         <th>Delivery Method</th>
                         <th>Status</th>
+                        <th>Instructions</th>
                     </tr>
                 </thead>
                 <tbody id="accepted-orders-body">
-                    <tr><td colspan="7" style="color:#6b7280;">No accepted orders yet.</td></tr>
+                    <tr><td colspan="8" style="color:#6b7280;">No accepted orders yet.</td></tr>
                 </tbody>
             </table>
             <div class="msg" id="accepted-msg"></div>
@@ -291,26 +292,29 @@
 
         async function loadAcceptedOrders() {
             const body = document.getElementById("accepted-orders-body");
-            body.innerHTML = `<tr><td colspan="7" style="color:#6b7280;">Loading accepted orders...</td></tr>`;
+            body.innerHTML = `<tr><td colspan="8" style="color:#6b7280;">Loading accepted orders...</td></tr>`;
 
             try {
                 const response = await fetch(`${API_BASE}/users/${encodeURIComponent(driverUsername)}/accepted_orders`);
                 if (!response.ok) {
                     const data = await response.json();
                     showMsg("accepted-msg", data.detail || "Failed to load accepted orders.", "error");
-                    body.innerHTML = `<tr><td colspan="7" style="color:#ef4444;">Unable to load accepted orders.</td></tr>`;
+                    body.innerHTML = `<tr><td colspan="8" style="color:#ef4444;">Unable to load accepted orders.</td></tr>`;
                     return;
                 }
 
                 const orders = await response.json();
                 if (!orders.length) {
-                    body.innerHTML = `<tr><td colspan="7" style="color:#6b7280;">No accepted orders yet.</td></tr>`;
+                    body.innerHTML = `<tr><td colspan="8" style="color:#6b7280;">No accepted orders yet.</td></tr>`;
                     return;
                 }
 
                 body.innerHTML = "";
                 for (const order of orders) {
                     const row = document.createElement("tr");
+                    const instructionsButton = order.delivery_instructions && order.delivery_instructions.trim() 
+                        ? `<button class="btn-primary" onclick="viewInstructions('${order.order_id}')">View</button>`
+                        : "";
                     row.innerHTML = `
                         <td>${order.order_id}</td>
                         <td>${order.restaurant_id}</td>
@@ -319,8 +323,23 @@
                         <td>$${Number(order.order_value).toFixed(2)}</td>
                         <td>${order.delivery_method}</td>
                         <td>${order.order_status}</td>
+                        <td>${instructionsButton}</td>
                     `;
                     body.appendChild(row);
+
+                    // Create expandable details row
+                    if (order.delivery_instructions && order.delivery_instructions.trim()) {
+                        const detailsRow = document.createElement("tr");
+                        detailsRow.id = `details-${order.order_id}`;
+                        detailsRow.style.display = "none";
+                        detailsRow.innerHTML = `
+                            <td colspan="8" style="padding: 12px; background: #f9fafb; border-top: none;">
+                                <div style="font-weight: bold; margin-bottom: 8px;">Delivery Instructions:</div>
+                                <div style="color: #374151; white-space: pre-wrap;">${order.delivery_instructions}</div>
+                            </td>
+                        `;
+                        body.appendChild(detailsRow);
+                    }
                 }
             } catch (error) {
                 showMsg("accepted-msg", "Unable to fetch accepted orders.", "error");
@@ -344,6 +363,15 @@
                 loadAcceptedOrders();
             } catch (error) {
                 showMsg("available-msg", "Unable to accept order.", "error");
+            }
+        }
+
+        function viewInstructions(orderId) {
+            const detailsRow = document.getElementById(`details-${orderId}`);
+            if (detailsRow.style.display === "none") {
+                detailsRow.style.display = "table-row";
+            } else {
+                detailsRow.style.display = "none";
             }
         }
 
