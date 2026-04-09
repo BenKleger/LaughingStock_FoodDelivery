@@ -371,6 +371,7 @@
         }
 
         const customerUsername = username;
+        let customerId = null;
 
         // ---- Star rating logic ----
         let selectedRating = 0;
@@ -540,6 +541,14 @@
             document.getElementById("payment-method").value = "CREDIT";
             togglePaymentFields();
             document.getElementById("payment-panel").scrollIntoView();
+
+
+        function showPaymentForm(orderId) {
+            if (customerId) {
+                window.location.href = `../payment_dashboard/payment.html?order_id=${orderId}&customer_id=${customerId}`;
+            } else {
+                showMsg("orders-msg", "Unable to load customer details.", "error");
+            }
         }
 
         function hidePaymentForm() {
@@ -554,20 +563,7 @@
             document.getElementById("email-password").value = "";
         }
 
-        function togglePaymentFields() {
-            const method = document.getElementById("payment-method").value;
-            const cardFields = document.getElementById("card-fields");
-            const digitalFields = document.getElementById("digital-fields");
-            if (method === "CREDIT" || method === "DEBIT") {
-                cardFields.style.display = "flex";
-                digitalFields.style.display = "none";
-            } else {
-                cardFields.style.display = "none";
-                digitalFields.style.display = "flex";
-            }
-        }
 
-        document.getElementById("payment-method").addEventListener("change", togglePaymentFields);
 
         async function processPayment() {
             if (!currentOrderId) return;
@@ -612,6 +608,7 @@
                 showMsg("payment-msg", "Unable to process payment.", "error");
             }
         }
+
 
         async function searchItems() {
             const query = document.getElementById("search-query").value.trim();
@@ -837,8 +834,20 @@
             window.location.href = "../login_dashboard/login_dashboard.html";
         }
 
-        window.addEventListener("DOMContentLoaded", () => {
+        window.addEventListener("DOMContentLoaded", async () => {
             document.getElementById("display-customer").textContent = customerUsername;
+            // Fetch customer ID
+            try {
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(customerUsername)}`);
+                if (response.ok) {
+                    const user = await response.json();
+                    customerId = user.id;
+                } else {
+                    console.error("Failed to fetch user details");
+                }
+            } catch (error) {
+                console.error("Error fetching user:", error);
+            }
             loadOrders();
         });
     </script>
