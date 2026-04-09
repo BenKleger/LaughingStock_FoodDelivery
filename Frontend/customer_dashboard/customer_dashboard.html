@@ -234,7 +234,7 @@
                 <div class="topbar">
                     <div>
                         <h2>Welcome, <span id="display-customer"></span></h2>
-                        <p style="color:#6b7280; margin-top:8px;">Search for food items, view your orders, and place new orders.</p>
+                        <p style="color:#6b7280; margin-top:8px;">Search for food items, view your orders, place new orders, and leave reviews.</p>
                     </div>
                 </div>
             </div>
@@ -541,7 +541,7 @@
             document.getElementById("payment-method").value = "CREDIT";
             togglePaymentFields();
             document.getElementById("payment-panel").scrollIntoView();
-
+        }
 
         function showPaymentForm(orderId) {
             if (customerId) {
@@ -728,10 +728,18 @@
                     if (order.item_ids && order.item_ids.length > 1) itemDetails += ` (+${order.item_ids.length - 1} more items)`;
                     let actions = "";
                     if (order.order_status === "being_created") {
-                        actions = `<button class="btn-success" onclick="showPaymentForm('${order.order_id}')">Complete</button>
-                                   <button class="btn-secondary" onclick="deleteOrder('${order.order_id}')">Delete</button>`;
+                        actions = `
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                                    <button class="btn-success" onclick="showPaymentForm('${order.order_id}')">Complete</button>
+                                    <button class="btn-secondary" onclick="deleteOrder('${order.order_id}')">Delete</button>
+                                </div>
+                                <div style="margin-top: 8px;">
+                                    <button class="btn-secondary" onclick="toggleInstructions('${order.order_id}')">Additional Instructions</button>
+                                </div>
+                            </div>
+                        `;
                     } else if (order.order_status === "paid") {
-                        actions = `<span style="color:#6b7280;">Processing...</span>`;
                     } else if (order.order_status === "accepted") {
                         actions = `<span style="color:#059669;">Out for delivery</span>`;
                     } else if (order.order_status === "delivered") {
@@ -746,7 +754,32 @@
                         <td>${order.delivery_distance} km</td>
                         <td>${actions}</td>
                     `;
+                    row.id = `order-row-${order.order_id}`;
                     body.appendChild(row);
+
+                    // Add instructions row if status is being_created
+                    if (order.order_status === "being_created") {
+                        const instructionsRow = document.createElement("tr");
+                        instructionsRow.id = `instructions-row-${order.order_id}`;
+                        instructionsRow.style.display = "none";
+                        instructionsRow.innerHTML = `
+                            <td colspan="7" style="background:#f9fafb; padding:16px;">
+                                <div style="max-width:400px;">
+                                    <h4 style="margin-bottom:12px; font-size:16px;">Additional Instructions</h4>
+                                    <div style="margin-bottom:12px;">
+                                        <label style="display:block; margin-bottom:4px; font-weight:500;">Cooking Instructions (optional)</label>
+                                        <textarea id="cooking-instructions-${order.order_id}" placeholder="${order.cooking_instructions ? order.cooking_instructions : 'Enter cooking instructions...'}" style="width:100%; min-height:60px; padding:8px; border:1px solid #d1d5db; border-radius:4px; resize:vertical;"></textarea>
+                                    </div>
+                                    <div style="margin-bottom:12px;">
+                                        <label style="display:block; margin-bottom:4px; font-weight:500;">Delivery Instructions (optional)</label>
+                                        <textarea id="delivery-instructions-${order.order_id}" placeholder="${order.delivery_instructions ? order.delivery_instructions : 'Enter delivery instructions...'}" style="width:100%; min-height:60px; padding:8px; border:1px solid #d1d5db; border-radius:4px; resize:vertical;"></textarea>
+                                    </div>
+                                    <button class="btn-primary" onclick="submitInstructions('${order.order_id}')">Submit Instructions</button>
+                                </div>
+                            </td>
+                        `;
+                        body.appendChild(instructionsRow);
+                    }
                 }
             } catch (error) {
                 showMsg("orders-msg", "Unable to fetch orders.", "error");
@@ -826,6 +859,61 @@
                 document.getElementById("order-item-id").value = "";
             } catch (error) {
                 showMsg("create-msg", "Unable to create order.", "error");
+            }
+        }
+
+        function toggleInstructions(orderId) {
+            const instructionsRow = document.getElementById(`instructions-row-${orderId}`);
+            if (instructionsRow.style.display === "none") {
+                instructionsRow.style.display = "table-row";
+            } else {
+                instructionsRow.style.display = "none";
+            }
+        }
+
+        async function submitInstructions(orderId) {
+            const cookingInstructions = document.getElementById(`cooking-instructions-${orderId}`).value.trim();
+            const deliveryInstructions = document.getElementById(`delivery-instructions-${orderId}`).value.trim();
+
+            try {
+                // Submit cooking instructions if provided
+                if (cookingInstructions) {
+                    const cookingResponse = await fetch(`${API_BASE}/instructions/cooking`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            order_id: orderId,
+                            instructions: cookingInstructions
+                        })
+                    });
+                    if (!cookingResponse.ok) {
+                        const data = await cookingResponse.json();
+                        showMsg("orders-msg", data.detail || "Failed to save cooking instructions.", "error");
+                        return;
+                    }
+                }
+
+                // Submit delivery instructions if provided
+                if (deliveryInstructions) {
+                    const deliveryResponse = await fetch(`${API_BASE}/instructions/delivery`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            order_id: orderId,
+                            instructions: deliveryInstructions
+                        })
+                    });
+                    if (!deliveryResponse.ok) {
+                        const data = await deliveryResponse.json();
+                        showMsg("orders-msg", data.detail || "Failed to save delivery instructions.", "error");
+                        return;
+                    }
+                }
+
+                showMsg("orders-msg", "Instructions saved successfully.", "success");
+                toggleInstructions(orderId); // Hide the form
+            } catch (error) {
+                showMsg("orders-msg", "Unable to save instructions.", "error");
             }
         }
 
