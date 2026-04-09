@@ -29,7 +29,7 @@ def removeReview(review_id: str):
 
 def getReviewsByRestaurantId(restaurant_id: int):
     reviews = load_all()
-    restaurant_reviews = [Review(**review).model_dump(include={"rating", "comment"}) for review in reviews if review["restaurant_id"] == restaurant_id]
+    restaurant_reviews = [Review(**review).model_dump() for review in reviews if review["restaurant_id"] == restaurant_id]
     return restaurant_reviews
 
 

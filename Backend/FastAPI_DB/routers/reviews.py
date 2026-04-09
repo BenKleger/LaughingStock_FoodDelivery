@@ -4,8 +4,8 @@ from FastAPI_DB.services.reviews_service import createReview, removeReview, getR
 
 router = APIRouter(prefix="/reviews", tags=["reviews"])
 
-@router.post("/create")
-def createReview_endpoint(payload: ReviewCreate, status_code=201):
+@router.post("/create", status_code=201)
+def createReview_endpoint(payload: ReviewCreate):
     return createReview(payload)
 
 @router.delete("/delete/{review_id}", status_code=200)
