@@ -91,3 +91,14 @@ def reset_menus_DB():
     except:
         print("Menus reset failed...")
         return False
+    
+def delete_menu_by_menu_ID(menu_ID: str):
+    menus = menus_load()
+    target_id = int(menu_ID)
+    for i in range(len(menus)):
+        if menus[i].get("menu_id") == target_id:
+            removed_menu = Menu(**menus[i])
+            menus.pop(i)
+            menus_save(menus)
+            return removed_menu
+    raise HTTPException(status_code=404, detail=f"Menu '{menu_ID}' not found")
