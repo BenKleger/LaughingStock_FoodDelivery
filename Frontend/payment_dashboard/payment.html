@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Processor</title>
+    <style>
+        body {
+            background: #f3f4f6;
+            color: #111827;
+            font-family: Arial, sans-serif;
+            padding: 32px;
+        }
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+            padding: 28px;
+        }
+        h1 {
+            margin-bottom: 12px;
+            font-size: 28px;
+        }
+        p {
+            color: #475569;
+            margin-bottom: 24px;
+        }
+        label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            font-size: 16px;
+        }
+        select {
+            background: white;
+        }
+        button {
+            margin-top: 24px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        .field-group {
+            display: none;
+        }
+        .field-group.active {
+            display: block;
+        }
+        .status {
+            margin-top: 22px;
+            padding: 18px;
+            border-radius: 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            min-height: 80px;
+            white-space: pre-wrap;
+            color: #0f172a;
+        }
+        .status.success {
+            background: #ecfdf5;
+            border-color: #bbf7d0;
+            color: #164e2a;
+        }
+        .status.error {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #991b1b;
+        }
+        .note {
+            margin-top: 12px;
+            color: #64748b;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Payment Checkout</h1>
+        <p>Select a payment method and enter the required details to complete the order payment.</p>
+
+        <button class="btn-secondary" onclick="window.location.href='../customer_dashboard/customer_dashboard.html'">Back to Customer Dashboard</button>
+
+        <label for="payment_method">Payment Method</label>
+        <select id="payment_method">
+            <option value="CREDIT">Credit Card</option>
+            <option value="DEBIT">Debit Card</option>
+            <option value="APPLEPAY">Apple Pay</option>
+            <option value="PAYPAL">PayPal</option>
+        </select>
+
+        <div id="cardFields" class="field-group active">
+            <label for="billing_address">Billing Address</label>
+            <input id="billing_address" type="text" placeholder="1234 Main St" />
+
+            <label for="payment_number">Card Number</label>
+            <input id="payment_number" type="text" placeholder="16-digit number" maxlength="16" />
+
+            <label for="payment_pin">PIN / CVV</label>
+            <input id="payment_pin" type="text" placeholder="3-digit PIN" maxlength="3" />
+
+            <label for="card_holder_name">Cardholder Name</label>
+            <input id="card_holder_name" type="text" placeholder="Name on card" />
+
+            <label for="postal_code">Postal Code</label>
+            <input id="postal_code" type="text" placeholder="A1A 1A1" />
+        </div>
+
+        <div id="digitalFields" class="field-group">
+            <label for="email">Email</label>
+            <input id="email" type="email" placeholder="user@example.com" />
+
+            <label for="email_password">Email Password</label>
+            <input id="email_password" type="password" placeholder="Enter email password" />
+        </div>
+
+        <button id="submitButton">Submit Payment</button>
+
+        <div id="statusMessage" class="status">Select payment method and enter details.</div>
+        
+    </div>
+
+    <script>
+        const paymentMethod = document.getElementById('payment_method');
+        const cardFields = document.getElementById('cardFields');
+        const digitalFields = document.getElementById('digitalFields');
+        const submitButton = document.getElementById('submitButton');
+        const statusMessage = document.getElementById('statusMessage');
+
+        const methodCard = ['CREDIT', 'DEBIT'];
+        const methodDigital = ['APPLEPAY', 'PAYPAL'];
+
+        // Parse URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const customerId = urlParams.get('customer_id');
+        const orderId = urlParams.get('order_id');
+
+        function updateFields() {
+            const selected = paymentMethod.value;
+            if (methodCard.includes(selected)) {
+                cardFields.classList.add('active');
+                digitalFields.classList.remove('active');
+            } else {
+                cardFields.classList.remove('active');
+                digitalFields.classList.add('active');
+            }
+            setStatus(`Ready to submit payment for ${selected}. Order: ${orderId}, Customer: ${customerId}`, '');
+        }
+
+        function setStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status';
+            if (type === 'success') {
+                statusMessage.classList.add('success');
+            } else if (type === 'error') {
+                statusMessage.classList.add('error');
+            }
+        }
+
+        function buildPayload() {
+            const payload = {
+                customer_id: customerId,
+                order_id: orderId,
+                payment_method: paymentMethod.value,
+                billing_address: '',
+                payment_number: '',
+                payment_pin: '',
+                card_holder_name: '',
+                postal_code: '',
+                email: '',
+                email_password: ''
+            };
+
+            if (methodCard.includes(paymentMethod.value)) {
+                payload.billing_address = document.getElementById('billing_address').value.trim();
+                payload.payment_number = document.getElementById('payment_number').value.trim();
+                payload.payment_pin = document.getElementById('payment_pin').value.trim();
+                payload.card_holder_name = document.getElementById('card_holder_name').value.trim();
+                payload.postal_code = document.getElementById('postal_code').value.trim();
+            } else {
+                payload.email = document.getElementById('email').value.trim();
+                payload.email_password = document.getElementById('email_password').value.trim();
+            }
+            return payload;
+        }
+
+        function validateForm(payload) {
+            if (methodCard.includes(payload.payment_method)) {
+                if (!payload.billing_address) return 'Billing address is required.';
+                if (!payload.payment_number) return 'Card number is required.';
+                if (!payload.payment_pin) return 'PIN/CVV is required.';
+                if (!payload.card_holder_name) return 'Cardholder name is required.';
+                if (!payload.postal_code) return 'Postal code is required.';
+            } else {
+                if (!payload.email) return 'Email is required.';
+                if (!payload.email_password) return 'Email password is required.';
+            }
+            return null;
+        }
+
+        async function submitPayment() {
+            submitButton.disabled = true;
+            setStatus('Submitting payment...', '');
+            const payload = buildPayload();
+            const validationError = validateForm(payload);
+            if (validationError) {
+                setStatus(validationError, 'error');
+                submitButton.disabled = false;
+                return;
+            }
+
+            try {
+                const response = await fetch('http://127.0.0.1:8080/payment/process', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    const detail = data.detail || 'Unknown error returned from server.';
+                    setStatus('Payment failed: ' + JSON.stringify(detail), 'error');
+                } else {
+                    setStatus('Payment successful! Server returned: ' + JSON.stringify(data), 'success');
+                }
+            } catch (error) {
+                setStatus('Unable to reach payment service: ' + error.message, 'error');
+            }
+            submitButton.disabled = false;
+        }
+
+        paymentMethod.addEventListener('change', updateFields);
+        submitButton.addEventListener('click', submitPayment);
+        updateFields();
+    </script>
+</body>
+</html>
